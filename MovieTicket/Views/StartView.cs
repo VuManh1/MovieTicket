@@ -1,4 +1,6 @@
-﻿using MovieTicket.Factory;
+﻿using BUS;
+using MovieTicket.Factory;
+using SharedLibrary.DTO;
 using Spectre.Console;
 
 namespace MovieTicket.Views
@@ -6,14 +8,22 @@ namespace MovieTicket.Views
 	public class StartView : IViewRender
 	{
 		private readonly IViewServiceFactory _viewServiceFactory;
+		private readonly MovieBus _movieBUS;
 
-		public StartView(IViewServiceFactory viewServiceFactory)
+		public StartView(IViewServiceFactory viewServiceFactory, MovieBus movieBUS)
 		{
 			_viewServiceFactory = viewServiceFactory;
+			_movieBUS = movieBUS;
 		}
 
 		public void Render(string? statusMessage = null, object? model = null)
 		{
+			List<Movie> movies = _movieBUS.GetAllBus();
+
+			movies.ForEach(m => {
+				Console.WriteLine($"{m.Name} {m.Description}");
+			});
+
 			// create panel
 			var panel = new Panel(
 				Align.Center(
