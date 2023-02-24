@@ -38,6 +38,7 @@ namespace MovieTicket
 			Services.AddSingleton<IUnitOfWork, UnitOfWork>();
 
 			Services.AddScoped<AuthenticationBUS>();
+			Services.AddScoped<MovieBus>();
 		}
 
 		public void Run()

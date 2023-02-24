@@ -11,7 +11,7 @@ namespace SharedLibrary.DTO
         public DateOnly? ReleaseDate { get; set; }
         public string? Poster { get; set; }
 
-        public Country? Country { get; set; }
+        public string Country { get; set; }
         public List<Cast>? Casts { get; set; }
         public List<Director>? Directors { get; set; }
 
