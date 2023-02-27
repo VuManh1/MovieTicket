@@ -40,7 +40,7 @@ namespace BUS
 			user.NormalizeName = user.Name.RemoveMarks();
 			user.CreateDate = DateOnly.FromDateTime(DateTime.Now);
 			user.IsLock = false;
-			user.Role = Role.User;
+			user.Role = Role.Member;
 
 			try
 			{

@@ -1,7 +1,9 @@
 ﻿using BUS;
 using MovieTicket.Factory;
+using MovieTicket.SignIn;
 using SharedLibrary;
 using SharedLibrary.Constants;
+using SharedLibrary.DTO;
 using SharedLibrary.Helpers;
 using Spectre.Console;
 
@@ -65,8 +67,25 @@ namespace MovieTicket.Views.Authentication
 			Result result = _authenticationBus.Login(email, password);
 			if (result.Success)
 			{
+				User? user = (User?)result.Model;
 
-				Console.WriteLine("Đăng nhập thành công !");
+				SignInManager.IsLogin = true;
+				SignInManager.User = user;
+				
+				if(user != null)
+				{
+					Role userRole = user.Role;
+
+					if(userRole == Role.Admin)
+					{
+						_viewFactory.Render("AdminHome");
+						return;
+					}
+					else if(userRole == Role.Member)
+					{
+						return;
+					}
+				}
 			}
 			else
 			{

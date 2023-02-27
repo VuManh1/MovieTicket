@@ -1,27 +1,30 @@
-﻿using BUS;
 using MovieTicket.Factory;
+using MovieTicket.SignIn;
 using Spectre.Console;
 
-namespace MovieTicket.Views
+namespace MovieTicket.Views.Admin
 {
-	public class StartView : IViewRender
-	{
+    public class HomeView : IViewRender
+    {
 		private readonly IViewFactory _viewFactory;
 
-		public StartView(IViewFactory viewFactory)
+		public HomeView(IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
 		}
 
-		public void Render(string? statusMessage = null, object? model = null)
-		{
+        public void Render(string? statusMessage = null, object? model = null)
+        {
 			// create panel
 			var panel = new Panel(
 				Align.Center(
-					new FigletText("MOVIE TICKET")
+                    new Rows(
+                        new FigletText("MOVIE TICKET")
 						.LeftJustified()
 						.Color(Color.Gold3_1),
-					VerticalAlignment.Middle))
+                        new Text("[Admin Menu]")
+                    )
+				))
 			{
 				Border = BoxBorder.Heavy,
 				BorderStyle = new Style(Color.PaleGreen3),
@@ -29,6 +32,10 @@ namespace MovieTicket.Views
 				Expand = true
 			};
 
+
+            panel.Header = new PanelHeader(SignInManager.User?.Name ?? "Not login");
+            panel.Header.RightJustified<PanelHeader>();
+        
 			AnsiConsole.Write(panel);
 
 			// create select: 
@@ -37,23 +44,25 @@ namespace MovieTicket.Views
 					.Title("[PaleGreen3]Choose: [/]")
 					.PageSize(10)
 					.AddChoices(new[] {
-						"Login", "Register", "Exit"
+						"Manage Movies", "Manage Shows", "Manage Cinemas",
+                        "Logout"
 					})
 					.HighlightStyle(new Style(Color.PaleGreen3)));
 
 			// switch view
 			switch (selection)
 			{
-				case "Login":
-					_viewFactory.Render("login");
+				case "Manage Movies":
+                    _viewFactory.Render("AdminMovieMenu");
 					break;
-				case "Register":
-					_viewFactory.Render("register");
+				case "Manage Shows":
 					break;
-				case "Exit":
+				case "Logout":
 					AnsiConsole.MarkupLine("[PaleGreen3]Goodbye ![/]");
 					break;
 			}
-		}
-	}
+        }
+
+
+    }
 }

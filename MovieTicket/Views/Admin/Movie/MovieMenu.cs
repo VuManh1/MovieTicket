@@ -1,27 +1,30 @@
-﻿using BUS;
 using MovieTicket.Factory;
+using MovieTicket.Views;
 using Spectre.Console;
 
-namespace MovieTicket.Views
+namespace MovieTicket.Views.Admin.Movie
 {
-	public class StartView : IViewRender
-	{
+    public class MovieMenu : IViewRender
+    {
 		private readonly IViewFactory _viewFactory;
 
-		public StartView(IViewFactory viewFactory)
+		public MovieMenu(IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
 		}
 
-		public void Render(string? statusMessage = null, object? model = null)
-		{
+        public void Render(string? statusMessage = null, object? model = null)
+        {
 			// create panel
 			var panel = new Panel(
 				Align.Center(
-					new FigletText("MOVIE TICKET")
+                    new Rows(
+                        new FigletText("MOVIE MENU")
 						.LeftJustified()
 						.Color(Color.Gold3_1),
-					VerticalAlignment.Middle))
+                        new Text("[Admin Menu]")
+                    )
+				))
 			{
 				Border = BoxBorder.Heavy,
 				BorderStyle = new Style(Color.PaleGreen3),
@@ -29,6 +32,8 @@ namespace MovieTicket.Views
 				Expand = true
 			};
 
+            
+        
 			AnsiConsole.Write(panel);
 
 			// create select: 
@@ -37,23 +42,26 @@ namespace MovieTicket.Views
 					.Title("[PaleGreen3]Choose: [/]")
 					.PageSize(10)
 					.AddChoices(new[] {
-						"Login", "Register", "Exit"
+						"Add Movie", "Update Movie", "Show All Movies","Search Movie",
+                        "Back"
 					})
 					.HighlightStyle(new Style(Color.PaleGreen3)));
 
-			// switch view
 			switch (selection)
 			{
-				case "Login":
-					_viewFactory.Render("login");
+				case "Add Movie":
+                    _viewFactory.Render("AdminMovieMenu");
 					break;
-				case "Register":
-					_viewFactory.Render("register");
+				case "Update Movie":
 					break;
-				case "Exit":
+                case "Show All Movies":
+					break;
+                case "Search Movie":
+					break;
+				case "Back":
 					AnsiConsole.MarkupLine("[PaleGreen3]Goodbye ![/]");
 					break;
 			}
-		}
-	}
+        }
+    }
 }

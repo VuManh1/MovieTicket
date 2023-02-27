@@ -16,5 +16,10 @@ namespace SharedLibrary.DTO
         public List<Director>? Directors { get; set; }
 
 	}
+
+    public enum MovieStatus
+    {
+        Playing, Coming, Stop
+    }
 }
 

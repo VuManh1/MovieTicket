@@ -38,6 +38,8 @@ namespace MovieTicket.Factory
 				"register" => typeof(RegisterView),
 				"forgot_password" => typeof(ForgotPasswordView),
 				"reset_password" => typeof(ResetPasswordView),
+				"AdminHome" => typeof(MovieTicket.Views.Admin.HomeView),
+				"AdminMovieMenu" => typeof(MovieTicket.Views.Admin.Movie.MovieMenu),
 				_ => null
 			};
 

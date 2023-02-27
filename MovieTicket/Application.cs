@@ -28,6 +28,8 @@ namespace MovieTicket
 			Services.AddTransient<IViewRender, RegisterView>();
 			Services.AddTransient<IViewRender, ForgotPasswordView>();
 			Services.AddTransient<IViewRender, ResetPasswordView>();
+			Services.AddTransient<IViewRender, MovieTicket.Views.Admin.HomeView>();
+			Services.AddTransient<IViewRender, MovieTicket.Views.Admin.Movie.MovieMenu>();
 		}
 
 		/// <summary>

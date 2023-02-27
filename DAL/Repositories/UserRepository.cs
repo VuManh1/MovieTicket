@@ -76,8 +76,9 @@ namespace DAL.Repositories
 					Email = reader.GetString("email"),
 					PasswordHash = reader["PasswordHash"].GetType() != typeof(System.DBNull) ? reader.GetString("PasswordHash") : "",
 					Salt = reader["salt"].GetType() != typeof(System.DBNull) ? reader.GetString("salt") : "",
-					IsLock = reader.GetInt32("IsLock") == 1
-				}); ;
+					IsLock = reader.GetInt32("IsLock") == 1,
+					Role = Enum.Parse<Role>(reader.GetString("role"))
+				});
 			}
 			reader.Close();
 
@@ -109,7 +110,8 @@ namespace DAL.Repositories
 					Email = reader.GetString("email"),
 					PasswordHash = reader["PasswordHash"].GetType() != typeof(System.DBNull) ? reader.GetString("PasswordHash") : "",
 					Salt = reader["salt"].GetType() != typeof(System.DBNull) ? reader.GetString("salt") : "",
-					IsLock = reader.GetInt32("IsLock") == 1
+					IsLock = reader.GetInt32("IsLock") == 1,
+					Role = Enum.Parse<Role>(reader.GetString("role"))
 				};
 
 			}
