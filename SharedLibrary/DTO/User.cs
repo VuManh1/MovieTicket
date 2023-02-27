@@ -17,7 +17,7 @@ namespace SharedLibrary.DTO
 
     public enum Role
     {
-        User, Admin
+        Member, Admin
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using BUS;
 using MovieTicket.Factory;
+using MovieTicket.SignIn;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
@@ -74,6 +75,9 @@ namespace MovieTicket.Views.Authentication
 			Result result = _authenticationBus.Register(user);
 			if (result.Success)
 			{
+				SignInManager.IsLogin = true;
+				SignInManager.User = (User?)result.Model;
+				Console.WriteLine(SignInManager.User?.Name);
 				Console.WriteLine("Đăng ký thành công !");
 			}
 			else
