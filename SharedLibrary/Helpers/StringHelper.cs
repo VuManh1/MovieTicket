@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace BUS.Helpers
+namespace SharedLibrary.Helpers
 {
 	public static class StringHelper
 	{

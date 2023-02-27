@@ -1,8 +1,7 @@
 ﻿using SharedLibrary;
 using SharedLibrary.DTO;
 using BUS.Services;
-using BUS.Helpers;
-using System.Text.RegularExpressions;
+using SharedLibrary.Helpers;
 using OtpNet;
 using DAL.UnitOfWork;
 
@@ -23,18 +22,6 @@ namespace BUS
 		{
 			if (user == null) return Result.Error();
 
-			if (String.IsNullOrEmpty(user.Email) || String.IsNullOrWhiteSpace(user.Email))
-			{
-				return Result.Error("Email can not empty !");
-			}
-
-			user.Email = user.Email.Trim();
-			Regex regex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-			if (!regex.IsMatch(user.Email))
-			{
-				return Result.Error("Email not correct !");
-			}
-
 			try
 			{
 				// check if email available ?
@@ -46,26 +33,6 @@ namespace BUS
 			catch
 			{
 				return Result.NetworkError();
-			}
-
-			// check name valid
-			if (String.IsNullOrEmpty(user.Name) || String.IsNullOrWhiteSpace(user.Name))
-			{
-				return Result.Error("Username can not empty !");
-			}
-			else if (user.Name.Trim().Length > 20)
-			{
-				return Result.Error("Username must less than 20 charactes !");
-			}
-
-			// check password valid
-			if (String.IsNullOrEmpty(user.PasswordHash) || String.IsNullOrWhiteSpace(user.PasswordHash))
-			{
-				return Result.Error("Password can not empty !");
-			}
-			else if (user.PasswordHash.Length < 6 || user.PasswordHash.Length > 30)
-			{
-				return Result.Error("Password must be between 6 and 30 charactes !");
 			}
 
 			user.Id = Guid.NewGuid().ToString();
@@ -112,7 +79,7 @@ namespace BUS
 				return Result.Error("Your account is locked !");
 			}
 
-			return Result.OK();
+			return Result.OK(user);
 		}
 
 		public void SendOTP(string email)

@@ -2,6 +2,7 @@
 using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
+using SharedLibrary.Helpers;
 using Spectre.Console;
 
 namespace MovieTicket.Views.Authentication
@@ -9,12 +10,12 @@ namespace MovieTicket.Views.Authentication
 	public class ResetPasswordView : IViewRender
 	{
 		private readonly AuthenticationBUS _authenticationBus;
-		private readonly IViewServiceFactory _viewServiceFactory;
+		private readonly IViewFactory _viewFactory;
 
-		public ResetPasswordView(AuthenticationBUS authenticationBus, IViewServiceFactory viewServiceFactory)
+		public ResetPasswordView(AuthenticationBUS authenticationBus, IViewFactory viewFactory)
 		{
 			_authenticationBus = authenticationBus;
-			_viewServiceFactory = viewServiceFactory;
+			_viewFactory = viewFactory;
 		}
 
 		public void Render(string? statusMessage = null, object? model = null)
@@ -25,6 +26,17 @@ namespace MovieTicket.Views.Authentication
 				new TextPrompt<string>(" -> Enter new password: ")
 					.PromptStyle("red")
 					.Secret());
+
+			// Validate password
+			while (!ValidationHelper.CheckPassword(newPassword))
+			{
+				AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Password must be between 6 and 30 charactes ![/]");
+
+				newPassword = AnsiConsole.Prompt(
+				new TextPrompt<string>(" -> Enter password: ")
+					.PromptStyle("red")
+					.Secret());
+			}
 
 			string confirmPassword = AnsiConsole.Prompt(
 				new TextPrompt<string>(" -> Confirm password: ")
@@ -37,11 +49,11 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewServiceFactory.Render("start");
+					_viewFactory.Render("start");
 					return;
 				}
 
-				_viewServiceFactory.Render("reset_password", model: model);
+				_viewFactory.Render("reset_password", model: model);
 				return;
 			}
 
@@ -50,7 +62,7 @@ namespace MovieTicket.Views.Authentication
 			{
 				AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Reset password successful ![/], press any key to go back.");
 				Console.ReadKey();
-				_viewServiceFactory.Render("start");
+				_viewFactory.Render("start");
 			}
 			else
 			{
@@ -58,11 +70,11 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewServiceFactory.Render("start");
+					_viewFactory.Render("start");
 					return;
 				}
 
-				_viewServiceFactory.Render("reset_password", model: model);
+				_viewFactory.Render("reset_password", model: model);
 			}
 		}
 	}

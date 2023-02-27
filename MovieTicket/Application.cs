@@ -21,13 +21,13 @@ namespace MovieTicket
 		/// </summary>
 		public void AddViewServices()
 		{
-			Services.AddSingleton<IViewServiceFactory, ViewServiceFactory>();
+			Services.AddScoped<IViewFactory, ViewFactory>();
 
-			Services.AddScoped<IViewRender, StartView>();
-			Services.AddScoped<IViewRender, LoginView>();
-			Services.AddScoped<IViewRender, RegisterView>();
-			Services.AddScoped<IViewRender, ForgotPasswordView>();
-			Services.AddScoped<IViewRender, ResetPasswordView>();
+			Services.AddTransient<IViewRender, StartView>();
+			Services.AddTransient<IViewRender, LoginView>();
+			Services.AddTransient<IViewRender, RegisterView>();
+			Services.AddTransient<IViewRender, ForgotPasswordView>();
+			Services.AddTransient<IViewRender, ResetPasswordView>();
 		}
 
 		/// <summary>
@@ -35,10 +35,10 @@ namespace MovieTicket
 		/// </summary>
 		public void AddBusinesses()
 		{
-			Services.AddSingleton<IUnitOfWork, UnitOfWork>();
+			Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-			Services.AddScoped<AuthenticationBUS>();
-			Services.AddScoped<MovieBus>();
+			Services.AddTransient<AuthenticationBUS>();
+			Services.AddTransient<MovieBus>();
 		}
 
 		public void Run()

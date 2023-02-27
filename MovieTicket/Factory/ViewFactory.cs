@@ -4,17 +4,17 @@ using MovieTicket.Views.Authentication;
 
 namespace MovieTicket.Factory
 {
-	public interface IViewServiceFactory
+	public interface IViewFactory
 	{
 		public void Render(string name, string? statusMessage = null, object? model = null);
 		public IViewRender? GetService(string name);
 	}
 
-	public class ViewServiceFactory : IViewServiceFactory
+	public class ViewFactory : IViewFactory
 	{
 		private readonly IServiceProvider _serviceProvider;
 
-		public ViewServiceFactory(IServiceProvider serviceProvider)
+		public ViewFactory(IServiceProvider serviceProvider)
 		{
 			_serviceProvider = serviceProvider;
 		}
@@ -22,6 +22,7 @@ namespace MovieTicket.Factory
 		public void Render(string name, string? statusMessage = null, object? model = null)
 		{
 			Console.Clear();
+			Console.Title = name;
 
 			// get view by name :
 			IViewRender? view = this.GetService(name);

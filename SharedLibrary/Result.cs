@@ -4,8 +4,16 @@
 	{
 		public bool Success { get; set; }
 		public string? Message { get; set; }
+		public object? Model { get; set; }
 
-		public static Result OK() => new() { Success = true };
+		public static Result OK(object? model = null)
+		{
+			return new()
+			{
+				Model = model,
+				Success = true
+			};
+		}
 
 		public static Result Error(string? message = null)
 		{

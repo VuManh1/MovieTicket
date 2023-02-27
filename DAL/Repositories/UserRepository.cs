@@ -45,7 +45,7 @@ namespace DAL.Repositories
 
 			cmd.ExecuteNonQuery();
 
-			return Result.OK();
+			return Result.OK(entity);
 		}
 
 		public Result Delete(string id)

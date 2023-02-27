@@ -1,5 +1,3 @@
-using MySql.Data.MySqlClient;
-using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
 #pragma warning disable

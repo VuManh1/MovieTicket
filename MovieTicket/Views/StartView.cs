@@ -7,12 +7,12 @@ namespace MovieTicket.Views
 {
 	public class StartView : IViewRender
 	{
-		private readonly IViewServiceFactory _viewServiceFactory;
+		private readonly IViewFactory _viewFactory;
 		private readonly MovieBus _movieBUS;
 
-		public StartView(IViewServiceFactory viewServiceFactory, MovieBus movieBUS)
+		public StartView(IViewFactory viewFactory, MovieBus movieBUS)
 		{
-			_viewServiceFactory = viewServiceFactory;
+			_viewFactory = viewFactory;
 			_movieBUS = movieBUS;
 		}
 
@@ -54,10 +54,10 @@ namespace MovieTicket.Views
 			switch (selection)
 			{
 				case "Login":
-					_viewServiceFactory.Render("login");
+					_viewFactory.Render("login");
 					break;
 				case "Register":
-					_viewServiceFactory.Render("register");
+					_viewFactory.Render("register");
 					break;
 				case "Exit":
 					AnsiConsole.MarkupLine("[PaleGreen3]Goodbye ![/]");

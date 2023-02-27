@@ -2,6 +2,7 @@
 using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
+using SharedLibrary.Helpers;
 using Spectre.Console;
 
 namespace MovieTicket.Views.Authentication
@@ -9,19 +10,19 @@ namespace MovieTicket.Views.Authentication
 	public class ForgotPasswordView : IViewRender
 	{
 		private readonly AuthenticationBUS _authenticationBus;
-		private readonly IViewServiceFactory _viewServiceFactory;
+		private readonly IViewFactory _viewFactory;
 
-		public ForgotPasswordView(AuthenticationBUS authenticationBus, IViewServiceFactory viewServiceFactory)
+		public ForgotPasswordView(AuthenticationBUS authenticationBus, IViewFactory viewFactory)
 		{
 			_authenticationBus = authenticationBus;
-			_viewServiceFactory = viewServiceFactory;
+			_viewFactory = viewFactory;
 		}
 
 		public void Render(string? statusMessage = null, object? model = null)
 		{
 			AnsiConsole.MarkupLine($"[{ColorConstant.Title}]Forgot Password[/]");
 
-			string email = AnsiConsole.Ask<string>(" -> Enter your email: ");
+			string email = ConsoleHelper.InputEmail(" -> Enter your email: ");
 
 			_authenticationBus.SendOTP(email);
 
@@ -31,7 +32,7 @@ namespace MovieTicket.Views.Authentication
 			Result result = _authenticationBus.ValidateOTP(otp);
 			if (result.Success)
 			{
-				_viewServiceFactory.Render("reset_password", model: email);
+				_viewFactory.Render("reset_password", model: email);
 			}
 			else
 			{
@@ -39,11 +40,11 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewServiceFactory.Render("start");
+					_viewFactory.Render("start");
 					return;
 				}
 
-				_viewServiceFactory.Render("forgot_password");
+				_viewFactory.Render("forgot_password");
 			}
 		}
 	}

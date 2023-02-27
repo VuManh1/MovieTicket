@@ -1,10 +1,13 @@
 ﻿using SharedLibrary.DTO;
 using System.Security.Cryptography;
 
-namespace BUS.Helpers
+namespace SharedLibrary.Helpers
 {
 	public static class AuthenticationHelper
 	{
+		/// <summary>
+		/// Compute salt and hash for User
+		/// </summary>
 		public static void ComputeSaltAndHash(this User user)
 		{
 			byte[] salt = GenerateSalt();
@@ -12,6 +15,9 @@ namespace BUS.Helpers
 			user.PasswordHash = ComputeHash(user.PasswordHash, user.Salt);
 		}
 
+		/// <summary>
+		/// Generate random salt
+		/// </summary>
 		public static byte[] GenerateSalt()
 		{
 			var rng = RandomNumberGenerator.Create();
@@ -21,6 +27,9 @@ namespace BUS.Helpers
 			return salt;
 		}
 
+		/// <summary>
+		/// Hash password
+		/// </summary>
 		public static string ComputeHash(string password, string salt)
 		{
 			using var hashGenerator = new Rfc2898DeriveBytes(password, Convert.FromBase64String(salt));
