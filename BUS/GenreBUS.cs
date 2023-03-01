@@ -14,7 +14,6 @@ namespace BUS
 
 		public void DeleteBus(string id)
 		{
-			_unitOfWork.GenreRepository.Delete(id);
 		}
 
 		public void GetAllBus()
@@ -29,7 +28,6 @@ namespace BUS
 
 		public void GetByIdBus(string id)
 		{
-			_unitOfWork.GenreRepository.GetById(id);
 		}
 
 		public void UpdateBus(Genre entity)

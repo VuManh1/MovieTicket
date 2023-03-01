@@ -22,7 +22,9 @@ namespace MovieTicket.Views.Authentication
 
 		public void Render(string? statusMessage = null, object? model = null)
 		{
-			AnsiConsole.MarkupLine($"[{ColorConstant.Title}]Login[/]");
+            _viewFactory.GetService(ViewConstant.Logo)?.Render();
+
+            AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Login\n[/]");
 			AnsiConsole.MarkupLine($"[{ColorConstant.Info}]Type '<forgot>' if you forget your password.[/]");
 
 			// enter email
@@ -30,7 +32,7 @@ namespace MovieTicket.Views.Authentication
 
 			if (email == "<forgot>")
 			{
-				_viewFactory.Render("forgot_password");
+				_viewFactory.Render(ViewConstant.ForgotPassword);
 				return;
 			}
 
@@ -49,7 +51,7 @@ namespace MovieTicket.Views.Authentication
 
 			if (password == "<forgot>")
 			{
-				_viewFactory.Render("forgot_password");
+				_viewFactory.Render(ViewConstant.ForgotPassword);
 				return;
 			}
 
@@ -69,22 +71,18 @@ namespace MovieTicket.Views.Authentication
 			{
 				User? user = (User?)result.Model;
 
-				SignInManager.IsLogin = true;
-				SignInManager.User = user;
-				
-				if(user != null)
-				{
-					Role userRole = user.Role;
+				if (user == null) return;
 
-					if(userRole == Role.Admin)
-					{
-						_viewFactory.Render("AdminHome");
-						return;
-					}
-					else if(userRole == Role.Member)
-					{
-						return;
-					}
+				SignInManager.SignIn(user);
+
+				if (user.Role == Role.Admin)
+				{
+					_viewFactory.Render(ViewConstant.AdminHome);
+					return;
+				}
+				else if (user.Role == Role.Member)
+				{
+					return;
 				}
 			}
 			else
@@ -93,11 +91,11 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewFactory.Render("start");
+					_viewFactory.Render(ViewConstant.Start);
 					return;
 				}
 
-				_viewFactory.Render("login");
+				_viewFactory.Render(ViewConstant.Login);
 			}
 		}
 	}

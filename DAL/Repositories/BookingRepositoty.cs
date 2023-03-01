@@ -22,9 +22,6 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@UserId", entity.User.Id);
 			cmd.Parameters["@UserId"].Direction = System.Data.ParameterDirection.Input;
 
@@ -45,16 +42,16 @@ namespace DAL.Repositories
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(Booking entity)
         {
             _dbConnection.OpenConnection();
 
-			string query = "delete FROM Bookings WHERE id = {id};";
-			MySqlCommand cmd = new(query, _dbConnection.Connection);
-
-            cmd.ExecuteNonQuery();
-
 			return Result.OK();
+        }
+
+        public IEnumerable<Booking> Find(string filter)
+        {
+            throw new NotImplementedException();
         }
 
         public Booking? FirstOrDefault(string filter)
@@ -77,7 +74,7 @@ namespace DAL.Repositories
 			{
 				Booking.Add(new Booking
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					SeatCount = reader.GetInt32("SeatCount"),
 					CreateTime = reader.GetDateTime("CreateTime"),
 					Total = reader.GetInt32("Total")
@@ -88,7 +85,7 @@ namespace DAL.Repositories
 			return Booking;
         }
 
-        public Booking? GetById(string id)
+        public Booking? GetById(int id)
         {
 
 			Booking? booking = null;
@@ -103,7 +100,7 @@ namespace DAL.Repositories
 			{
 				booking = new Booking
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					SeatCount = reader.GetInt32("SeatCount"),
 					CreateTime = reader.GetDateTime("CreateTime"),
 					Total = reader.GetInt32("Total")

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MovieTicket.Views;
 using MovieTicket.Views.Authentication;
+using MovieTicket.Views.Shared;
+using SharedLibrary.Constants;
 
 namespace MovieTicket.Factory
 {
@@ -33,14 +35,19 @@ namespace MovieTicket.Factory
 		{
 			Type? type = name switch
 			{
-				"start" => typeof(StartView),
-				"login" => typeof(LoginView),
-				"register" => typeof(RegisterView),
-				"forgot_password" => typeof(ForgotPasswordView),
-				"reset_password" => typeof(ResetPasswordView),
-				"AdminHome" => typeof(MovieTicket.Views.Admin.HomeView),
-				"AdminMovieMenu" => typeof(MovieTicket.Views.Admin.Movie.MovieMenu),
-				_ => null
+                ViewConstant.Paging => typeof(PagingView),
+                ViewConstant.Logo => typeof(LogoView),
+                ViewConstant.LoginInfo => typeof(LoginInfoView),
+                ViewConstant.Start => typeof(StartView),
+                ViewConstant.Login => typeof(LoginView),
+                ViewConstant.Register => typeof(RegisterView),
+                ViewConstant.ForgotPassword => typeof(ForgotPasswordView),
+                ViewConstant.ResetPassword => typeof(ResetPasswordView),
+                ViewConstant.AdminHome => typeof(Views.AdminView.HomeView),
+                ViewConstant.ManageMovie => typeof(Views.AdminView.MovieView.MovieManageView),
+                ViewConstant.AddMovie => typeof(Views.AdminView.MovieView.AddMovieView),
+                ViewConstant.AdminListMovie => typeof(Views.AdminView.MovieView.ListMovieView),
+                _ => null
 			};
 
 			return _serviceProvider.GetServices<IViewRender>().FirstOrDefault(s => s.GetType() == type);

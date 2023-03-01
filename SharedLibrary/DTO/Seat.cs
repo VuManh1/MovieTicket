@@ -3,7 +3,7 @@
 	public class Seat
 	{
 #pragma warning disable
-		public string Id { get; set; }
+		public int Id { get; set; }
 		public int SeatNumber { get; set; }
 		public SeatType SeatType { get; set; }
 		public double Price { get; set; }

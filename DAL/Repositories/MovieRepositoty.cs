@@ -17,50 +17,88 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("AddMovie", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            MySqlCommand cmd = new("AddMovie", _dbConnection.Connection)
+            {
+                CommandType = System.Data.CommandType.StoredProcedure
+            };
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@name", entity.Name);
+            cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@NormalizeName", entity.NormalizeName);
+            cmd.Parameters["@NormalizeName"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@description", entity.Description);
+            cmd.Parameters["@description"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@length", entity.Length);
+            cmd.Parameters["@length"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@ReleaseDate", entity.ReleaseDate?.ToString("yyyy-MM-dd"));
+            cmd.Parameters["@ReleaseDate"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@country", entity.Country);
+            cmd.Parameters["@country"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@status", entity.MovieStatus.ToString());
+            cmd.Parameters["@status"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@movieid", MySqlDbType.Int32);
+            cmd.Parameters["@movieid"].Direction = System.Data.ParameterDirection.Output;
 
-			cmd.Parameters.AddWithValue("@name", entity.Name);
-			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
+            cmd.ExecuteNonQuery();
 
-			cmd.Parameters.AddWithValue("@NormalizeName", entity.NormalizeName);
-			cmd.Parameters["@NormalizeName"].Direction = System.Data.ParameterDirection.Input;
+            // get id of movie
+            int id = (int)cmd.Parameters["@movieid"].Value;
 
-			cmd.Parameters.AddWithValue("@Description", entity.Description);
-			cmd.Parameters["@Description"].Direction = System.Data.ParameterDirection.Input;
+            // insert to MovieCast table
+            if (entity.Casts != null)
+            {
+                string query = "INSERT INTO MovieCast VALUES";
 
-			cmd.Parameters.AddWithValue("@Length", entity.Length);
-			cmd.Parameters["@Length"].Direction = System.Data.ParameterDirection.Input;
-            
-			cmd.Parameters.AddWithValue("@ReleaseDate", entity.ReleaseDate?.ToString("yyyy-MM-dd"));
-			cmd.Parameters["@ReleaseDate"].Direction = System.Data.ParameterDirection.Input;
+                entity.Casts.ForEach(c =>
+                {
+                    query += $" ({id}, {c.Id}),";
+                });
 
-			cmd.Parameters.AddWithValue("@Poster", entity);
-			cmd.Parameters["@Poster"].Direction = System.Data.ParameterDirection.Input;
+                // remove the ','
+                query = query[0..^1];
+                query += ";";
 
-			cmd.Parameters.AddWithValue("@Country", entity.Country);
-			cmd.Parameters["@Country"].Direction = System.Data.ParameterDirection.Input;
+                cmd.Parameters.Clear();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = query;
 
-			cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();
+            }
+
+            // insert to MovieDirector table
+            if (entity.Directors != null)
+            {
+                string query = "INSERT INTO MovieDirector VALUES";
+
+                entity.Directors.ForEach(c =>
+                {
+                    query += $" ({id}, {c.Id}),";
+                });
+
+                // remove the ','
+                query = query[0..^1];
+                query += ";";
+
+                cmd.Parameters.Clear();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = query;
+
+                cmd.ExecuteNonQuery();
+            }
+
+            return Result.OK();
+        }
+
+        public Result Delete(Movie entity)
+        {
+            _dbConnection.OpenConnection();
 
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public IEnumerable<Movie> Find(string filter)
         {
-            _dbConnection.OpenConnection();
-
-			id = "delete FROM Movies;";
-			MySqlCommand cmd = new(id, _dbConnection.Connection);
-
-            cmd.ExecuteNonQuery();
-
-			return Result.OK();
+            throw new NotImplementedException();
         }
 
         public Movie? FirstOrDefault(string filter)
@@ -83,22 +121,22 @@ namespace DAL.Repositories
 			{
 				movies.Add(new Movie
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("name"),
 					NormalizeName = reader.GetString("NormalizeName"),
-					Description = reader["Description"].GetType() != typeof(System.DBNull) ? reader.GetString("Description") : null,
-					Length = reader.GetInt32("Length"),
-					ReleaseDate = reader["ReleaseDate"].GetType() != typeof(System.DBNull) ? DateOnly.FromDateTime(reader.GetDateTime("ReleaseDate")) : null,
-                    Poster = reader.GetString("Poster"),
-					Country = reader.GetString("Country")
-				}); ;
+					Description = reader["description"].GetType() != typeof(System.DBNull) ? reader.GetString("Description") : null,
+					Length = reader.GetInt32("length"),
+					ReleaseDate = DateOnly.FromDateTime(reader.GetDateTime("ReleaseDate")),
+					Country = reader["country"].GetType() != typeof(System.DBNull) ? reader.GetString("country") : null,
+					MovieStatus = Enum.Parse<MovieStatus>(reader.GetString("status"))
+				});
 			}
 			reader.Close();
 
 			return movies;
         }
 
-        public Movie? GetById(string id)
+        public Movie? GetById(int id)
         {
             throw new NotImplementedException();
         }
@@ -121,20 +159,17 @@ namespace DAL.Repositories
 			cmd.Parameters.AddWithValue("@NormalizeName", entity.NormalizeName);
 			cmd.Parameters["@NormalizeName"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.Parameters.AddWithValue("@Description", entity.Description);
-			cmd.Parameters["@Description"].Direction = System.Data.ParameterDirection.Input;
+			cmd.Parameters.AddWithValue("@description", entity.Description);
+			cmd.Parameters["@description"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.Parameters.AddWithValue("@Length", entity.Length);
-			cmd.Parameters["@Length"].Direction = System.Data.ParameterDirection.Input;
+			cmd.Parameters.AddWithValue("@length", entity.Length);
+			cmd.Parameters["@length"].Direction = System.Data.ParameterDirection.Input;
             
 			cmd.Parameters.AddWithValue("@ReleaseDate", entity.ReleaseDate?.ToString("yyyy-MM-dd"));
 			cmd.Parameters["@ReleaseDate"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.Parameters.AddWithValue("@Poster", entity);
-			cmd.Parameters["@Poster"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@Country", entity.Country);
-			cmd.Parameters["@Country"].Direction = System.Data.ParameterDirection.Input;
+			cmd.Parameters.AddWithValue("@country", entity.Country);
+			cmd.Parameters["@country"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.ExecuteNonQuery();
 

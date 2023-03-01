@@ -43,5 +43,40 @@ namespace SharedLibrary.Helpers
 
 			return name;
 		}
-	}
+
+		public static string InputPhoneNumber(string? msg = null)
+		{
+			Console.Write(msg ?? " -> Enter phone number: ");
+
+			string number = Console.ReadLine()?.Trim() ?? "";
+
+			Regex regex = new(@"\(?\d{3}\)?[-\.]? *\d{3}[-\.]? *[-\.]?\d{4}");
+
+			while (!regex.IsMatch(number))
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Invalid phone number !");
+				Console.ForegroundColor = ConsoleColor.White;
+
+				Console.Write(msg ?? " -> Enter phone number: ");
+				number = Console.ReadLine()?.Trim() ?? "";
+			}
+
+			return number;
+		}
+
+        public static ConsoleKey InputKey(IEnumerable<ConsoleKey> keys)
+        {
+			var keyinfo = Console.ReadKey(true);
+			ConsoleKey key = keyinfo.Key;
+
+            while (!keys.Contains(key))
+            {
+                keyinfo = Console.ReadKey(true);
+                key = keyinfo.Key;
+            }
+
+            return key;
+        }
+    }
 }

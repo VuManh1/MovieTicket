@@ -3,7 +3,7 @@
 	public class Booking
 	{
 #pragma warning disable
-		public string Id { get; set; }
+		public int Id { get; set; }
 		public User User { get; set; }
 		public Show Show { get; set; }
 		public int SeatCount { get; set; }

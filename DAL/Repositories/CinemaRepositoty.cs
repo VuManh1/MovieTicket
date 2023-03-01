@@ -22,16 +22,13 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@Name", entity.Name);
 			cmd.Parameters["@Name"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.Parameters.AddWithValue("@HallCount", entity.HallCount);
 			cmd.Parameters["@HallCount"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.Parameters.AddWithValue("@CityId", entity.City.Id);
+			cmd.Parameters.AddWithValue("@CityId", entity.City?.Id);
 			cmd.Parameters["@CityId"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.ExecuteNonQuery();
@@ -39,7 +36,7 @@ namespace DAL.Repositories
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(Cinema entity)
         {
             _dbConnection.OpenConnection();
 
@@ -49,6 +46,11 @@ namespace DAL.Repositories
             cmd.ExecuteNonQuery();
 
 			return Result.OK();
+        }
+
+        public IEnumerable<Cinema> Find(string filter)
+        {
+            throw new NotImplementedException();
         }
 
         public Cinema? FirstOrDefault(string filter)
@@ -71,7 +73,7 @@ namespace DAL.Repositories
 			{
 				Cinema.Add(new Cinema
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("Name"),
 					HallCount = reader.GetInt32("HallCount")
 				}); ;
@@ -81,7 +83,7 @@ namespace DAL.Repositories
 			return Cinema;
         }
 
-        public Cinema? GetById(string id)
+        public Cinema? GetById(int id)
         {
 			Cinema? cinema = null;
 
@@ -96,7 +98,7 @@ namespace DAL.Repositories
 			{
 				cinema = new Cinema
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("Name"),
 					HallCount = reader.GetInt32("HallCount")
 				};
@@ -124,7 +126,7 @@ namespace DAL.Repositories
 			cmd.Parameters.AddWithValue("@HallCount", entity.HallCount);
 			cmd.Parameters["@HallCount"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.Parameters.AddWithValue("@CityId", entity.City.Id);
+			cmd.Parameters.AddWithValue("@CityId", entity.City?.Id);
 			cmd.Parameters["@CityId"].Direction = System.Data.ParameterDirection.Input;
 
 

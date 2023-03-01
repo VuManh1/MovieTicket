@@ -25,7 +25,7 @@ namespace BUS
 			try
 			{
 				// check if email available ?
-				if (_unitOfWork.UserRepository.FirstOrDefault($"Users.email = '{user.Email}'") != null)
+				if (_unitOfWork.UserRepository.FirstOrDefault($"email = '{user.Email}'") != null)
 				{
 					return Result.Error("Email is available !");
 				}
@@ -35,7 +35,6 @@ namespace BUS
 				return Result.NetworkError();
 			}
 
-			user.Id = Guid.NewGuid().ToString();
 			user.ComputeSaltAndHash();
 			user.NormalizeName = user.Name.RemoveMarks();
 			user.CreateDate = DateOnly.FromDateTime(DateTime.Now);
@@ -57,10 +56,11 @@ namespace BUS
 			User? user;
 			try
 			{
-				user = _unitOfWork.UserRepository.FirstOrDefault($"Users.email = '{email}'");
+				user = _unitOfWork.UserRepository.FirstOrDefault($"email = '{email}'");
 			}
-			catch
+			catch(Exception e)
 			{
+				Console.WriteLine(e);
 				return Result.NetworkError();
 			}
 

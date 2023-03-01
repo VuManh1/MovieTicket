@@ -13,5 +13,12 @@ namespace SharedLibrary.Helpers
 
 			return regex.IsMatch(email);
 		}
+
+		public static bool CheckPhoneNumber(string phone)
+		{
+			Regex regex = new(@"\(?\d{3}\)?[-\.]? *\d{3}[-\.]? *[-\.]?\d{4}");
+
+			return regex.IsMatch(phone);
+		}
 	}
 }

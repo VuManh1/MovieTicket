@@ -1,8 +1,9 @@
 using MovieTicket.Factory;
 using MovieTicket.SignIn;
+using SharedLibrary.Constants;
 using Spectre.Console;
 
-namespace MovieTicket.Views.Admin
+namespace MovieTicket.Views.AdminView
 {
     public class HomeView : IViewRender
     {
@@ -15,28 +16,8 @@ namespace MovieTicket.Views.Admin
 
         public void Render(string? statusMessage = null, object? model = null)
         {
-			// create panel
-			var panel = new Panel(
-				Align.Center(
-                    new Rows(
-                        new FigletText("MOVIE TICKET")
-						.LeftJustified()
-						.Color(Color.Gold3_1),
-                        new Text("[Admin Menu]")
-                    )
-				))
-			{
-				Border = BoxBorder.Heavy,
-				BorderStyle = new Style(Color.PaleGreen3),
-				Padding = new Padding(2, 2, 2, 2),
-				Expand = true
-			};
-
-
-            panel.Header = new PanelHeader(SignInManager.User?.Name ?? "Not login");
-            panel.Header.RightJustified<PanelHeader>();
-        
-			AnsiConsole.Write(panel);
+            _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
+            _viewFactory.GetService(ViewConstant.Logo)?.Render("[Admin Menu]");
 
 			// create select: 
 			var selection = AnsiConsole.Prompt(
@@ -53,12 +34,13 @@ namespace MovieTicket.Views.Admin
 			switch (selection)
 			{
 				case "Manage Movies":
-                    _viewFactory.Render("AdminMovieMenu");
+                    _viewFactory.Render(ViewConstant.ManageMovie);
 					break;
 				case "Manage Shows":
 					break;
 				case "Logout":
-					AnsiConsole.MarkupLine("[PaleGreen3]Goodbye ![/]");
+					SignInManager.Logout();
+					_viewFactory.Render(ViewConstant.Start);
 					break;
 			}
         }

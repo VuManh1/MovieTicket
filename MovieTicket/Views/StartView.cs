@@ -1,5 +1,6 @@
 ﻿using BUS;
 using MovieTicket.Factory;
+using SharedLibrary.Constants;
 using Spectre.Console;
 
 namespace MovieTicket.Views
@@ -15,21 +16,7 @@ namespace MovieTicket.Views
 
 		public void Render(string? statusMessage = null, object? model = null)
 		{
-			// create panel
-			var panel = new Panel(
-				Align.Center(
-					new FigletText("MOVIE TICKET")
-						.LeftJustified()
-						.Color(Color.Gold3_1),
-					VerticalAlignment.Middle))
-			{
-				Border = BoxBorder.Heavy,
-				BorderStyle = new Style(Color.PaleGreen3),
-				Padding = new Padding(2, 2, 2, 2),
-				Expand = true
-			};
-
-			AnsiConsole.Write(panel);
+			_viewFactory.GetService(ViewConstant.Logo)?.Render();
 
 			// create select: 
 			var selection = AnsiConsole.Prompt(
@@ -37,18 +24,21 @@ namespace MovieTicket.Views
 					.Title("[PaleGreen3]Choose: [/]")
 					.PageSize(10)
 					.AddChoices(new[] {
-						"Login", "Register", "Exit"
+						"Guest", "Login", "Register", "Exit"
 					})
 					.HighlightStyle(new Style(Color.PaleGreen3)));
 
 			// switch view
 			switch (selection)
 			{
-				case "Login":
-					_viewFactory.Render("login");
+                case "Guest":
+
+                    break;
+                case "Login":
+					_viewFactory.Render(ViewConstant.Login);
 					break;
 				case "Register":
-					_viewFactory.Render("register");
+					_viewFactory.Render(ViewConstant.Register);
 					break;
 				case "Exit":
 					AnsiConsole.MarkupLine("[PaleGreen3]Goodbye ![/]");

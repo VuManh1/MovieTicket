@@ -22,8 +22,6 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
 			cmd.Parameters.AddWithValue("@name", entity.Name);
 			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
 			cmd.Parameters.AddWithValue("@NormalizeName", entity.NormalizeName);
@@ -42,13 +40,15 @@ namespace DAL.Repositories
 			cmd.Parameters["@IsLock"].Direction = System.Data.ParameterDirection.Input;
 			cmd.Parameters.AddWithValue("@role", entity.Role.ToString());
 			cmd.Parameters["@role"].Direction = System.Data.ParameterDirection.Input;
+			cmd.Parameters.AddWithValue("@CityId", entity.City?.Id);
+			cmd.Parameters["@CityId"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.ExecuteNonQuery();
 
 			return Result.OK(entity);
 		}
 
-		public Result Delete(string id)
+		public Result Delete(User entity)
 		{
 			throw new NotImplementedException();
 		}
@@ -59,7 +59,7 @@ namespace DAL.Repositories
 
 			_dbConnection.OpenConnection();
 
-			string query = "SELECT * FROM Users;";
+			string query = "SELECT * FROM `UserDetails`;";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			MySqlDataReader reader = cmd.ExecuteReader();
@@ -68,16 +68,22 @@ namespace DAL.Repositories
 			{
 				users.Add(new User
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("name"),
 					NormalizeName = reader.GetString("NormalizeName"),
 					PhoneNumber = reader["PhoneNumber"].GetType() != typeof(System.DBNull) ? reader.GetString("PhoneNumber") : null,
-					CreateDate = reader["CreateDate"].GetType() != typeof(System.DBNull) ? DateOnly.FromDateTime(reader.GetDateTime("CreateDate")) : null,
+					CreateDate = DateOnly.FromDateTime(reader.GetDateTime("CreateDate")),
 					Email = reader.GetString("email"),
-					PasswordHash = reader["PasswordHash"].GetType() != typeof(System.DBNull) ? reader.GetString("PasswordHash") : "",
-					Salt = reader["salt"].GetType() != typeof(System.DBNull) ? reader.GetString("salt") : "",
+					PasswordHash = reader.GetString("PasswordHash"),
+					Salt = reader.GetString("salt"),
 					IsLock = reader.GetInt32("IsLock") == 1,
-					Role = Enum.Parse<Role>(reader.GetString("role"))
+					Role = Enum.Parse<Role>(reader.GetString("role")),
+					City = reader["CityId"].GetType() != typeof(System.DBNull) ? 
+						new()
+						{
+							Id = reader.GetInt32("CityId"),
+							Name = reader.GetString("CityName"),
+						} : null
 				});
 			}
 			reader.Close();
@@ -91,7 +97,7 @@ namespace DAL.Repositories
 
 			_dbConnection.OpenConnection();
 
-			string query = $"SELECT * FROM Users WHERE {filter};";
+			string query = $"SELECT * FROM `UserDetails` WHERE {filter};";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			MySqlDataReader reader = cmd.ExecuteReader();
@@ -102,16 +108,22 @@ namespace DAL.Repositories
 
 				user = new User
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("name"),
 					NormalizeName = reader.GetString("NormalizeName"),
 					PhoneNumber = reader["PhoneNumber"].GetType() != typeof(System.DBNull) ? reader.GetString("PhoneNumber") : null,
-					CreateDate = reader["CreateDate"].GetType() != typeof(System.DBNull) ? DateOnly.FromDateTime(reader.GetDateTime("CreateDate")) : null,
+					CreateDate = DateOnly.FromDateTime(reader.GetDateTime("CreateDate")),
 					Email = reader.GetString("email"),
-					PasswordHash = reader["PasswordHash"].GetType() != typeof(System.DBNull) ? reader.GetString("PasswordHash") : "",
-					Salt = reader["salt"].GetType() != typeof(System.DBNull) ? reader.GetString("salt") : "",
+					PasswordHash = reader.GetString("PasswordHash"),
+					Salt = reader.GetString("salt"),
 					IsLock = reader.GetInt32("IsLock") == 1,
-					Role = Enum.Parse<Role>(reader.GetString("role"))
+					Role = Enum.Parse<Role>(reader.GetString("role")),
+					City = reader["CityId"].GetType() != typeof(System.DBNull) ?
+						new()
+						{
+							Id = reader.GetInt32("CityId"),
+							Name = reader.GetString("CityName"),
+						} : null
 				};
 
 			}
@@ -120,7 +132,7 @@ namespace DAL.Repositories
 			return user;
 		}
 
-		public User? GetById(string id)
+		public User? GetById(int id)
 		{
 			throw new NotImplementedException();
 		}
@@ -154,10 +166,17 @@ namespace DAL.Repositories
 			cmd.Parameters["@newIsLock"].Direction = System.Data.ParameterDirection.Input;
 			cmd.Parameters.AddWithValue("@newRole", entity.Role.ToString());
 			cmd.Parameters["@newRole"].Direction = System.Data.ParameterDirection.Input;
+			cmd.Parameters.AddWithValue("@CityId", entity.City?.Id);
+			cmd.Parameters["@CityId"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.ExecuteNonQuery();
 
 			return Result.OK();
 		}
-	}
+
+        public IEnumerable<User> Find(string filter)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -22,9 +22,6 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@Name", entity.Name);
 			cmd.Parameters["@Name"].Direction = System.Data.ParameterDirection.Input;
 
@@ -36,7 +33,7 @@ namespace DAL.Repositories
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(Director entity)
         {
             _dbConnection.OpenConnection();
 
@@ -46,6 +43,11 @@ namespace DAL.Repositories
             cmd.ExecuteNonQuery();
 
 			return Result.OK();
+        }
+
+        public IEnumerable<Director> Find(string filter)
+        {
+            throw new NotImplementedException();
         }
 
         public Director? FirstOrDefault(string filter)
@@ -68,7 +70,7 @@ namespace DAL.Repositories
 			{
 				Director.Add(new Director
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("Name"),
 					About = reader["About"].GetType() != typeof(System.DBNull) ? reader.GetString("About") : null,
 				}); ;
@@ -78,12 +80,12 @@ namespace DAL.Repositories
 			return Director;
         }
 
-        public Director? GetById(string id)
+        public Director? GetById(int id)
         {
 			Director? director = null;
             _dbConnection.OpenConnection();
 
-			string query = "SELECT * FROM Directors WHERE id = {id};";
+			string query = $"SELECT * FROM Directors WHERE id = {id};";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			MySqlDataReader reader = cmd.ExecuteReader();
@@ -92,7 +94,7 @@ namespace DAL.Repositories
 			{
 				director = new Director
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("Name"),
 					About = reader["About"].GetType() != typeof(System.DBNull) ? reader.GetString("About") : null,
 				};

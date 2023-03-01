@@ -17,26 +17,15 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("AddCast", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
-
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@name", entity.Name);
-			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@About", entity.About);
-			cmd.Parameters["@About"].Direction = System.Data.ParameterDirection.Input;
+            string query = $"INSERT INTO Casts(name, about) VALUES('{entity.Name}', '{entity.About}');";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			cmd.ExecuteNonQuery();
 
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(Cast entity)
         {
             _dbConnection.OpenConnection();
 
@@ -46,6 +35,11 @@ namespace DAL.Repositories
             cmd.ExecuteNonQuery();
 
 			return Result.OK();
+        }
+
+        public IEnumerable<Cast> Find(string filter)
+        {
+            throw new NotImplementedException();
         }
 
         public Cast? FirstOrDefault(string filter)
@@ -68,7 +62,7 @@ namespace DAL.Repositories
 			{
 				cast.Add(new Cast
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("name"),
 					About = reader["About"].GetType() != typeof(System.DBNull) ? reader.GetString("About") : null,
 				}); ;
@@ -78,7 +72,7 @@ namespace DAL.Repositories
 			return cast;
         }
 
-        public Cast? GetById(string id)
+        public Cast? GetById(int id)
         {
 			Cast? cast = null;
             _dbConnection.OpenConnection();
@@ -92,7 +86,7 @@ namespace DAL.Repositories
 			{
 				cast = new Cast
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("name"),
 					About = reader["About"].GetType() != typeof(System.DBNull) ? reader.GetString("About") : null,
 				} ;

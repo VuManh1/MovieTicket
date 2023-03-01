@@ -39,7 +39,7 @@ namespace DAL.Repositories
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(ShowSeat entity)
         {
             _dbConnection.OpenConnection();
 
@@ -49,6 +49,11 @@ namespace DAL.Repositories
             cmd.ExecuteNonQuery();
 
 			return Result.OK();
+        }
+
+        public IEnumerable<ShowSeat> Find(string filter)
+        {
+            throw new NotImplementedException();
         }
 
         public ShowSeat? FirstOrDefault(string filter)
@@ -80,7 +85,7 @@ namespace DAL.Repositories
 			return ShowSeat;
         }
 
-        public ShowSeat? GetById(string id)
+        public ShowSeat? GetById(int id)
         {
 			ShowSeat? showSeat = null;
             _dbConnection.OpenConnection();

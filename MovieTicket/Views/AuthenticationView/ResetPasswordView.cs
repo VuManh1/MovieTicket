@@ -20,7 +20,9 @@ namespace MovieTicket.Views.Authentication
 
 		public void Render(string? statusMessage = null, object? model = null)
 		{
-			AnsiConsole.MarkupLine($"[{ColorConstant.Title}]Reset Password[/]");
+            _viewFactory.GetService(ViewConstant.Logo)?.Render();
+
+            AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Reset Password\n[/]");
 
 			string newPassword = AnsiConsole.Prompt(
 				new TextPrompt<string>(" -> Enter new password: ")
@@ -49,11 +51,11 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewFactory.Render("start");
+					_viewFactory.Render(ViewConstant.Start);
 					return;
 				}
 
-				_viewFactory.Render("reset_password", model: model);
+				_viewFactory.Render(ViewConstant.ResetPassword, model: model);
 				return;
 			}
 
@@ -62,7 +64,7 @@ namespace MovieTicket.Views.Authentication
 			{
 				AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Reset password successful ![/], press any key to go back.");
 				Console.ReadKey();
-				_viewFactory.Render("start");
+				_viewFactory.Render(ViewConstant.Start);
 			}
 			else
 			{
@@ -70,11 +72,11 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewFactory.Render("start");
+					_viewFactory.Render(ViewConstant.Start);
 					return;
 				}
 
-				_viewFactory.Render("reset_password", model: model);
+				_viewFactory.Render(ViewConstant.ResetPassword, model: model);
 			}
 		}
 	}

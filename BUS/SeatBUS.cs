@@ -16,7 +16,6 @@ namespace BUS
 
 		public void DeleteBus(string id)
 		{
-			_unitOfWork.SeatRepository.Delete(id);
 		}
 
 		public void GetAllBus()
@@ -31,7 +30,6 @@ namespace BUS
 
 		public void GetByIdBus(string id)
 		{
-			_unitOfWork.SeatRepository.GetById(id);
 		}
 
 		public void UpdateBus(Seat entity)

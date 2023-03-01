@@ -22,9 +22,6 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@SeatNumber", entity.SeatNumber);
 			cmd.Parameters["@SeatNumber"].Direction = System.Data.ParameterDirection.Input;
 
@@ -42,7 +39,7 @@ namespace DAL.Repositories
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(Seat entity)
         {
             _dbConnection.OpenConnection();
 
@@ -52,11 +49,6 @@ namespace DAL.Repositories
             cmd.ExecuteNonQuery();
 
 			return Result.OK();
-        }
-
-        public Seat? FirstOrDefault(string filter)
-        {
-            throw new NotImplementedException();
         }
 
 		public string test()
@@ -87,7 +79,7 @@ namespace DAL.Repositories
 			{
 				Seat.Add(new Seat
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					SeatNumber = reader.GetInt32("SeatNumber"),
 					SeatType = Enum.Parse<SeatType>(reader.GetString("SeatType")),
                     Price = reader.GetDouble("Price")
@@ -98,7 +90,7 @@ namespace DAL.Repositories
 			return Seat;
         }
 
-        public Seat? GetById(string id)
+        public Seat? GetById(int id)
         {
 			Seat? seat = null;
             _dbConnection.OpenConnection();
@@ -112,7 +104,7 @@ namespace DAL.Repositories
 			{
 				seat = new Seat
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					SeatNumber = reader.GetInt32("SeatNumber"),
 					SeatType = Enum.Parse<SeatType>(reader.GetString("SeatType")),
                     Price = reader.GetDouble("Price")
@@ -151,5 +143,15 @@ namespace DAL.Repositories
 
 			return Result.OK();
         }
-}
+
+        public Seat? FirstOrDefault(string filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Seat> Find(string filter)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -6,50 +6,51 @@ namespace DAL.UnitOfWork
 {
 	public interface IUnitOfWork
 	{
-		IRepository<User> UserRepository { get; }
-		IRepository<ShowSeat> ShowSeatRepository { get; }
-		IRepository<Show> ShowRepository { get; }
-		IRepository<Seat> SeatRepository { get; }
-		IRepository<Movie> MovieRepository { get; }
-		IRepository<Hall> HallRepository { get; }
-		IRepository<Genre> GenreRepository { get; }
-		IRepository<Director> DirectorRepository { get; }
-		IRepository<City> CityRepository { get; }
-		IRepository<Cast> CastRepository { get; }
-		IRepository<Cinema> CinemaRepository { get; }
-		IRepository<Booking> BookingRepository { get; }
+		UserRepository UserRepository { get; }
+		ShowSeatRepositoty ShowSeatRepository { get; }
+		ShowRepositoty ShowRepository { get; }
+		SeatRepositoty SeatRepository { get; }
+		MovieRepositoty MovieRepository { get; }
+		HallRepositoty HallRepository { get; }
+		GenreRepositoty GenreRepository { get; }
+		DirectorRepositoty DirectorRepository { get; }
+		CityRepositoty CityRepository { get; }
+		CastRepositoty CastRepository { get; }
+		CinemaRepositoty CinemaRepository { get; }
+		BookingRepositoty BookingRepository { get; }
 
-
-		public MySqlTransaction BeginTransaction();
-	}
+		public void BeginTransaction();
+		public void CommitTransaction();
+		public void RollBack();
+    }
 
 	public class UnitOfWork : IUnitOfWork
 	{
-#nullable disable
+#pragma warning disable
+		private MySqlTransaction? _transaction;
 		private readonly IDbConnection _dbConnection;
 
-		private IRepository<User> _userRepository;
-		private IRepository<ShowSeat> _showSeatRepository;
-		private IRepository<Show> _showRepository;
+		private UserRepository _userRepository;
+		private ShowSeatRepositoty _showSeatRepository;
+		private ShowRepositoty _showRepository;
 
-		private IRepository<Seat> _seatRepository;
+		private SeatRepositoty _seatRepository;
 
-		private IRepository<Movie> _movieRepository;
+		private MovieRepositoty _movieRepository;
 
-		private IRepository<Hall> _hallRepository;
+		private HallRepositoty _hallRepository;
 
-		private IRepository<Genre> _genreRepository;
+		private GenreRepositoty _genreRepository;
 
-		private IRepository<Director> _directorRepository;
+		private DirectorRepositoty _directorRepository;
 
-		private IRepository<City> _cityRepository;
+		private CityRepositoty _cityRepository;
 
-		private IRepository<Cast> _castRepository;
+		private CastRepositoty _castRepository;
 
-		private IRepository<Cinema> _cinemaRepository;
+		private CinemaRepositoty _cinemaRepository;
 
-		private IRepository<Booking> _bookingRepository;
-
+		private BookingRepositoty _bookingRepository;
 
 
 		public UnitOfWork(IDbConnection dbConnection)
@@ -62,19 +63,28 @@ namespace DAL.UnitOfWork
 			get { return _dbConnection; }
 		}
 
-		public MySqlTransaction BeginTransaction()
+		public void BeginTransaction()
 		{
 			_dbConnection.OpenConnection();
 
-			return _dbConnection.Connection.BeginTransaction();
+			_transaction = _dbConnection.Connection.BeginTransaction();
 		}
 
-        MySqlTransaction IUnitOfWork.BeginTransaction()
+        public void CommitTransaction()
         {
-            throw new NotImplementedException();
+			if (_transaction == null) return;
+
+			_transaction.Commit();
         }
 
-        public IRepository<User> UserRepository
+        public void RollBack()
+        {
+            if (_transaction == null) return;
+
+            _transaction.Rollback();
+        }
+
+        public UserRepository UserRepository
 		{
 			get
 			{
@@ -84,7 +94,7 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<ShowSeat> ShowSeatRepository
+        public ShowSeatRepositoty ShowSeatRepository
 		{
 			get
 			{
@@ -94,7 +104,7 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<Show> ShowRepository
+        public ShowRepositoty ShowRepository
 		{
 			get
 			{
@@ -104,7 +114,7 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<Seat> SeatRepository
+        public SeatRepositoty SeatRepository
 		{
 			get
 			{
@@ -114,17 +124,17 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<Movie> MovieRepository
+        public MovieRepositoty MovieRepository
 		{
 			get
 			{
 				_movieRepository ??= new MovieRepositoty(_dbConnection);
-
+				
 				return _movieRepository;
 			}
 		}
 
-        public IRepository<Hall> HallRepository
+        public HallRepositoty HallRepository
 		{
 			get
 			{
@@ -134,7 +144,7 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<Genre> GenreRepository
+        public GenreRepositoty GenreRepository
 		{
 			get
 			{
@@ -144,7 +154,7 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<Director> DirectorRepository
+        public DirectorRepositoty DirectorRepository
 		{
 			get
 			{
@@ -154,7 +164,7 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<City> CityRepository
+        public CityRepositoty CityRepository
 		{
 			get
 			{
@@ -164,7 +174,7 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<Cast> CastRepository
+        public CastRepositoty CastRepository
 		{
 			get
 			{
@@ -174,7 +184,7 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<Cinema> CinemaRepository
+        public CinemaRepositoty CinemaRepository
 		{
 			get
 			{
@@ -184,7 +194,7 @@ namespace DAL.UnitOfWork
 			}
 		}
 
-        public IRepository<Booking> BookingRepository
+        public BookingRepositoty BookingRepository
 		{
 			get
 			{

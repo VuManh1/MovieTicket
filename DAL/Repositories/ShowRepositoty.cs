@@ -22,9 +22,6 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@MovieId", entity.Movie.Id);
 			cmd.Parameters["@MovieId"].Direction = System.Data.ParameterDirection.Input;
 
@@ -39,7 +36,7 @@ namespace DAL.Repositories
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(Show entity)
         {
             _dbConnection.OpenConnection();
 
@@ -49,6 +46,11 @@ namespace DAL.Repositories
             cmd.ExecuteNonQuery();
 
 			return Result.OK();
+        }
+
+        public IEnumerable<Show> Find(string filter)
+        {
+            throw new NotImplementedException();
         }
 
         public Show? FirstOrDefault(string filter)
@@ -71,7 +73,7 @@ namespace DAL.Repositories
 			{
 				Show.Add(new Show
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					StartTime = reader.GetDateTime("StartTime"),
 				}); ;
 			}
@@ -80,7 +82,7 @@ namespace DAL.Repositories
 			return Show;
         }
 
-        public Show? GetById(string id)
+        public Show? GetById(int id)
         {
 			Show? show = null;
             _dbConnection.OpenConnection();
@@ -94,7 +96,7 @@ namespace DAL.Repositories
 			{
 				show = new Show
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					StartTime = reader.GetDateTime("StartTime"),
 				};
 			}

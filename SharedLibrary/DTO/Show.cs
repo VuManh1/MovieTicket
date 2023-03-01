@@ -3,7 +3,7 @@
 	public class Show
 	{
 #pragma warning disable
-		public string Id { get; set; }
+		public int Id { get; set; }
 		public Movie Movie { get; set; }
 		public Hall Hall { get; set; }
 		public DateTime StartTime { get; set; }

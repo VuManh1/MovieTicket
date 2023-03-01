@@ -1,5 +1,3 @@
-using MySql.Data.MySqlClient;
-using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
 #pragma warning disable
@@ -16,7 +14,6 @@ namespace BUS
 
 		public void DeleteBus(string id)
 		{
-			_unitOfWork.BookingRepository.Delete(id);
 		}
 
 		public void GetAllBus()
@@ -31,7 +28,6 @@ namespace BUS
 
 		public void GetByIdBus(string id)
 		{
-			_unitOfWork.BookingRepository.GetById(id);
 		}
 
 		public void UpdateBus(Booking entity)

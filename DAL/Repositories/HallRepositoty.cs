@@ -22,9 +22,6 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@CinemaId", entity.Cinema.Id);
 			cmd.Parameters["@CinemaId"].Direction = System.Data.ParameterDirection.Input;
 
@@ -39,16 +36,14 @@ namespace DAL.Repositories
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(Hall entity)
         {
-            _dbConnection.OpenConnection();
+            throw new NotImplementedException();
+        }
 
-			string query = "delete FROM Halls WHERE id = {id};";
-			MySqlCommand cmd = new(query, _dbConnection.Connection);
-
-            cmd.ExecuteNonQuery();
-
-			return Result.OK();
+        public IEnumerable<Hall> Find(string filter)
+        {
+            throw new NotImplementedException();
         }
 
         public Hall? FirstOrDefault(string filter)
@@ -71,7 +66,7 @@ namespace DAL.Repositories
 			{
 				Hall.Add(new Hall
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("Name"),
 					SeatCount = reader.GetInt32("SeatCount")
 					
@@ -82,7 +77,7 @@ namespace DAL.Repositories
 			return Hall;
         }
 
-        public Hall? GetById(string id)
+        public Hall? GetById(int id)
         {
 			Hall? hall = null;
             _dbConnection.OpenConnection();
@@ -96,7 +91,7 @@ namespace DAL.Repositories
 			{
 				hall = new Hall
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("Name"),
 					SeatCount = reader.GetInt32("SeatCount")
 					

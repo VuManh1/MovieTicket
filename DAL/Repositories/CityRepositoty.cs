@@ -22,21 +22,15 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@Name", entity.Name);
-			cmd.Parameters["@Name"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@State", entity.State);
-			cmd.Parameters["@State"].Direction = System.Data.ParameterDirection.Input;
+			cmd.Parameters.AddWithValue("@name", entity.Name);
+			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.ExecuteNonQuery();
 
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(City entity)
         {
             _dbConnection.OpenConnection();
 
@@ -48,6 +42,11 @@ namespace DAL.Repositories
 			return Result.OK();
         }
 
+        public IEnumerable<City> Find(string filter)
+        {
+            throw new NotImplementedException();
+        }
+
         public City? FirstOrDefault(string filter)
         {
             throw new NotImplementedException();
@@ -55,46 +54,44 @@ namespace DAL.Repositories
 
         public IEnumerable<City> GetAll()
         {
-            List<City> City = new();
+            List<City> cities = new();
 
 			_dbConnection.OpenConnection();
 
-			string query = "SELECT * FROM Citys;";
+			string query = "SELECT * FROM Cities;";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			MySqlDataReader reader = cmd.ExecuteReader();
 
 			while (reader.Read())
 			{
-				City.Add(new City
+				cities.Add(new City
 				{
-					Id = reader.GetString("id"),
-					Name = reader.GetString("Name"),
-					State = reader.GetString("State")
+					Id = reader.GetInt32("id"),
+					Name = reader.GetString("name"),
 				}); ;
 			}
 			reader.Close();
 
-			return City;
+			return cities;
         }
 
-        public City? GetById(string id)
+        public City? GetById(int id)
         {
 			City? city = null;
             _dbConnection.OpenConnection();
 
-			string query = "SELECT * FROM Citys WHERE id = {id};";
+			string query = $"SELECT * FROM Cities WHERE id = {id};";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			MySqlDataReader reader = cmd.ExecuteReader();
 
 			while (reader.Read())
 			{
-				city = new City
+				city = new()
 				{
-					Id = reader.GetString("id"),
-					Name = reader.GetString("Name"),
-					State = reader.GetString("State")
+					Id = reader.GetInt32("id"),
+					Name = reader.GetString("name"),
 				};
 			}
 			reader.Close();
@@ -116,9 +113,6 @@ namespace DAL.Repositories
 
 			cmd.Parameters.AddWithValue("@name", entity.Name);
 			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@State", entity.State);
-			cmd.Parameters["@State"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.ExecuteNonQuery();
 

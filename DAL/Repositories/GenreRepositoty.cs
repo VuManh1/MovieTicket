@@ -22,9 +22,6 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@Name", entity.Name);
 			cmd.Parameters["@Name"].Direction = System.Data.ParameterDirection.Input;
 
@@ -36,7 +33,7 @@ namespace DAL.Repositories
 			return Result.OK();
         }
 
-        public Result Delete(string id)
+        public Result Delete(Genre entity)
         {
             _dbConnection.OpenConnection();
 
@@ -46,6 +43,11 @@ namespace DAL.Repositories
             cmd.ExecuteNonQuery();
 
 			return Result.OK();
+        }
+
+        public IEnumerable<Genre> Find(string filter)
+        {
+            throw new NotImplementedException();
         }
 
         public Genre? FirstOrDefault(string filter)
@@ -68,7 +70,7 @@ namespace DAL.Repositories
 			{
 				Genre.Add(new Genre
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("Name"),
 					Description = reader["Description"].GetType() != typeof(System.DBNull) ? reader.GetString("Description") : null,
 				}); ;
@@ -78,7 +80,7 @@ namespace DAL.Repositories
 			return Genre;
         }
 
-        public Genre? GetById(string id)
+        public Genre? GetById(int id)
         {
 			Genre? genre = null;
             _dbConnection.OpenConnection();
@@ -92,7 +94,7 @@ namespace DAL.Repositories
 			{
 				genre = new Genre
 				{
-					Id = reader.GetString("id"),
+					Id = reader.GetInt32("id"),
 					Name = reader.GetString("Name"),
 					Description = reader["Description"].GetType() != typeof(System.DBNull) ? reader.GetString("Description") : null,
 				} ;

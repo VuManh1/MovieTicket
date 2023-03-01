@@ -1,9 +1,11 @@
 ﻿using BUS;
 using DAL.UnitOfWork;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using MovieTicket.Factory;
 using MovieTicket.Views;
-using MovieTicket.Views.Authentication;
+using MovieTicket.Views.AdminView.MovieView;
+using System.Reflection;
 
 namespace MovieTicket
 {
@@ -23,13 +25,13 @@ namespace MovieTicket
 		{
 			Services.AddScoped<IViewFactory, ViewFactory>();
 
-			Services.AddTransient<IViewRender, StartView>();
-			Services.AddTransient<IViewRender, LoginView>();
-			Services.AddTransient<IViewRender, RegisterView>();
-			Services.AddTransient<IViewRender, ForgotPasswordView>();
-			Services.AddTransient<IViewRender, ResetPasswordView>();
-			Services.AddTransient<IViewRender, MovieTicket.Views.Admin.HomeView>();
-			Services.AddTransient<IViewRender, MovieTicket.Views.Admin.Movie.MovieMenu>();
+			// get all class implement IViewRender
+			var views = GetAllView();
+
+			foreach (var view in views)
+			{
+                Services.Add(new ServiceDescriptor(typeof(IViewRender), view, ServiceLifetime.Transient));
+            }
 		}
 
 		/// <summary>
@@ -41,13 +43,28 @@ namespace MovieTicket
 
 			Services.AddTransient<AuthenticationBUS>();
 			Services.AddTransient<MovieBus>();
-		}
+			Services.AddTransient<CityBus>();
+			Services.AddTransient<CastBus>();
+			Services.AddTransient<DirectorBus>();
+        }
+
+        /// <summary>
+        /// Get all type that implement IViewRender
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Type> GetAllView()
+		{
+            return Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(type => typeof(IViewRender).IsAssignableFrom(type) && !type.IsInterface);
+        }
 
 		public void Run()
 		{
 			var provider = Services.BuildServiceProvider();
 			// get StartView and render it
-			var view = provider.GetServices<IViewRender>().FirstOrDefault(s => s.GetType() == typeof(StartView));
+			var view = provider.GetServices<IViewRender>()
+				.FirstOrDefault(s => s.GetType() == typeof(AddMovieView));
 			
 			view?.Render();
 		}

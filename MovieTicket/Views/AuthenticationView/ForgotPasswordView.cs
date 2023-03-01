@@ -20,19 +20,23 @@ namespace MovieTicket.Views.Authentication
 
 		public void Render(string? statusMessage = null, object? model = null)
 		{
-			AnsiConsole.MarkupLine($"[{ColorConstant.Title}]Forgot Password[/]");
+            _viewFactory.GetService(ViewConstant.Logo)?.Render();
+
+            AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Forgot Password\n[/]");
 
 			string email = ConsoleHelper.InputEmail(" -> Enter your email: ");
 
+			// send OTP
 			_authenticationBus.SendOTP(email);
 
 			AnsiConsole.MarkupLine($"[{ColorConstant.Info}]OTP has just been sent to your mailbox.[/]");
-			string otp = AnsiConsole.Ask<string>(" -> Enter OTP: ");
+			AnsiConsole.MarkupLine($"[{ColorConstant.Info}]OTP code will expire in 60 seconds.[/]");
+            string otp = AnsiConsole.Ask<string>(" -> Enter OTP: ");
 
 			Result result = _authenticationBus.ValidateOTP(otp);
 			if (result.Success)
 			{
-				_viewFactory.Render("reset_password", model: email);
+				_viewFactory.Render(ViewConstant.ResetPassword, model: email);
 			}
 			else
 			{
@@ -40,11 +44,11 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewFactory.Render("start");
+					_viewFactory.Render(ViewConstant.Start);
 					return;
 				}
 
-				_viewFactory.Render("forgot_password");
+				_viewFactory.Render(ViewConstant.ForgotPassword);
 			}
 		}
 	}
