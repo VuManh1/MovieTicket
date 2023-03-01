@@ -108,9 +108,9 @@ namespace BUS
 			_unitOfWork.MovieRepository.GetById(id);
 		}
 
-		public void Update(Movie entity)
+		public Result Update(Movie entity)
 		{
-			_unitOfWork.MovieRepository.Update(entity);
+			return _unitOfWork.MovieRepository.Update(entity);
 		}
 }
 }

@@ -11,10 +11,47 @@
         public const string ManageMovie = "Manage Movie";
         public const string AddMovie = "Add Movie";
         public const string AdminListMovie = "Admin List Movie";
+        public const string ManageCast = "Manage Cast";
+        public const string AddCast = "Add Cast";
+        public const string AdminListCast = "Admin List Cast";
+        public const string ManageDirector = "Manage Director";
+        public const string AddDirector = "Add Director";
+        public const string AdminListDirector = "Admin List Director";
+        public const string ManageCinema = "Manage Cinema";
+        public const string AddCinema = "Add Cinema";
+        public const string AdminListCinema = "Admin List Cinema";
+        public const string ManageCity = "Manage City";
+        public const string AddCity = "Add City";
+        public const string AdminListCity = "Admin List City";
+        public const string AddGenre = "Add Genre";
+        public const string ManageGenre = "Manage Genre";
+        public const string AdminListGenre = "Admin List Genre";
+        public const string AddHall = "Add Hall";
+        public const string ManageHall = "Manage Hall";
+        public const string AdminListHall = "Admin List Hall";
+        public const string AddSeat = "Add Seat";
+        public const string ManageSeat = "Manage Seat";
+        public const string AdminListSeat = "Admin List Seat";
+        public const string AddShowSeat = "Add ShowSeat";
+        public const string ManageShowSeat = "Manage ShowSeat";
+        public const string AdminListShowSeat = "Admin List ShowSeat";
+        public const string AddShow = "Add Show";
+        public const string ManageShow = "Manage Show";
+        public const string AdminListShow = "Admin List Show";
+        public const string AddUser = "Add User";
+        public const string ManageUser = "Manage User";
+        public const string AdminListUser = "Admin List User";
+        public const string AddBooking = "Add Booking";
+        public const string ManageBooking = "Manage Booking";
+        public const string AdminListBooking = "Admin List Booking";
+
+
+
 
         // Shared Views
         public const string Logo = "Logo";
         public const string LoginInfo = "LoginInfo";
         public const string Paging = "Paging";
+        
     }
 }

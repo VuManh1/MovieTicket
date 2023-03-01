@@ -9,18 +9,22 @@ namespace BUS
     public class DirectorBus
     {
        private readonly IUnitOfWork _unitOfWork;
-		public void AddBus(Director Director)
+	   public DirectorBus(IUnitOfWork unitOfWork)
 		{
-			_unitOfWork.DirectorRepository.Add(Director);
+			_unitOfWork = unitOfWork;
+		}
+		public Result AddBus(Director Director)
+		{
+			return _unitOfWork.DirectorRepository.Add(Director);
 		}
 
 		public void DeleteBus(string id)
 		{
 		}
 
-		public void GetAllBus()
+		public List<Director> GetAllBus()
 		{
-			_unitOfWork.DirectorRepository.GetAll();
+			return _unitOfWork.DirectorRepository.GetAll().ToList();
 		}
 
 		public void FirstOrDefaultBus(string filter)
@@ -32,9 +36,9 @@ namespace BUS
 		{
 		}
 
-		public void UpdateBus(Director entity)
+		public Result UpdateBus(Director entity)
 		{
-			_unitOfWork.DirectorRepository.Update(entity);
+			return _unitOfWork.DirectorRepository.Update(entity);
 		}
 }
 }

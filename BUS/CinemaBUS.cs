@@ -1,24 +1,29 @@
+using MySql.Data.MySqlClient;
+using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
 #pragma warning disable
-
 namespace BUS
 {
     public class CinemaBus
     {
         private readonly IUnitOfWork _unitOfWork;
-		public void AddBus(Cinema Cinema)
+		public CinemaBus(IUnitOfWork unitOfWork)
 		{
-			_unitOfWork.CinemaRepository.Add(Cinema);
+			_unitOfWork = unitOfWork;
+		}
+		public Result AddBus(Cinema Cinema)
+		{
+			return _unitOfWork.CinemaRepository.Add(Cinema);
 		}
 
 		public void DeleteBus(string id)
 		{
 		}
 
-		public void GetAllBus()
+		public List<Cinema> GetAllBus()
 		{
-			_unitOfWork.CinemaRepository.GetAll();
+			return _unitOfWork.CinemaRepository.GetAll().ToList();
 		}
 
 		public void FirstOrDefaultBus(string filter)
@@ -30,9 +35,9 @@ namespace BUS
 		{
 		}
 
-		public void UpdateBus(Cinema entity)
+		public Result UpdateBus(Cinema entity)
 		{
-			_unitOfWork.CinemaRepository.Update(entity);
+			return _unitOfWork.CinemaRepository.Update(entity);
 		}
 }
 }

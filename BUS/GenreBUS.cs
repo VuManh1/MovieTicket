@@ -1,3 +1,5 @@
+using MySql.Data.MySqlClient;
+using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
 #pragma warning disable
@@ -7,18 +9,22 @@ namespace BUS
     public class GenreBus
     {
        private readonly IUnitOfWork _unitOfWork;
-		public void AddBus(Genre Genre)
+	   public GenreBus(IUnitOfWork unitOfWork)
 		{
-			_unitOfWork.GenreRepository.Add(Genre);
+			_unitOfWork = unitOfWork;
+		}
+		public Result AddBus(Genre Genre)
+		{
+			return _unitOfWork.GenreRepository.Add(Genre);
 		}
 
 		public void DeleteBus(string id)
 		{
 		}
 
-		public void GetAllBus()
+		public List<Genre> GetAllBus()
 		{
-			_unitOfWork.GenreRepository.GetAll();
+			return _unitOfWork.GenreRepository.GetAll().ToList();
 		}
 
 		public void FirstOrDefaultBus(string filter)
@@ -30,9 +36,9 @@ namespace BUS
 		{
 		}
 
-		public void UpdateBus(Genre entity)
+		public Result UpdateBus(Genre entity)
 		{
-			_unitOfWork.GenreRepository.Update(entity);
+			return _unitOfWork.GenreRepository.Update(entity);
 		}
 }
 }

@@ -9,32 +9,36 @@ namespace BUS
     public class CastBus
     {
        private readonly IUnitOfWork _unitOfWork;
-		public void AddBus(City City)
+	   public CastBus(IUnitOfWork unitOfWork)
 		{
-			_unitOfWork.CityRepository.Add(City);
+			_unitOfWork = unitOfWork;
+		}
+		public Result AddBus(Cast cast)
+		{
+			return _unitOfWork.CastRepository.Add(cast);
 		}
 
 		public void DeleteBus(string id)
 		{
 		}
 
-		public void GetAllBus()
+		public List<Cast> GetAllBus()
 		{
-			_unitOfWork.CityRepository.GetAll();
+			return _unitOfWork.CastRepository.GetAll().ToList();
 		}
 
-		public void FirstOrDefaultBus(string filter)
+		public Cast? FirstOrDefaultBus(string filter)
 		{
-			_unitOfWork.CityRepository.FirstOrDefault(filter);
+			return _unitOfWork.CastRepository.FirstOrDefault(filter);
 		}
 
 		public void GetByIdBus(string id)
 		{
 		}
 
-		public void UpdateBus(City entity)
+		public Result UpdateBus(Cast entity)
 		{
-			_unitOfWork.CityRepository.Update(entity);
+			return _unitOfWork.CastRepository.Update(entity);
 		}
 }
 }
