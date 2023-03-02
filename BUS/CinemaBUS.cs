@@ -85,5 +85,17 @@ namespace BUS
 		{
 			return _unitOfWork.CinemaRepository.Update(entity);
 		}
-}
+
+        public List<Hall> GetHalls(Cinema cinema)
+        {
+            try
+            {
+                return _unitOfWork.CinemaRepository.GetHalls(cinema).ToList();
+            }
+            catch
+            {
+                return new List<Hall>();
+            }
+        }
+    }
 }

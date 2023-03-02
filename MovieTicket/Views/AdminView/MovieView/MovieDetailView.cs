@@ -20,7 +20,7 @@ namespace MovieTicket.Views.AdminView.MovieView
             _genreBUS = genreBUS;
 		}
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -52,17 +52,17 @@ namespace MovieTicket.Views.AdminView.MovieView
                     AnsiConsole.MarkupLine($"[{ColorConstant.Error}]{statusMessage}[/]\n");
             }
 
-                // create select: 
-                var selection = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
-                        .Title("Choose a field you want to edit: ")
-                        .PageSize(10)
-                        .AddChoices(new[] {
-                        "Go Back", "Delete this movie", 
-                        "Name", "Description", "Length", "Release Date", 
-                        "Country", "Status", "Casts", "Directors", "Genres"
-                        })
-                        .HighlightStyle(new Style(Color.PaleGreen3)));
+            // create select: 
+            var selection = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Choose a action: ")
+                    .PageSize(10)
+                    .AddChoices(new[] {
+                        "Go Back", "Delete this movie",
+                        "Change Name", "Change Description", "Change Length", "Change Release Date",
+                        "Change Country", "Change Status", "Change Casts", "Change Directors", "Change Genres"
+                    })
+                    .HighlightStyle(new Style(Color.PaleGreen3)));
 
 
             switch (selection)
@@ -73,7 +73,7 @@ namespace MovieTicket.Views.AdminView.MovieView
                 case "Delete this movie":
                     if (!AnsiConsole.Confirm("Delete this movie ? : "))
                     {
-                        _viewFactory.Render(ViewConstant.AdminMovieDetail, model:movie.Id);
+                        _viewFactory.Render(ViewConstant.AdminMovieDetail, movie.Id);
                         return;
                     }
 
@@ -82,34 +82,34 @@ namespace MovieTicket.Views.AdminView.MovieView
                     if (deleteResult.Success)
                         _viewFactory.Render(ViewConstant.AdminListMovie);
                     else
-                        _viewFactory.Render(ViewConstant.AdminMovieDetail, "Error !, " + deleteResult.Message, movie.Id);
+                        _viewFactory.Render(ViewConstant.AdminMovieDetail, movie.Id, statusMessage: "Error !, " + deleteResult.Message);
 
                     return;
-                case "Name":
+                case "Change Name":
                     movie.Name = AnsiConsole.Ask<string>(" -> Change movie's name: ");
                     break;
-                case "Description":
+                case "Change Description":
                     movie.Description = AnsiConsole.Ask<string>(" -> Change movie's description: ");
                     break;
-                case "Length":
+                case "Change Length":
                     movie.Length = AnsiConsole.Ask<int>(" -> Change movie's Length: ");
                     break;
-                case "Release Date":
+                case "Change Release Date":
                     movie.ReleaseDate = DateOnly.FromDateTime(AnsiConsole.Ask<DateTime>(" -> Change movie's Release Date: "));
                     break;
-                case "Country":
+                case "Change Country":
                     movie.Country = AnsiConsole.Ask<string>(" -> Change movie's Country: ");
                     break;
-                case "Status":
+                case "Change Status":
                     movie.MovieStatus = AnsiConsole.Ask<MovieStatus>(" -> Change movie's Status: ");
                     break;
-                case "Casts":
+                case "Change Casts":
                     movie.CastIdString = AnsiConsole.Ask<string>(" -> Change movie's Casts (Enter id separate by ','): ");
                     break;
-                case "Directors":
+                case "Change Directors":
                     movie.DirectorIdString = AnsiConsole.Ask<string>(" -> Change movie's Directors (Enter id separate by ','): ");
                     break;
-                case "Genres":
+                case "Change Genres":
                     movie.GenreString = GetGenres();
                     break;
             }
@@ -117,9 +117,9 @@ namespace MovieTicket.Views.AdminView.MovieView
             Result result = _movieBUS.Update(movie);
 
             if (result.Success)
-                _viewFactory.Render(ViewConstant.AdminMovieDetail, "Successful change movie detail !", movie.Id);
+                _viewFactory.Render(ViewConstant.AdminMovieDetail, movie.Id, statusMessage: "Successful change movie detail !");
             else
-                _viewFactory.Render(ViewConstant.AdminMovieDetail, "Error !, " + result.Message, movie.Id);
+                _viewFactory.Render(ViewConstant.AdminMovieDetail, movie.Id, statusMessage: "Error !, " + result.Message);
         }
 
         public string? GetGenres()

@@ -8,7 +8,7 @@ namespace MovieTicket.Factory
 {
 	public interface IViewFactory
 	{
-		public void Render(string name, string? statusMessage = null, object? model = null);
+		public void Render(string name, object? model = null, string? previousView = null, string? statusMessage = null);
 		public IViewRender? GetService(string name);
 	}
 
@@ -21,14 +21,14 @@ namespace MovieTicket.Factory
 			_serviceProvider = serviceProvider;
 		}
 
-		public void Render(string name, string? statusMessage = null, object? model = null)
+		public void Render(string name, object? model = null, string? previousView = null, string? statusMessage = null)
 		{
 			Console.Clear();
 			Console.Title = name;
 
 			// get view by name :
 			IViewRender? view = this.GetService(name);
-			view?.Render(statusMessage, model);
+			view?.Render(model, previousView, statusMessage);
 		}
 
 		public IViewRender? GetService(string name)

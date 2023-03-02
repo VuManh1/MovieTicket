@@ -21,7 +21,7 @@ namespace MovieTicket.Views.AdminView.MovieView
             _movieBUS = movieBUS;
         }
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -60,7 +60,7 @@ namespace MovieTicket.Views.AdminView.MovieView
                 };
 
                 // render pagination
-                _viewFactory.GetService(ViewConstant.Paging)?.Render(model: pagingModel);
+                _viewFactory.GetService(ViewConstant.Paging)?.Render(pagingModel);
             }
             else
             {
@@ -81,14 +81,14 @@ namespace MovieTicket.Views.AdminView.MovieView
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    _viewFactory.Render(ViewConstant.AdminListMovie, model: new SearchModel()
+                    _viewFactory.Render(ViewConstant.AdminListMovie, new SearchModel()
                     {
                         Page = page - 1,
                         SearchValue = searchModel.SearchValue,
                     });
                     break;
                 case ConsoleKey.RightArrow:
-                    _viewFactory.Render(ViewConstant.AdminListMovie, model: new SearchModel()
+                    _viewFactory.Render(ViewConstant.AdminListMovie, new SearchModel()
                     {
                         Page = page + 1,
                         SearchValue = searchModel.SearchValue
@@ -97,18 +97,18 @@ namespace MovieTicket.Views.AdminView.MovieView
                 case ConsoleKey.F:
                     searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter movie's name to search: ");
 
-                    _viewFactory.Render(ViewConstant.AdminListMovie, model: new SearchModel()
+                    _viewFactory.Render(ViewConstant.AdminListMovie, new SearchModel()
                     {
                         Page = 1,
                         SearchValue = searchModel.SearchValue
-                    });
+                    }, ViewConstant.AdminListMovie);
                     break;
                 case ConsoleKey.C:
                     int id = AnsiConsole.Ask<int>(" -> Enter movie's id (0 to cancel): ");
 
                     if (id == 0)
                     {
-                        _viewFactory.Render(ViewConstant.AdminListMovie, model: new SearchModel()
+                        _viewFactory.Render(ViewConstant.AdminListMovie, new SearchModel()
                         {
                             Page = page,
                             SearchValue = searchModel.SearchValue
@@ -116,11 +116,11 @@ namespace MovieTicket.Views.AdminView.MovieView
                         return;
                     }
 
-                    _viewFactory.Render(ViewConstant.AdminMovieDetail, model: id);
+                    _viewFactory.Render(ViewConstant.AdminMovieDetail, id);
                     break;
                 case ConsoleKey.Escape:
-                    if(searchModel.SearchValue != null)
-                        _viewFactory.Render(ViewConstant.AdminListMovie);
+                    if(previousView != null)
+                        _viewFactory.Render(previousView);
                     else
                         _viewFactory.Render(ViewConstant.ManageMovie);
 

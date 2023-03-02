@@ -18,7 +18,7 @@ namespace MovieTicket.Views.AdminView.MemberView
             _userBUS = userBUS;
 		}
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -53,7 +53,7 @@ namespace MovieTicket.Views.AdminView.MemberView
             // create select: 
             var selection = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                    .Title("Choose : ")
+                    .Title("Choose a action : ")
                     .PageSize(10)
                     .AddChoices(new[] {
                         "Go Back", user.IsLock ? "Unlock Member" : "Lock Member", "Delete this Member",
@@ -71,9 +71,9 @@ namespace MovieTicket.Views.AdminView.MemberView
                     Result lockResult = _userBUS.Update(user);
 
                     if (lockResult.Success)
-                        _viewFactory.Render(ViewConstant.AdminMemberDetail, "Member locked !", user.Id);
+                        _viewFactory.Render(ViewConstant.AdminMemberDetail, user.Id, statusMessage: "Member locked !");
                     else
-                        _viewFactory.Render(ViewConstant.AdminMemberDetail, "Error !, " + lockResult.Message, user.Id);
+                        _viewFactory.Render(ViewConstant.AdminMemberDetail, user.Id, statusMessage: "Error !, " + lockResult.Message);
 
                     return;
                 case "Unlock Member":
@@ -81,15 +81,15 @@ namespace MovieTicket.Views.AdminView.MemberView
                     Result unlockResult = _userBUS.Update(user);
 
                     if (unlockResult.Success)
-                        _viewFactory.Render(ViewConstant.AdminMemberDetail, "Member unlocked !", user.Id);
+                        _viewFactory.Render(ViewConstant.AdminMemberDetail, user.Id, statusMessage: "Member unlocked !");
                     else
-                        _viewFactory.Render(ViewConstant.AdminMemberDetail, "Error !, " + unlockResult.Message, user.Id);
+                        _viewFactory.Render(ViewConstant.AdminMemberDetail, user.Id, statusMessage: "Error !, " + unlockResult.Message);
 
                     return;
                 case "Delete this Member":
                     if (!AnsiConsole.Confirm("Delete this Member ? : "))
                     {
-                        _viewFactory.Render(ViewConstant.AdminMemberDetail, model: user.Id);
+                        _viewFactory.Render(ViewConstant.AdminMemberDetail, user.Id);
                         return;
                     }
 
@@ -98,7 +98,7 @@ namespace MovieTicket.Views.AdminView.MemberView
                     if (deleteResult.Success)
                         _viewFactory.Render(ViewConstant.AdminListMember);
                     else
-                        _viewFactory.Render(ViewConstant.AdminMemberDetail, "Error !, " + deleteResult.Message, user.Id);
+                        _viewFactory.Render(ViewConstant.AdminMemberDetail, user.Id, statusMessage: "Error !, " + deleteResult.Message);
 
                     return;
             }

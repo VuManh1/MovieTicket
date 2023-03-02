@@ -5,7 +5,7 @@ namespace MovieTicket.Views.Shared
 {
     public class LogoView : IViewRender
     {
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             // create panel
             var panel = new Panel(
@@ -14,7 +14,7 @@ namespace MovieTicket.Views.Shared
                         new FigletText("MOVIE TICKET")
                         .LeftJustified()
                         .Color(Color.Gold3_1),
-                        new Text(statusMessage ?? "")
+                        new Text(model?.ToString() ?? "")
                     )
                 ))
             {

@@ -6,7 +6,7 @@ namespace MovieTicket.Views.Shared
 {
     public class PagingView : IViewRender
     {
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             if (model == null) return;
 

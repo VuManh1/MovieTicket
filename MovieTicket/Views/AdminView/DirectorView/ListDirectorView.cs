@@ -21,7 +21,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
             _directorBUS = directorBUS;
         }
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -101,7 +101,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
                     {
                         Page = 1,
                         SearchValue = searchModel.SearchValue
-                    });
+                    }, ViewConstant.AdminListDirector);
                     break;
                 case ConsoleKey.C:
                     int id = AnsiConsole.Ask<int>(" -> Enter director's id (0 to cancel): ");

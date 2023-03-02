@@ -2,6 +2,6 @@
 {
 	public interface IViewRender
 	{
-		public void Render(string? statusMessage = null, object? model = null);
+		public void Render(object? model = null, string? previousView = null, string? statusMessage = null);
 	}
 }

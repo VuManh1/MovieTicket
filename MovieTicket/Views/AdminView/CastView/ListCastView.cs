@@ -21,7 +21,7 @@ namespace MovieTicket.Views.AdminView.CastView
             _castBUS = castBUS;
         }
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -101,7 +101,7 @@ namespace MovieTicket.Views.AdminView.CastView
                     {
                         Page = 1,
                         SearchValue = searchModel.SearchValue
-                    });
+                    }, ViewConstant.AdminListCast);
                     break;
                 case ConsoleKey.C:
                     int id = AnsiConsole.Ask<int>(" -> Enter cast's id (0 to cancel): ");

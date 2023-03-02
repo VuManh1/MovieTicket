@@ -22,7 +22,7 @@ namespace MovieTicket.Views.Authentication
 			_cityBus = cityBus;
 		}
 
-		public void Render(string? statusMessage = null, object? model = null)
+		public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
 		{
             _viewFactory.GetService(ViewConstant.Logo)?.Render();
 

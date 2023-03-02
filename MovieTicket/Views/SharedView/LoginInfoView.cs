@@ -5,7 +5,7 @@ namespace MovieTicket.Views.Shared
 {
     public class LoginInfoView : IViewRender
     {
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             // Render User infor bar:
             if (SignInManager.IsLogin)

@@ -18,7 +18,7 @@ namespace MovieTicket.Views.AdminView.CastView
             _castBUS = castBUS;
         }
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -53,11 +53,11 @@ namespace MovieTicket.Views.AdminView.CastView
                 // create select: 
                 var selection = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
-                        .Title("Choose a field you want to edit: ")
+                        .Title("Choose a action: ")
                         .PageSize(10)
                         .AddChoices(new[] {
-                        "Go Back", "Delete this cast", 
-                        "Name", "About"
+                        "Go Back", "Delete this cast",
+                        "Change Name", "Change 'About'"
                         })
                         .HighlightStyle(new Style(Color.PaleGreen3)));
 
@@ -79,13 +79,13 @@ namespace MovieTicket.Views.AdminView.CastView
                     if (deleteResult.Success)
                         _viewFactory.Render(ViewConstant.AdminListCast);
                     else
-                        _viewFactory.Render(ViewConstant.AdminCastDetail, "Error !, " + deleteResult.Message, cast.Id);
+                        _viewFactory.Render(ViewConstant.AdminCastDetail, cast.Id, statusMessage: "Error !, " + deleteResult.Message);
 
                     return;
-                case "Name":
+                case "Change Name":
                     cast.Name = AnsiConsole.Ask<string>(" -> Change cast's name: ");
                     break;
-                case "About":
+                case "Change 'About'":
                     cast.About = AnsiConsole.Ask<string>(" -> Change cast's about: ");
                     break;
             }
@@ -93,9 +93,9 @@ namespace MovieTicket.Views.AdminView.CastView
             Result result = _castBUS.Update(cast);
 
             if (result.Success)
-                _viewFactory.Render(ViewConstant.AdminCastDetail, "Successful change cast detail !", cast.Id);
+                _viewFactory.Render(ViewConstant.AdminCastDetail, cast.Id, statusMessage: "Successful change cast detail !");
             else
-                _viewFactory.Render(ViewConstant.AdminCastDetail, "Error !, " + result.Message, cast.Id);
+                _viewFactory.Render(ViewConstant.AdminCastDetail, cast.Id, statusMessage: "Error !, " + result.Message);
         }
 
         public void RenderCastInfo(Cast cast)

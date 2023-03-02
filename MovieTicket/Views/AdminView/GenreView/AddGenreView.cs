@@ -19,7 +19,7 @@ namespace MovieTicket.Views.AdminView.GenreView
             _genreBUS = genreBUS;
 		}
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 

@@ -20,7 +20,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
             _cityBus = cityBus;
 		}
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -55,11 +55,11 @@ namespace MovieTicket.Views.AdminView.CinemaView
             // create select: 
             var selection = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
-                        .Title("Choose a field you want to edit: ")
+                        .Title("Choose a action: ")
                         .PageSize(10)
                         .AddChoices(new[] {
-                        "Go Back", "Delete this cinema", 
-                        "Name", "Number Of Halls", "Address", "City", 
+                        "Go Back", "Delete this cinema", "Add a hall", "Delete a hall",
+                        "Change Name", "Change Number Of Halls", "Change Address", "Change City"
                         })
                         .HighlightStyle(new Style(Color.PaleGreen3)));
 
@@ -67,6 +67,12 @@ namespace MovieTicket.Views.AdminView.CinemaView
             switch (selection)
             {
                 case "Go Back":
+                    _viewFactory.Render(ViewConstant.AdminListCinema);
+                    return;
+                case "Add a hall":
+                    _viewFactory.Render(ViewConstant.AdminListCinema);
+                    return;
+                case "Delete a hall":
                     _viewFactory.Render(ViewConstant.AdminListCinema);
                     return;
                 case "Delete this cinema":
@@ -81,19 +87,19 @@ namespace MovieTicket.Views.AdminView.CinemaView
                     if (deleteResult.Success)
                         _viewFactory.Render(ViewConstant.AdminListCinema);
                     else
-                        _viewFactory.Render(ViewConstant.AdminCinemaDetail, "Error !, " + deleteResult.Message, cinema.Id);
+                        _viewFactory.Render(ViewConstant.AdminCinemaDetail, cinema.Id, statusMessage: "Error !, " + deleteResult.Message);
 
                     return;
-                case "Name":
+                case "Change Name":
                     cinema.Name = AnsiConsole.Ask<string>(" -> Change cinema's name: ");
                     break;
-                case "Number Of Halls":
+                case "Change Number Of Halls":
                     cinema.HallCount = AnsiConsole.Ask<int>(" -> Change number of halls: ");
                     break;
-                case "Address":
+                case "Change Address":
                     cinema.Address = AnsiConsole.Ask<string>(" -> Change cinema's address: ");
                     break;
-                case "City":
+                case "Change City":
                     cinema.City = GetCity();
                     break;
             }
@@ -101,9 +107,9 @@ namespace MovieTicket.Views.AdminView.CinemaView
             Result result = _cinemaBUS.Update(cinema);
 
             if (result.Success)
-                _viewFactory.Render(ViewConstant.AdminCinemaDetail, "Successful change cinema detail !", cinema.Id);
+                _viewFactory.Render(ViewConstant.AdminCinemaDetail, cinema.Id, statusMessage: "Successful change cinema detail !");
             else
-                _viewFactory.Render(ViewConstant.AdminCinemaDetail, "Error !, " + result.Message, cinema.Id);
+                _viewFactory.Render(ViewConstant.AdminCinemaDetail, cinema.Id, statusMessage: "Error !, " + result.Message);
         }
 
         public City? GetCity()
@@ -126,12 +132,15 @@ namespace MovieTicket.Views.AdminView.CinemaView
 
         public void RenderCinemaInfo(Cinema cinema)
         {
+            List<Hall> halls = _cinemaBUS.GetHalls(cinema);
+
             Rows rows = new(
                 new Markup($"[{ColorConstant.Primary}]Id: [/]{cinema.Id}"),
                 new Markup($"[{ColorConstant.Primary}]Name: [/]{cinema.Name}"),
                 new Markup($"[{ColorConstant.Primary}]Number Of Halls: [/]{cinema.HallCount}"),
                 new Markup($"[{ColorConstant.Primary}]Address: [/]{cinema.Address}"),
-                new Markup($"[{ColorConstant.Primary}]City: [/]{cinema.City?.Name}")
+                new Markup($"[{ColorConstant.Primary}]City: [/]{cinema.City?.Name}\n"),
+                new Markup($"[{ColorConstant.Primary}]Halls: [/]{String.Join(", ", halls.Select(h => h.Name))}")
             );
 
             var panel = new Panel(

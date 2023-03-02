@@ -200,5 +200,32 @@ namespace DAL.Repositories
 
 			return Result.OK();
         }
-}
+
+        public IEnumerable<Hall> GetHalls(Cinema cinema)
+        {
+            List<Hall> halls = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM Halls WHERE CinemaId = {cinema.Id};";
+
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                halls.Add(new Hall
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    SeatCount = reader.GetInt32("SeatCount"),
+                    Cinema = cinema
+                });
+            }
+            reader.Close();
+
+            return halls;
+        }
+    }
 }

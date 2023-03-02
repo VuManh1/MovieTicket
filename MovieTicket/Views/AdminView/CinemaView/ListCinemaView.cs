@@ -21,7 +21,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
             _cinemaBUS = CinemaBUS;
         }
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -101,7 +101,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
                     {
                         Page = 1,
                         SearchValue = searchModel.SearchValue
-                    });
+                    }, ViewConstant.AdminListCinema);
                     break;
                 case ConsoleKey.C:
                     int id = AnsiConsole.Ask<int>(" -> Enter cinema's id (0 to cancel): ");

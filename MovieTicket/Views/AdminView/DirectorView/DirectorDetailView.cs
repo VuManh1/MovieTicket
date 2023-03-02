@@ -18,7 +18,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
             _directorBUS = directorBUS;
         }
 
-        public void Render(string? statusMessage = null, object? model = null)
+        public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -53,11 +53,11 @@ namespace MovieTicket.Views.AdminView.DirectorView
                 // create select: 
                 var selection = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
-                        .Title("Choose a field you want to edit: ")
+                        .Title("Choose a actiont: ")
                         .PageSize(10)
                         .AddChoices(new[] {
                         "Go Back", "Delete this director", 
-                        "Name", "About"
+                        "Change Name", "Change 'About'"
                         })
                         .HighlightStyle(new Style(Color.PaleGreen3)));
 
@@ -79,13 +79,13 @@ namespace MovieTicket.Views.AdminView.DirectorView
                     if (deleteResult.Success)
                         _viewFactory.Render(ViewConstant.AdminListDirector);
                     else
-                        _viewFactory.Render(ViewConstant.AdminDirectorDetail, "Error !, " + deleteResult.Message, director.Id);
+                        _viewFactory.Render(ViewConstant.AdminDirectorDetail, director.Id, statusMessage: "Error !, " + deleteResult.Message);
 
                     return;
-                case "Name":
+                case "Change Name":
                     director.Name = AnsiConsole.Ask<string>(" -> Change director's name: ");
                     break;
-                case "About":
+                case "Change 'About'":
                     director.About = AnsiConsole.Ask<string>(" -> Change director's about: ");
                     break;
             }
@@ -93,9 +93,9 @@ namespace MovieTicket.Views.AdminView.DirectorView
             Result result = _directorBUS.Update(director);
 
             if (result.Success)
-                _viewFactory.Render(ViewConstant.AdminDirectorDetail, "Successful change director detail !", director.Id);
+                _viewFactory.Render(ViewConstant.AdminDirectorDetail, director.Id, statusMessage: "Successful change director detail !");
             else
-                _viewFactory.Render(ViewConstant.AdminDirectorDetail, "Error !, " + result.Message, director.Id);
+                _viewFactory.Render(ViewConstant.AdminDirectorDetail, director.Id, statusMessage: "Error !, " + result.Message);
         }
 
         public void RenderDirectorInfo(Director director)
