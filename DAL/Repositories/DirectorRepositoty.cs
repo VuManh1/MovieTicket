@@ -17,27 +17,19 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("AddDirector", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            string query = $"INSERT INTO Directors(name, about) VALUES('{entity.Name}', '{entity.About}');";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
-			cmd.Parameters.AddWithValue("@Name", entity.Name);
-			cmd.Parameters["@Name"].Direction = System.Data.ParameterDirection.Input;
+            cmd.ExecuteNonQuery();
 
-			cmd.Parameters.AddWithValue("@About", entity.About);
-			cmd.Parameters["@About"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.ExecuteNonQuery();
-
-			return Result.OK();
+            return Result.OK();
         }
 
         public Result Delete(Director entity)
         {
             _dbConnection.OpenConnection();
 
-			string query = "delete FROM Directors WHERE id = {id};";
+			string query = $"DELETE FROM Directors WHERE id = {entity.Id};";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
             cmd.ExecuteNonQuery();
@@ -47,12 +39,53 @@ namespace DAL.Repositories
 
         public IEnumerable<Director> Find(string filter)
         {
-            throw new NotImplementedException();
+            List<Director> Director = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM Directors WHERE {filter};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Director.Add(new Director
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    About = reader["about"].GetType() != typeof(System.DBNull) ? reader.GetString("about") : null,
+                });
+            }
+            reader.Close();
+
+            return Director;
         }
 
         public Director? FirstOrDefault(string filter)
         {
-            throw new NotImplementedException();
+            Director? director = null;
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM Directors WHERE {filter};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                reader.Read();
+
+                director = new Director
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    About = reader["about"].GetType() != typeof(System.DBNull) ? reader.GetString("about") : null,
+                };
+            }
+            reader.Close();
+
+            return director;
         }
 
         public IEnumerable<Director> GetAll()
@@ -90,13 +123,15 @@ namespace DAL.Repositories
 
 			MySqlDataReader reader = cmd.ExecuteReader();
 
-			while (reader.Read())
+			if (reader.HasRows)
 			{
+				reader.Read();
+
 				director = new Director
 				{
 					Id = reader.GetInt32("id"),
-					Name = reader.GetString("Name"),
-					About = reader["About"].GetType() != typeof(System.DBNull) ? reader.GetString("About") : null,
+					Name = reader.GetString("name"),
+					About = reader["about"].GetType() != typeof(System.DBNull) ? reader.GetString("about") : null,
 				};
 			}
 			reader.Close();
@@ -108,23 +143,15 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("UpdateDirector", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            string query = $"UPDATE Directors SET" +
+                $" name = '{entity.Name}', about = '{entity.About}'" +
+                $" WHERE id = {entity.Id};";
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
-			cmd.Parameters.AddWithValue("@name", entity.Name);
-			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
+            cmd.ExecuteNonQuery();
 
-			cmd.Parameters.AddWithValue("@About", entity.About);
-			cmd.Parameters["@About"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.ExecuteNonQuery();
-
-			return Result.OK();
+            return Result.OK();
         }
 }
 }

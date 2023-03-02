@@ -22,9 +22,9 @@ namespace MovieTicket.Views.AdminView.DirectorView
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            Director director = new();
-
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Director \n[/]");
+
+            Director director = new();
 
             director.Name = AnsiConsole.Ask<string>(" -> Enter Director's name: ");
             

@@ -25,11 +25,20 @@ namespace MovieTicket.Views.AdminView.DirectorView
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            int page = model != null ? (int)model : 1; 
-            
+            SearchModel searchModel = model != null ? (SearchModel)model : new SearchModel() { Page = 1 };
+
+            int page = searchModel.Page;
             if (page <= 0) page = 1;
 
-            List<Director> directors = _directorBUS.GetAll();
+            List<Director> directors;
+            if (searchModel.SearchValue != null)
+            {
+                AnsiConsole.Markup($"[{ColorConstant.Success}]Search for '{searchModel.SearchValue}'[/]\n");
+                directors = _directorBUS.Find($"name like '%{searchModel.SearchValue}%'");
+            }
+            else
+                directors = _directorBUS.GetAll();
+
 
             if (directors.Count > 0)
             {
@@ -37,7 +46,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
 
                 if (page > numberOfPage) page = numberOfPage;
 
-                // get Directors by page
+                // get movies by page
                 List<Director> directorsToRender = directors.
                     Skip((page - 1) * DIRECTORS_PER_PAGE)
                     .Take(DIRECTORS_PER_PAGE).ToList();
@@ -55,25 +64,66 @@ namespace MovieTicket.Views.AdminView.DirectorView
             }
             else
             {
-                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No Director :([/]");
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No director :([/]\n");
             }
 
-            AnsiConsole.MarkupLine("");
+            AnsiConsole.MarkupLine(" * Press [dodgerblue2]'C'[/] to choose a director, [dodgerblue2]'F'[/] to search directors, " +
+                "[red]'ESCAPE'[/] to go back");
             var key = ConsoleHelper.InputKey(new List<ConsoleKey>()
                 {
                     ConsoleKey.LeftArrow,
-                    ConsoleKey.RightArrow
+                    ConsoleKey.RightArrow,
+                    ConsoleKey.F,
+                    ConsoleKey.C,
+                    ConsoleKey.Escape
                 });
-            
+
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    _viewFactory.Render(ViewConstant.AdminListDirector, model: page - 1);
+                    _viewFactory.Render(ViewConstant.AdminListDirector, model: new SearchModel()
+                    {
+                        Page = page - 1,
+                        SearchValue = searchModel.SearchValue,
+                    });
                     break;
                 case ConsoleKey.RightArrow:
-                    _viewFactory.Render(ViewConstant.AdminListDirector, model: page + 1);
+                    _viewFactory.Render(ViewConstant.AdminListDirector, model: new SearchModel()
+                    {
+                        Page = page + 1,
+                        SearchValue = searchModel.SearchValue
+                    }); ;
                     break;
                 case ConsoleKey.F:
+                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter director's name to search: ");
+
+                    _viewFactory.Render(ViewConstant.AdminListDirector, model: new SearchModel()
+                    {
+                        Page = 1,
+                        SearchValue = searchModel.SearchValue
+                    });
+                    break;
+                case ConsoleKey.C:
+                    int id = AnsiConsole.Ask<int>(" -> Enter director's id (0 to cancel): ");
+
+                    if (id == 0)
+                    {
+                        _viewFactory.Render(ViewConstant.AdminListDirector, model: new SearchModel()
+                        {
+                            Page = page,
+                            SearchValue = searchModel.SearchValue
+                        });
+                        return;
+                    }
+
+                    _viewFactory.Render(ViewConstant.AdminDirectorDetail, model: id);
+                    break;
+                case ConsoleKey.Escape:
+                    if (searchModel.SearchValue != null)
+                        _viewFactory.Render(ViewConstant.AdminListDirector);
+                    else
+                        _viewFactory.Render(ViewConstant.ManageDirector);
+
                     break;
             }
         }
@@ -87,14 +137,13 @@ namespace MovieTicket.Views.AdminView.DirectorView
                     new Style(Color.PaleGreen3)),
                 Expand = true
             };
-            table.AddColumns("Id", "Name", "About");
+            table.AddColumns("Id", "Name");
 
             foreach (var director in directors)
             {
                 table.AddRow(
                     director.Id.ToString(),
-                    director.Name,
-                    director.About ?? ""
+                    director.Name
                 );
             }
 

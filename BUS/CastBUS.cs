@@ -15,30 +15,72 @@ namespace BUS
 
 		public Result Create(Cast cast)
 		{
-			return _unitOfWork.CastRepository.Create(cast);
+			try
+			{
+				return _unitOfWork.CastRepository.Create(cast);
+			}
+			catch
+			{
+				return Result.NetworkError();
+			}
 		}
 
-		public void Delete(string id)
+		public Result Delete(Cast cast)
 		{
+			try
+			{
+				return _unitOfWork.CastRepository.Delete(cast);
+			}
+			catch
+			{
+				return Result.NetworkError();
+			}
 		}
 
-		public List<Cast> GetAll()
+        public List<Cast> Find(string filter)
+        {
+			try
+			{
+				return _unitOfWork.CastRepository.Find(filter).ToList();
+			}
+			catch
+			{
+				return new List<Cast>();
+			}
+        }
+
+        public List<Cast> GetAll()
 		{
-			return _unitOfWork.CastRepository.GetAll().ToList();
-		}
+            try
+            {
+                return _unitOfWork.CastRepository.GetAll().ToList();
+            }
+            catch
+            {
+                return new List<Cast>();
+            }
+        }
 
 		public Cast? FirstOrDefault(string filter)
 		{
 			return _unitOfWork.CastRepository.FirstOrDefault(filter);
 		}
 
-		public void GetById(string id)
+		public Cast? GetById(int id)
 		{
-		}
+            return _unitOfWork.CastRepository.GetById(id);
+        }
 
 		public Result Update(Cast entity)
 		{
-			return _unitOfWork.CastRepository.Update(entity);
-		}
+            try
+            {
+                return _unitOfWork.CastRepository.Update(entity);
+            }
+            catch
+            {
+                return Result.NetworkError();
+            }
+        }
 }
 }

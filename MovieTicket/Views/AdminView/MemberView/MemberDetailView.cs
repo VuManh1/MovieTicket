@@ -27,6 +27,7 @@ namespace MovieTicket.Views.AdminView.MemberView
                 _viewFactory.Render(ViewConstant.NotFound, "user", ViewConstant.AdminListMember);
                 return;
             }
+
             int userid = (int)model;
 
             User? user = _userBUS.GetById(userid);

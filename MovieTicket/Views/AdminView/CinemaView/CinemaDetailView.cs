@@ -30,9 +30,9 @@ namespace MovieTicket.Views.AdminView.CinemaView
                 return;
             }
 
-            int movieid = (int)model;
+            int cinemaid = (int)model;
 
-            Cinema? cinema = _cinemaBUS.GetById(movieid);
+            Cinema? cinema = _cinemaBUS.GetById(cinemaid);
 
             if (cinema == null)
             {

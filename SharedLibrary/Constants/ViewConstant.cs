@@ -45,6 +45,8 @@
         public const string AdminListBooking = "Admin List Booking";
         public const string AdminMemberDetail = "Admin Member Detail";
         public const string AdminCinemaDetail = "Admin Cinema Detail";
+        public const string AdminCastDetail = "Admin Cast Detail";
+        public const string AdminDirectorDetail = "Admin Director Detail";
 
         // Shared Views
         public const string Logo = "Logo";

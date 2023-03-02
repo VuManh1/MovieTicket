@@ -82,6 +82,8 @@ namespace MovieTicket.Factory
                 ViewConstant.AdminListMember => typeof(Views.AdminView.MemberView.ListMemberView),
                 ViewConstant.AdminMemberDetail => typeof(Views.AdminView.MemberView.MemberDetailView),
                 ViewConstant.AdminCinemaDetail => typeof(Views.AdminView.CinemaView.CinemaDetailView),
+                ViewConstant.AdminCastDetail => typeof(Views.AdminView.CastView.CastDetailView),
+                ViewConstant.AdminDirectorDetail => typeof(Views.AdminView.DirectorView.DirectorDetailView),
                 _ => null
 			};
 

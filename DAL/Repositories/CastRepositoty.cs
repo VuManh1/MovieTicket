@@ -29,7 +29,7 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			string query = "delete FROM Casts WHERE id = {id};";
+			string query = $"DELETE FROM Casts WHERE id = {entity.Id};";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
             cmd.ExecuteNonQuery();
@@ -39,7 +39,27 @@ namespace DAL.Repositories
 
         public IEnumerable<Cast> Find(string filter)
         {
-            throw new NotImplementedException();
+            List<Cast> cast = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM Casts WHERE {filter};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                cast.Add(new Cast
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    About = reader["About"].GetType() != typeof(System.DBNull) ? reader.GetString("About") : null,
+                });
+            }
+            reader.Close();
+
+            return cast;
         }
 
         public Cast? FirstOrDefault(string filter)
@@ -82,8 +102,10 @@ namespace DAL.Repositories
 
 			MySqlDataReader reader = cmd.ExecuteReader();
 
-			while (reader.Read())
+			if (reader.HasRows)
 			{
+				reader.Read();
+
 				cast = new Cast
 				{
 					Id = reader.GetInt32("id"),
@@ -100,23 +122,15 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("UpdateCast", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            string query = $"UPDATE Casts SET" +
+                $" name = '{entity.Name}', about = '{entity.About}'" +
+                $" WHERE id = {entity.Id};";
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
-			cmd.Parameters.AddWithValue("@name", entity.Name);
-			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
+            cmd.ExecuteNonQuery();
 
-			cmd.Parameters.AddWithValue("@About", entity.About);
-			cmd.Parameters["@About"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.ExecuteNonQuery();
-
-			return Result.OK();
+            return Result.OK();
         }
 }
 }
