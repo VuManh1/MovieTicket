@@ -21,16 +21,14 @@ namespace BUS
             movie.NormalizeName = movie.Name.RemoveMarks();
 
             List<Genre>? genres = null;
-            // add casts
-            if (movie.GenreIdString != null)
+            // add genres
+            if (movie.GenreString != null)
             {
-                string[] idList = Regex.Split(movie.GenreIdString, ", |,");
+                string[] genreList = Regex.Split(movie.GenreString, ", |,");
 
-                foreach (string idItem in idList)
+                foreach (string genreItem in genreList)
                 {
-                    if (!int.TryParse(idItem, out int id) || id == 0) continue;
-
-                    Genre? genre = _unitOfWork.GenreRepository.GetById(id);
+                    Genre? genre = _unitOfWork.GenreRepository.FirstOrDefault($"name = '{genreItem}'");
 
                     if (genre != null)
                     {
@@ -147,16 +145,14 @@ namespace BUS
             movie.NormalizeName = movie.Name.RemoveMarks();
 
             List<Genre>? genres = null;
-            // add casts
-            if (movie.GenreIdString != null)
+            // add genres
+            if (movie.GenreString != null)
             {
-                string[] idList = Regex.Split(movie.GenreIdString, ", |,");
+                string[] genreList = Regex.Split(movie.GenreString, ", |,");
 
-                foreach (string idItem in idList)
+                foreach (string genreItem in genreList)
                 {
-                    if (!int.TryParse(idItem, out int id) || id == 0) continue;
-
-                    Genre? genre = _unitOfWork.GenreRepository.GetById(id);
+                    Genre? genre = _unitOfWork.GenreRepository.FirstOrDefault($"name = '{genreItem}'");
 
                     if (genre != null)
                     {

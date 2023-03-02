@@ -14,7 +14,7 @@ namespace SharedLibrary.DTO
 
         public string? CastIdString { get; set; }
         public string? DirectorIdString { get; set; }
-        public string? GenreIdString { get; set; }
+        public string? GenreString { get; set; }
     }
 
     public enum MovieStatus

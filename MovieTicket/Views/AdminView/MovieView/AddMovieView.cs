@@ -10,12 +10,14 @@ namespace MovieTicket.Views.AdminView.MovieView
     public class AddMovieView : IViewRender
     {
 		private readonly MovieBUS _movieBUS;
+		private readonly GenreBUS _genreBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddMovieView(MovieBUS movieBUS, IViewFactory viewFactory)
+        public AddMovieView(MovieBUS movieBUS, GenreBUS genreBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _movieBUS = movieBUS;
+            _genreBUS = genreBUS;
 		}
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -39,7 +41,7 @@ namespace MovieTicket.Views.AdminView.MovieView
 
             string country = AnsiConsole.Ask<string>(" -> Enter movie's country: ");
 
-            string? genres = AnsiConsole.Ask<string>(" -> Enter genre id (separate by ',') or 0 to skip: ");
+            string? genres = GetGenres();
             if (genres == "0") genres = null;
 
             string? casts = AnsiConsole.Ask<string>(" -> Enter cast id (separate by ',') or 0 to skip: ");
@@ -58,7 +60,7 @@ namespace MovieTicket.Views.AdminView.MovieView
                 Country = country,
                 CastIdString = casts,
                 DirectorIdString = directors,
-                GenreIdString = genres
+                GenreString = genres
             };
 
             Result result = _movieBUS.Create(movie);
@@ -81,6 +83,25 @@ namespace MovieTicket.Views.AdminView.MovieView
 
                 _viewFactory.Render(ViewConstant.AddMovie);
             }
+        }
+
+        public string? GetGenres()
+        {
+            List<string> genres = _genreBUS.GetAll().Select(g => g.Name).ToList();
+
+            Console.WriteLine();
+            var fruits = AnsiConsole.Prompt(
+                new MultiSelectionPrompt<string>()
+                    .Title("Select [green]genres[/]: ")
+                    .NotRequired()
+                    .PageSize(10)
+                    .MoreChoicesText("[grey](Move up and down to reveal more genres)[/]")
+                    .InstructionsText(
+                        "[grey](Press [blue]<space>[/] to toggle a genre, " +
+                        "[green]<enter>[/] to accept)[/]")
+                    .AddChoices(genres));
+
+            return fruits.Count > 0 ? String.Join(",", fruits) : null;
         }
     }
 }

@@ -52,7 +52,28 @@ namespace DAL.Repositories
 
         public Genre? FirstOrDefault(string filter)
         {
-            throw new NotImplementedException();
+            Genre? genre = null;
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM Genres WHERE {filter};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+			if (reader.HasRows)
+            {
+				reader.Read();
+
+                genre = new()
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    Description = reader["description"].GetType() != typeof(System.DBNull) ? reader.GetString("description") : null,
+                };
+            }
+            reader.Close();
+
+            return genre;
         }
 
         public IEnumerable<Genre> GetAll()
@@ -90,9 +111,11 @@ namespace DAL.Repositories
 
 			MySqlDataReader reader = cmd.ExecuteReader();
 
-			while (reader.Read())
-			{
-				genre = new()
+            if (reader.HasRows)
+            {
+                reader.Read();
+
+                genre = new()
 				{
 					Id = reader.GetInt32("id"),
 					Name = reader.GetString("name"),
