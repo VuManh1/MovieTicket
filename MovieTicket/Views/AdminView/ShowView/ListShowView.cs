@@ -11,14 +11,14 @@ namespace MovieTicket.Views.AdminView.ShowView
     public class ListShowView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly ShowBUS _ShowBUS;
+        private readonly ShowBUS _showBUS;
 
-        private const int ShowS_PER_PAGE = 10;
+        private const int SHOWS_PER_PAGE = 10;
 
-        public ListShowView(IViewFactory viewFactory, ShowBUS ShowBUS)
+        public ListShowView(IViewFactory viewFactory, ShowBUS showBUS)
         {
             _viewFactory = viewFactory;
-            _ShowBUS = ShowBUS;
+            _showBUS = showBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -29,20 +29,20 @@ namespace MovieTicket.Views.AdminView.ShowView
             
             if (page <= 0) page = 1;
 
-            List<Show> Shows = _ShowBUS.GetAll();
+            List<Show> shows = _showBUS.GetAll();
 
-            if (Shows.Count > 0)
+            if (shows.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)Shows.Count / ShowS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)shows.Count / SHOWS_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
                 // get Shows by page
-                List<Show> ShowsToRender = Shows.
-                    Skip((page - 1) * ShowS_PER_PAGE)
-                    .Take(ShowS_PER_PAGE).ToList();
+                List<Show> showsToRender = shows.
+                    Skip((page - 1) * SHOWS_PER_PAGE)
+                    .Take(SHOWS_PER_PAGE).ToList();
 
-                RenderShows(ShowsToRender);
+                RenderShows(showsToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -78,7 +78,7 @@ namespace MovieTicket.Views.AdminView.ShowView
             }
         }
 
-        public void RenderShows(List<Show> Shows)
+        public void RenderShows(List<Show> shows)
         {
             Table table = new()
             {
@@ -89,13 +89,13 @@ namespace MovieTicket.Views.AdminView.ShowView
             };
             table.AddColumns("Id", "Hall ID", "Movie ID", "StartTime");
 
-            foreach (var Show in Shows)
+            foreach (var show in shows)
             {
                 table.AddRow(
-                    Show.Id.ToString(),
-                    Show.Hall.Id.ToString(),
-                    Show.Movie.Id.ToString(),
-                    Show.StartTime.ToString()
+                    show.Id.ToString(),
+                    show.Hall.Id.ToString(),
+                    show.Movie.Id.ToString(),
+                    show.StartTime.ToString()
                 );
             }
 

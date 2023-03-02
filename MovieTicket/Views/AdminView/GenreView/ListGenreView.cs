@@ -11,14 +11,14 @@ namespace MovieTicket.Views.AdminView.GenreView
     public class ListGenreView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly GenreBUS _GenreBUS;
+        private readonly GenreBUS _genreBUS;
 
-        private const int GenreS_PER_PAGE = 10;
+        private const int GENRES_PER_PAGE = 10;
 
-        public ListGenreView(IViewFactory viewFactory, GenreBUS GenreBUS)
+        public ListGenreView(IViewFactory viewFactory, GenreBUS genreBUS)
         {
             _viewFactory = viewFactory;
-            _GenreBUS = GenreBUS;
+            _genreBUS = genreBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -29,20 +29,20 @@ namespace MovieTicket.Views.AdminView.GenreView
             
             if (page <= 0) page = 1;
 
-            List<Genre> Genres = _GenreBUS.GetAll();
+            List<Genre> genres = _genreBUS.GetAll();
 
-            if (Genres.Count > 0)
+            if (genres.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)Genres.Count / GenreS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)genres.Count / GENRES_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
                 // get Genres by page
-                List<Genre> GenresToRender = Genres.
-                    Skip((page - 1) * GenreS_PER_PAGE)
-                    .Take(GenreS_PER_PAGE).ToList();
+                List<Genre> genresToRender = genres.
+                    Skip((page - 1) * GENRES_PER_PAGE)
+                    .Take(GENRES_PER_PAGE).ToList();
 
-                RenderGenres(GenresToRender);
+                RenderGenres(genresToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -78,7 +78,7 @@ namespace MovieTicket.Views.AdminView.GenreView
             }
         }
 
-        public void RenderGenres(List<Genre> Genres)
+        public void RenderGenres(List<Genre> genres)
         {
             Table table = new()
             {
@@ -89,11 +89,11 @@ namespace MovieTicket.Views.AdminView.GenreView
             };
             table.AddColumns("Id", "Name");
 
-            foreach (var Genre in Genres)
+            foreach (var genre in genres)
             {
                 table.AddRow(
-                    Genre.Id.ToString(),
-                    Genre.Name
+                    genre.Id.ToString(),
+                    genre.Name
                 );
             }
 

@@ -11,14 +11,14 @@ namespace MovieTicket.Views.AdminView.ShowSeatView
     public class ListShowSeatView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly ShowSeatBUS _ShowSeatBUS;
+        private readonly ShowSeatBUS _showSeatBUS;
 
-        private const int ShowSeatS_PER_PAGE = 10;
+        private const int SHOWSEATS_PER_PAGE = 10;
 
-        public ListShowSeatView(IViewFactory viewFactory, ShowSeatBUS ShowSeatBUS)
+        public ListShowSeatView(IViewFactory viewFactory, ShowSeatBUS showSeatBUS)
         {
             _viewFactory = viewFactory;
-            _ShowSeatBUS = ShowSeatBUS;
+            _showSeatBUS = showSeatBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -29,20 +29,20 @@ namespace MovieTicket.Views.AdminView.ShowSeatView
             
             if (page <= 0) page = 1;
 
-            List<ShowSeat> ShowSeats = _ShowSeatBUS.GetAll();
+            List<ShowSeat> showSeats = _showSeatBUS.GetAll();
 
-            if (ShowSeats.Count > 0)
+            if (showSeats.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)ShowSeats.Count / ShowSeatS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)showSeats.Count / SHOWSEATS_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
                 // get ShowSeats by page
-                List<ShowSeat> ShowSeatsToRender = ShowSeats.
-                    Skip((page - 1) * ShowSeatS_PER_PAGE)
-                    .Take(ShowSeatS_PER_PAGE).ToList();
+                List<ShowSeat> showSeatsToRender = showSeats.
+                    Skip((page - 1) * SHOWSEATS_PER_PAGE)
+                    .Take(SHOWSEATS_PER_PAGE).ToList();
 
-                RenderShowSeats(ShowSeatsToRender);
+                RenderShowSeats(showSeatsToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -78,7 +78,7 @@ namespace MovieTicket.Views.AdminView.ShowSeatView
             }
         }
 
-        public void RenderShowSeats(List<ShowSeat> ShowSeats)
+        public void RenderShowSeats(List<ShowSeat> showSeats)
         {
             Table table = new()
             {
@@ -89,13 +89,13 @@ namespace MovieTicket.Views.AdminView.ShowSeatView
             };
             table.AddColumns("Seat ID", "Show ID", "SeatStatus", "Booking ID");
 
-            foreach (var ShowSeat in ShowSeats)
+            foreach (var showSeat in showSeats)
             {
                 table.AddRow(
-                    ShowSeat.Seat.Id.ToString(),
-                    ShowSeat.Show.Id.ToString(),
-                    ShowSeat.SeatStatus.ToString(),
-                    ShowSeat.Booking.ToString() ?? ""
+                    showSeat.Seat.Id.ToString(),
+                    showSeat.Show.Id.ToString(),
+                    showSeat.SeatStatus.ToString(),
+                    showSeat.Booking.ToString() ?? ""
                 );
             }
 

@@ -11,14 +11,14 @@ namespace MovieTicket.Views.AdminView.BookingView
     public class ListBookingView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly BookingBUS _BookingBUS;
+        private readonly BookingBUS _bookingBUS;
 
-        private const int BookingS_PER_PAGE = 10;
+        private const int BOOKINGS_PER_PAGE = 10;
 
-        public ListBookingView(IViewFactory viewFactory, BookingBUS BookingBUS)
+        public ListBookingView(IViewFactory viewFactory, BookingBUS bookingBUS)
         {
             _viewFactory = viewFactory;
-            _BookingBUS = BookingBUS;
+            _bookingBUS = bookingBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -29,20 +29,20 @@ namespace MovieTicket.Views.AdminView.BookingView
             
             if (page <= 0) page = 1;
 
-            List<Booking> Bookings = _BookingBUS.GetAllBus();
+            List<Booking> bookings = _bookingBUS.GetAll();
 
-            if (Bookings.Count > 0)
+            if (bookings.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)Bookings.Count / BookingS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)bookings.Count / BOOKINGS_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
                 // get Bookings by page
-                List<Booking> BookingsToRender = Bookings.
-                    Skip((page - 1) * BookingS_PER_PAGE)
-                    .Take(BookingS_PER_PAGE).ToList();
+                List<Booking> bookingsToRender = bookings.
+                    Skip((page - 1) * BOOKINGS_PER_PAGE)
+                    .Take(BOOKINGS_PER_PAGE).ToList();
 
-                RenderBookings(BookingsToRender);
+                RenderBookings(bookingsToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -78,7 +78,7 @@ namespace MovieTicket.Views.AdminView.BookingView
             }
         }
 
-        public void RenderBookings(List<Booking> Bookings)
+        public void RenderBookings(List<Booking> bookings)
         {
             Table table = new()
             {
@@ -89,7 +89,7 @@ namespace MovieTicket.Views.AdminView.BookingView
             };
             table.AddColumns("Id", "User ID", "Show ID", "SeatCount","CreateTime","Total");
 
-            foreach (var Booking in Bookings)
+            foreach (var Booking in bookings)
             {
                 table.AddRow(
                     Booking.Id.ToString(),

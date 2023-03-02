@@ -3,40 +3,39 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.ShowSeatView
 {
     public class AddShowSeatView : IViewRender
     {
-		private readonly ShowSeatBUS _ShowSeatBUS;
+		private readonly ShowSeatBUS _showSeatBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddShowSeatView(ShowSeatBUS ShowSeatBUS, IViewFactory viewFactory)
+        public AddShowSeatView(ShowSeatBUS showSeatBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
-            _ShowSeatBUS = ShowSeatBUS;
+            _showSeatBUS = showSeatBUS;
 		}
 
         public void Render(string? statusMessage = null, object? model = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            ShowSeat ShowSeat = new();
+            ShowSeat showSeat = new();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add ShowSeat \n[/]");
             
-            ShowSeat.Seat.Id = AnsiConsole.Ask<int>(" -> Enter Seat Id: ");
+            showSeat.Seat.Id = AnsiConsole.Ask<int>(" -> Enter Seat Id: ");
 
-            ShowSeat.Show.Id = AnsiConsole.Ask<int>(" -> Enter Show Id: ");
+            showSeat.Show.Id = AnsiConsole.Ask<int>(" -> Enter Show Id: ");
 
-            ShowSeat.SeatStatus = AnsiConsole.Ask<SeatStatus>(" -> Enter SeatStatus: ");
+            showSeat.SeatStatus = AnsiConsole.Ask<SeatStatus>(" -> Enter SeatStatus: ");
             
-            ShowSeat.Booking.Id = AnsiConsole.Ask<int>(" -> Enter Booking Id: ");
+            showSeat.Booking.Id = AnsiConsole.Ask<int>(" -> Enter Booking Id: ");
 
 
-            Result result = _ShowSeatBUS.Create(ShowSeat);
+            Result result = _showSeatBUS.Create(showSeat);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add ShowSeat successful ![/], press any key to go back.");

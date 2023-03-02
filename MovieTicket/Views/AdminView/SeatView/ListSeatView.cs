@@ -11,14 +11,14 @@ namespace MovieTicket.Views.AdminView.SeatView
     public class ListSeatView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly SeatBUS _SeatBUS;
+        private readonly SeatBUS _seatBUS;
 
-        private const int SeatS_PER_PAGE = 10;
+        private const int SEATS_PER_PAGE = 10;
 
-        public ListSeatView(IViewFactory viewFactory, SeatBUS SeatBUS)
+        public ListSeatView(IViewFactory viewFactory, SeatBUS seatBUS)
         {
             _viewFactory = viewFactory;
-            _SeatBUS = SeatBUS;
+            _seatBUS = seatBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -29,20 +29,20 @@ namespace MovieTicket.Views.AdminView.SeatView
             
             if (page <= 0) page = 1;
 
-            List<Seat> Seats = _SeatBUS.GetAll();
+            List<Seat> seats = _seatBUS.GetAll();
 
-            if (Seats.Count > 0)
+            if (seats.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)Seats.Count / SeatS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)seats.Count / SEATS_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
                 // get Seats by page
-                List<Seat> SeatsToRender = Seats.
-                    Skip((page - 1) * SeatS_PER_PAGE)
-                    .Take(SeatS_PER_PAGE).ToList();
+                List<Seat> seatsToRender = seats.
+                    Skip((page - 1) * SEATS_PER_PAGE)
+                    .Take(SEATS_PER_PAGE).ToList();
 
-                RenderSeats(SeatsToRender);
+                RenderSeats(seatsToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -78,7 +78,7 @@ namespace MovieTicket.Views.AdminView.SeatView
             }
         }
 
-        public void RenderSeats(List<Seat> Seats)
+        public void RenderSeats(List<Seat> seats)
         {
             Table table = new()
             {
@@ -89,14 +89,14 @@ namespace MovieTicket.Views.AdminView.SeatView
             };
             table.AddColumns("Id", "Hall ID", "SeatType", "SeatNumber","Price");
 
-            foreach (var Seat in Seats)
+            foreach (var seat in seats)
             {
                 table.AddRow(
-                    Seat.Id.ToString(),
-                    Seat.Hall.Id.ToString(),
-                    Seat.SeatType.ToString(),
-                    Seat.SeatNumber.ToString(),
-                    Seat.Price.ToString()
+                    seat.Id.ToString(),
+                    seat.Hall.Id.ToString(),
+                    seat.SeatType.ToString(),
+                    seat.SeatNumber.ToString(),
+                    seat.Price.ToString()
                 );
             }
 

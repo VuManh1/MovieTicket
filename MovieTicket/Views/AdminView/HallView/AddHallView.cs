@@ -3,37 +3,36 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.HallView
 {
     public class AddHallView : IViewRender
     {
-		private readonly HallBUS _HallBUS;
+		private readonly HallBUS _hallBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddHallView(HallBUS HallBUS, IViewFactory viewFactory)
+        public AddHallView(HallBUS hallBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
-            _HallBUS = HallBUS;
+            _hallBUS = hallBUS;
 		}
 
         public void Render(string? statusMessage = null, object? model = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            Hall Hall = new();
+            Hall hall = new();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Hall \n[/]");
 
-            Hall.Name = AnsiConsole.Ask<string>(" -> Enter Hall's name: ");
+            hall.Name = AnsiConsole.Ask<string>(" -> Enter Hall's name: ");
 
-            Hall.Cinema.Id = AnsiConsole.Ask<int>(" -> Enter Cinema Id: ");
+            hall.Cinema.Id = AnsiConsole.Ask<int>(" -> Enter Cinema Id: ");
 
-            Hall.SeatCount = AnsiConsole.Ask<int>(" -> Enter SeatCount: ");
+            hall.SeatCount = AnsiConsole.Ask<int>(" -> Enter SeatCount: ");
 
-            Result result = _HallBUS.Create(Hall);
+            Result result = _hallBUS.Create(hall);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Hall successful ![/], press any key to go back.");

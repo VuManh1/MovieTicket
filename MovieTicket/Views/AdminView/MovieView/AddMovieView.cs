@@ -3,7 +3,6 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.MovieView

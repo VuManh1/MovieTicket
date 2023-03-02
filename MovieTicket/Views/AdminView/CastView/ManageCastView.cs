@@ -1,15 +1,14 @@
 using MovieTicket.Factory;
-using MovieTicket.Views;
 using SharedLibrary.Constants;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.CastView
 {
-    public class CastManageView : IViewRender
+    public class ManageCastView : IViewRender
     {
 		private readonly IViewFactory _viewFactory;
 
-		public CastManageView(IViewFactory viewFactory)
+		public ManageCastView(IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
 		}

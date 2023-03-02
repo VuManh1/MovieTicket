@@ -10,28 +10,26 @@ namespace MovieTicket.Views.AdminView.GenreView
 {
     public class AddGenreView : IViewRender
     {
-		private readonly GenreBUS _GenreBUS;
+		private readonly GenreBUS _genreBUS;
         private readonly IViewFactory _viewFactory;
-        private readonly GenreBUS _GenreBus;
 
-        public AddGenreView(GenreBUS GenreBUS, IViewFactory viewFactory,GenreBUS GenreBus)
+        public AddGenreView(GenreBUS genreBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
-            _GenreBUS = GenreBUS;
-            _GenreBus = GenreBus;
+            _genreBUS = genreBUS;
 		}
 
         public void Render(string? statusMessage = null, object? model = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            Genre Genre = new();
+            Genre genre = new();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Genre \n[/]");
 
-            Genre.Name = AnsiConsole.Ask<string>(" -> Enter Genre's name: ");
+            genre.Name = AnsiConsole.Ask<string>(" -> Enter Genre's name: ");
 
-            Result result = _GenreBUS.Create(Genre);
+            Result result = _genreBUS.Create(genre);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Genre successful ![/], press any key to go back.");
@@ -55,20 +53,20 @@ namespace MovieTicket.Views.AdminView.GenreView
 
         public string GetGenre()
 		{
-			List<string> cities = _GenreBus.GetAll().Select(c => c.Name).ToList();
+			List<string> cities = _genreBUS.GetAll().Select(c => c.Name).ToList();
 			cities.Insert(0, "Skip");
 
 			Console.WriteLine();
 
 			// create select Genre: 
-			var Genre = AnsiConsole.Prompt(
+			var genre = AnsiConsole.Prompt(
 				new SelectionPrompt<string>()
 					.Title("\nChoose a Genre where you live: ")
 					.PageSize(10)
 					.AddChoices(cities)
 					.HighlightStyle(new Style(Color.PaleGreen3)));
 
-			return Genre;
+			return genre;
 		}
     }
 }

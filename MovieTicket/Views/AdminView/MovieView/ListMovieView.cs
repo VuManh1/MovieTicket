@@ -33,7 +33,7 @@ namespace MovieTicket.Views.AdminView.MovieView
             List<Movie> movies;
             if (searchModel.SearchValue != null) 
             {
-                AnsiConsole.Markup($"[{ColorConstant.Info}]Search for '{searchModel.SearchValue}'[/]\n");
+                AnsiConsole.Markup($"[{ColorConstant.Success}]Search for '{searchModel.SearchValue}'[/]\n");
                 movies = _movieBUS.Find($"NormalizeName like '%{searchModel.SearchValue}%'");
             }
             else

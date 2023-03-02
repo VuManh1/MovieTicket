@@ -1,5 +1,4 @@
 using MovieTicket.Factory;
-using MovieTicket.Views;
 using SharedLibrary.Constants;
 using Spectre.Console;
 

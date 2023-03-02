@@ -3,42 +3,41 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.BookingView
 {
     public class AddBookingView : IViewRender
     {
-		private readonly BookingBUS _BookingBUS;
+		private readonly BookingBUS _bookingBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddBookingView(BookingBUS BookingBUS, IViewFactory viewFactory)
+        public AddBookingView(BookingBUS bookingBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
-            _BookingBUS = BookingBUS;
+            _bookingBUS = bookingBUS;
 		}
 
         public void Render(string? statusMessage = null, object? model = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            Booking Booking = new();
-
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Booking \n[/]");
+
+            Booking booking = new();
             
-            Booking.Show.Id = AnsiConsole.Ask<int>(" -> Enter Show Id: ");
+            booking.Show.Id = AnsiConsole.Ask<int>(" -> Enter Show Id: ");
 
-            Booking.SeatCount = AnsiConsole.Ask<int>(" -> Enter SeatCount: ");
+            booking.SeatCount = AnsiConsole.Ask<int>(" -> Enter SeatCount: ");
 
-            Booking.User.Id = AnsiConsole.Ask<int>(" -> Enter User Id: ");
+            booking.User.Id = AnsiConsole.Ask<int>(" -> Enter User Id: ");
             
-            Booking.CreateTime = AnsiConsole.Ask<DateTime>(" -> Enter CreateTime: ");
+            booking.CreateTime = AnsiConsole.Ask<DateTime>(" -> Enter CreateTime: ");
 
-            Booking.Total = AnsiConsole.Ask<double>(" -> Enter Total: ");
+            booking.Total = AnsiConsole.Ask<double>(" -> Enter Total: ");
 
 
-            Result result = _BookingBUS.AddBus(Booking);
+            Result result = _bookingBUS.Create(booking);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Booking successful ![/], press any key to go back.");

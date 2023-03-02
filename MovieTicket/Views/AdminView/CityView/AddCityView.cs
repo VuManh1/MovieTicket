@@ -3,35 +3,32 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.CityView
 {
     public class AddCityView : IViewRender
     {
-		private readonly CityBUS _CityBUS;
         private readonly IViewFactory _viewFactory;
-        private readonly CityBUS _cityBus;
+        private readonly CityBUS _cityBUS;
 
-        public AddCityView(CityBUS CityBUS, IViewFactory viewFactory,CityBUS cityBus)
+        public AddCityView(IViewFactory viewFactory, CityBUS cityBUS)
 		{
 			_viewFactory = viewFactory;
-            _CityBUS = CityBUS;
-            _cityBus = cityBus;
+            _cityBUS = cityBUS;
 		}
 
         public void Render(string? statusMessage = null, object? model = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            City City = new();
+            City city = new();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add City \n[/]");
 
-            City.Name = AnsiConsole.Ask<string>(" -> Enter City's name: ");
+            city.Name = AnsiConsole.Ask<string>(" -> Enter City's name: ");
 
-            Result result = _CityBUS.Create(City);
+            Result result = _cityBUS.Create(city);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add City successful ![/], press any key to go back.");
@@ -55,7 +52,7 @@ namespace MovieTicket.Views.AdminView.CityView
 
         public string GetCity()
 		{
-			List<string> cities = _cityBus.GetAll().Select(c => c.Name).ToList();
+			List<string> cities = _cityBUS.GetAll().Select(c => c.Name).ToList();
 			cities.Insert(0, "Skip");
 
 			Console.WriteLine();

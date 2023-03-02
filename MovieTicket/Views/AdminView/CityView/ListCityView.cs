@@ -11,14 +11,14 @@ namespace MovieTicket.Views.AdminView.CityView
     public class ListCityView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly CityBUS _CityBUS;
+        private readonly CityBUS _cityBUS;
 
-        private const int CityS_PER_PAGE = 10;
+        private const int CITY_PER_PAGE = 10;
 
-        public ListCityView(IViewFactory viewFactory, CityBUS CityBUS)
+        public ListCityView(IViewFactory viewFactory, CityBUS cityBUS)
         {
             _viewFactory = viewFactory;
-            _CityBUS = CityBUS;
+            _cityBUS = cityBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -29,20 +29,20 @@ namespace MovieTicket.Views.AdminView.CityView
             
             if (page <= 0) page = 1;
 
-            List<City> Citys = _CityBUS.GetAll();
+            List<City> cities = _cityBUS.GetAll();
 
-            if (Citys.Count > 0)
+            if (cities.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)Citys.Count / CityS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)cities.Count / CITY_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
                 // get Citys by page
-                List<City> CitysToRender = Citys.
-                    Skip((page - 1) * CityS_PER_PAGE)
-                    .Take(CityS_PER_PAGE).ToList();
+                List<City> citiesToRender = cities.
+                    Skip((page - 1) * CITY_PER_PAGE)
+                    .Take(CITY_PER_PAGE).ToList();
 
-                RenderCitys(CitysToRender);
+                RenderCitys(citiesToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -78,7 +78,7 @@ namespace MovieTicket.Views.AdminView.CityView
             }
         }
 
-        public void RenderCitys(List<City> Citys)
+        public void RenderCitys(List<City> Cities)
         {
             Table table = new()
             {
@@ -89,11 +89,11 @@ namespace MovieTicket.Views.AdminView.CityView
             };
             table.AddColumns("Id", "Name");
 
-            foreach (var City in Citys)
+            foreach (var city in Cities)
             {
                 table.AddRow(
-                    City.Id.ToString(),
-                    City.Name
+                    city.Id.ToString(),
+                    city.Name
                 );
             }
 

@@ -3,40 +3,39 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.SeatView
 {
     public class AddSeatView : IViewRender
     {
-		private readonly SeatBUS _SeatBUS;
+		private readonly SeatBUS _seatBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddSeatView(SeatBUS SeatBUS, IViewFactory viewFactory)
+        public AddSeatView(SeatBUS seatBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
-            _SeatBUS = SeatBUS;
+            _seatBUS = seatBUS;
 		}
 
         public void Render(string? statusMessage = null, object? model = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            Seat Seat = new();
+            Seat seat = new();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Seat \n[/]");
             
-            Seat.Hall.Id = AnsiConsole.Ask<int>(" -> Enter Hall Id: ");
+            seat.Hall.Id = AnsiConsole.Ask<int>(" -> Enter Hall Id: ");
 
-            Seat.SeatNumber = AnsiConsole.Ask<int>(" -> Enter Seat Number: ");
+            seat.SeatNumber = AnsiConsole.Ask<int>(" -> Enter Seat Number: ");
 
-            Seat.SeatType = AnsiConsole.Ask<SeatType>(" -> Enter SeatType: ");
+            seat.SeatType = AnsiConsole.Ask<SeatType>(" -> Enter SeatType: ");
             
-            Seat.Price = AnsiConsole.Ask<double>(" -> Enter Price: ");
+            seat.Price = AnsiConsole.Ask<double>(" -> Enter Price: ");
 
 
-            Result result = _SeatBUS.Create(Seat);
+            Result result = _seatBUS.Create(seat);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Seat successful ![/], press any key to go back.");

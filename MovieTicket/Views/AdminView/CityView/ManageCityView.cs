@@ -1,5 +1,4 @@
 using MovieTicket.Factory;
-using MovieTicket.Views;
 using SharedLibrary.Constants;
 using Spectre.Console;
 
@@ -25,7 +24,7 @@ namespace MovieTicket.Views.AdminView.CityView
 					.Title("[PaleGreen3]Choose: [/]")
 					.PageSize(10)
 					.AddChoices(new[] {
-						"Add City", "Show All Citys", "Back"
+						"Add City", "Show All Cities", "Back"
 					})
 					.HighlightStyle(new Style(Color.PaleGreen3)));
 

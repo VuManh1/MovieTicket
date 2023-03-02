@@ -11,14 +11,14 @@ namespace MovieTicket.Views.AdminView.CastView
     public class ListCastView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly CastBUS _CastBUS;
+        private readonly CastBUS _castBUS;
 
-        private const int CastS_PER_PAGE = 10;
+        private const int CASTS_PER_PAGE = 10;
 
-        public ListCastView(IViewFactory viewFactory, CastBUS CastBUS)
+        public ListCastView(IViewFactory viewFactory, CastBUS castBUS)
         {
             _viewFactory = viewFactory;
-            _CastBUS = CastBUS;
+            _castBUS = castBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -29,20 +29,20 @@ namespace MovieTicket.Views.AdminView.CastView
             
             if (page <= 0) page = 1;
 
-            List<Cast> Casts = _CastBUS.GetAllBus();
+            List<Cast> casts = _castBUS.GetAll();
 
-            if (Casts.Count > 0)
+            if (casts.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)Casts.Count / CastS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)casts.Count / CASTS_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
                 // get Casts by page
-                List<Cast> CastsToRender = Casts.
-                    Skip((page - 1) * CastS_PER_PAGE)
-                    .Take(CastS_PER_PAGE).ToList();
+                List<Cast> castsToRender = casts.
+                    Skip((page - 1) * CASTS_PER_PAGE)
+                    .Take(CASTS_PER_PAGE).ToList();
 
-                RenderCasts(CastsToRender);
+                RenderCasts(castsToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -78,7 +78,7 @@ namespace MovieTicket.Views.AdminView.CastView
             }
         }
 
-        public void RenderCasts(List<Cast> Casts)
+        public void RenderCasts(List<Cast> casts)
         {
             Table table = new()
             {
@@ -89,12 +89,12 @@ namespace MovieTicket.Views.AdminView.CastView
             };
             table.AddColumns("Id", "Name", "About");
 
-            foreach (var Cast in Casts)
+            foreach (var cast in casts)
             {
                 table.AddRow(
-                    Cast.Id.ToString(),
-                    Cast.Name,
-                    Cast.About ?? ""
+                    cast.Id.ToString(),
+                    cast.Name,
+                    cast.About ?? ""
                 );
             }
 

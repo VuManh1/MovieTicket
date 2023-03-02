@@ -11,14 +11,14 @@ namespace MovieTicket.Views.AdminView.DirectorView
     public class ListDirectorView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly DirectorBUS _DirectorBUS;
+        private readonly DirectorBUS _directorBUS;
 
-        private const int DirectorS_PER_PAGE = 10;
+        private const int DIRECTORS_PER_PAGE = 10;
 
-        public ListDirectorView(IViewFactory viewFactory, DirectorBUS DirectorBUS)
+        public ListDirectorView(IViewFactory viewFactory, DirectorBUS directorBUS)
         {
             _viewFactory = viewFactory;
-            _DirectorBUS = DirectorBUS;
+            _directorBUS = directorBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -29,20 +29,20 @@ namespace MovieTicket.Views.AdminView.DirectorView
             
             if (page <= 0) page = 1;
 
-            List<Director> Directors = _DirectorBUS.GetAll();
+            List<Director> directors = _directorBUS.GetAll();
 
-            if (Directors.Count > 0)
+            if (directors.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)Directors.Count / DirectorS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)directors.Count / DIRECTORS_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
                 // get Directors by page
-                List<Director> DirectorsToRender = Directors.
-                    Skip((page - 1) * DirectorS_PER_PAGE)
-                    .Take(DirectorS_PER_PAGE).ToList();
+                List<Director> directorsToRender = directors.
+                    Skip((page - 1) * DIRECTORS_PER_PAGE)
+                    .Take(DIRECTORS_PER_PAGE).ToList();
 
-                RenderDirectors(DirectorsToRender);
+                RenderDirectors(directorsToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -78,7 +78,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
             }
         }
 
-        public void RenderDirectors(List<Director> Directors)
+        public void RenderDirectors(List<Director> directors)
         {
             Table table = new()
             {
@@ -89,12 +89,12 @@ namespace MovieTicket.Views.AdminView.DirectorView
             };
             table.AddColumns("Id", "Name", "About");
 
-            foreach (var Director in Directors)
+            foreach (var director in directors)
             {
                 table.AddRow(
-                    Director.Id.ToString(),
-                    Director.Name,
-                    Director.About ?? ""
+                    director.Id.ToString(),
+                    director.Name,
+                    director.About ?? ""
                 );
             }
 

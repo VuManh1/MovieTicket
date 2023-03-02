@@ -3,20 +3,19 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.DirectorView
 {
     public class AddDirectorView : IViewRender
     {
-		private readonly DirectorBUS _DirectorBUS;
+		private readonly DirectorBUS _directorBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddDirectorView(DirectorBUS DirectorBUS, IViewFactory viewFactory)
+        public AddDirectorView(DirectorBUS directorBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
-            _DirectorBUS = DirectorBUS;
+            _directorBUS = directorBUS;
 		}
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -32,7 +31,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
             director.About = AnsiConsole.Ask<string>(" -> Enter Director's About (0 to skip): ");
             if (director.About == "0") director.About = null;
 
-            Result result = _DirectorBUS.Create(director);
+            Result result = _directorBUS.Create(director);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Director successful ![/], press any key to go back.");

@@ -3,35 +3,35 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.CastView
 {
     public class AddCastView : IViewRender
     {
-		private readonly CastBUS _CastBUS;
+		private readonly CastBUS _castBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddCastView(CastBUS CastBUS, IViewFactory viewFactory)
+        public AddCastView(CastBUS castBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
-            _CastBUS = CastBUS;
+            _castBUS = castBUS;
 		}
 
         public void Render(string? statusMessage = null, object? model = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
-            Cast cast = new Cast();
+
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Cast \n[/]");
 
-            cast.Name = AnsiConsole.Ask<string>(" -> Enter Cast's name: ");
-            
-            cast.About = AnsiConsole.Ask<string>(" -> Enter Cast's About (0 to skip): ");
+            Cast cast = new()
+            {
+                Name = AnsiConsole.Ask<string>(" -> Enter Cast's name: "),
+                About = AnsiConsole.Ask<string>(" -> Enter Cast's About (0 to skip): ")
+            };
             if (cast.About == "0") cast.About = null;
 
-
-            Result result = _CastBUS.AddBus(cast);
+            Result result = _castBUS.Create(cast);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Cast successful ![/], press any key to go back.");

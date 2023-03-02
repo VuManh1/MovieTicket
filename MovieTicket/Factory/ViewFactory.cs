@@ -52,7 +52,7 @@ namespace MovieTicket.Factory
                 ViewConstant.ManageBooking => typeof(Views.AdminView.BookingView.BookingManageView),
                 ViewConstant.AddBooking => typeof(Views.AdminView.BookingView.AddBookingView),
                 ViewConstant.AdminListBooking => typeof(Views.AdminView.BookingView.ListBookingView),
-                ViewConstant.ManageCast => typeof(Views.AdminView.CastView.CastManageView),
+                ViewConstant.ManageCast => typeof(Views.AdminView.CastView.ManageCastView),
                 ViewConstant.AddCast => typeof(Views.AdminView.CastView.AddCastView),
                 ViewConstant.AdminListCast => typeof(Views.AdminView.CastView.ListCastView),
                 ViewConstant.ManageCinema => typeof(Views.AdminView.CinemaView.ManageCinemaView),
