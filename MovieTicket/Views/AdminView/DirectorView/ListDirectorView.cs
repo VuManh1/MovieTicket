@@ -11,11 +11,11 @@ namespace MovieTicket.Views.AdminView.DirectorView
     public class ListDirectorView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly DirectorBus _DirectorBUS;
+        private readonly DirectorBUS _DirectorBUS;
 
         private const int DirectorS_PER_PAGE = 10;
 
-        public ListDirectorView(IViewFactory viewFactory, DirectorBus DirectorBUS)
+        public ListDirectorView(IViewFactory viewFactory, DirectorBUS DirectorBUS)
         {
             _viewFactory = viewFactory;
             _DirectorBUS = DirectorBUS;
@@ -29,7 +29,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
             
             if (page <= 0) page = 1;
 
-            List<Director> Directors = _DirectorBUS.GetAllBus();
+            List<Director> Directors = _DirectorBUS.GetAll();
 
             if (Directors.Count > 0)
             {

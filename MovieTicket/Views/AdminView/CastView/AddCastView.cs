@@ -10,10 +10,10 @@ namespace MovieTicket.Views.AdminView.CastView
 {
     public class AddCastView : IViewRender
     {
-		private readonly CastBus _CastBUS;
+		private readonly CastBUS _CastBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddCastView(CastBus CastBUS, IViewFactory viewFactory)
+        public AddCastView(CastBUS CastBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _CastBUS = CastBUS;

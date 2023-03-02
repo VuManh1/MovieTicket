@@ -13,7 +13,7 @@ namespace DAL.Repositories
 			_dbConnection = dbConnection;
 		}
 
-        public Result Add(City entity)
+        public Result Create(City entity)
         {
             _dbConnection.OpenConnection();
 
@@ -49,7 +49,27 @@ namespace DAL.Repositories
 
         public City? FirstOrDefault(string filter)
         {
-            throw new NotImplementedException();
+            City? city = null;
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM Cities WHERE {filter};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            if(reader.HasRows)
+            {
+                reader.Read();
+
+                city = new()
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                };
+            }
+            reader.Close();
+
+            return city;
         }
 
         public IEnumerable<City> GetAll()
@@ -86,8 +106,10 @@ namespace DAL.Repositories
 
 			MySqlDataReader reader = cmd.ExecuteReader();
 
-			while (reader.Read())
+            if (reader.HasRows)
 			{
+                reader.Read();
+
 				city = new()
 				{
 					Id = reader.GetInt32("id"),
@@ -101,22 +123,7 @@ namespace DAL.Repositories
 
         public Result Update(City entity)
         {
-            _dbConnection.OpenConnection();
-
-			MySqlCommand cmd = new("UpdateCity", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
-
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@name", entity.Name);
-			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.ExecuteNonQuery();
-
-			return Result.OK();
+            throw new NotImplementedException();
         }
-}
+    }
 }

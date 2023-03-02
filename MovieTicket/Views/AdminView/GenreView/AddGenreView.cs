@@ -10,11 +10,11 @@ namespace MovieTicket.Views.AdminView.GenreView
 {
     public class AddGenreView : IViewRender
     {
-		private readonly GenreBus _GenreBUS;
+		private readonly GenreBUS _GenreBUS;
         private readonly IViewFactory _viewFactory;
-        private readonly GenreBus _GenreBus;
+        private readonly GenreBUS _GenreBus;
 
-        public AddGenreView(GenreBus GenreBUS, IViewFactory viewFactory,GenreBus GenreBus)
+        public AddGenreView(GenreBUS GenreBUS, IViewFactory viewFactory,GenreBUS GenreBus)
 		{
 			_viewFactory = viewFactory;
             _GenreBUS = GenreBUS;
@@ -31,7 +31,7 @@ namespace MovieTicket.Views.AdminView.GenreView
 
             Genre.Name = AnsiConsole.Ask<string>(" -> Enter Genre's name: ");
 
-            Result result = _GenreBUS.AddBus(Genre);
+            Result result = _GenreBUS.Create(Genre);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Genre successful ![/], press any key to go back.");
@@ -55,7 +55,7 @@ namespace MovieTicket.Views.AdminView.GenreView
 
         public string GetGenre()
 		{
-			List<string> cities = _GenreBus.GetAllBus().Select(c => c.Name).ToList();
+			List<string> cities = _GenreBus.GetAll().Select(c => c.Name).ToList();
 			cities.Insert(0, "Skip");
 
 			Console.WriteLine();

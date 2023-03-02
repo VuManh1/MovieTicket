@@ -1,10 +1,6 @@
-﻿using MySql.Data.MySqlClient;
-using SharedLibrary;
+﻿using SharedLibrary;
 using SharedLibrary.DTO;
-using DAL;
-using DAL.Repositories;
 using DAL.UnitOfWork;
-#pragma warning disable
 
 namespace BUS
 {
@@ -12,32 +8,52 @@ namespace BUS
 	{
 
 		private readonly IUnitOfWork _unitOfWork;
-		public Result AddBus(User user)
+
+        public UserBUS(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+		public Result Delete(User user)
 		{
-			return _unitOfWork.UserRepository.Add(user);
+			try
+			{
+				return _unitOfWork.UserRepository.Delete(user);
+			}
+			catch
+			{
+				return Result.NetworkError();
+			}
 		}
 
-		public void DeleteBus(string id)
+		public List<User> GetAll()
 		{
-			// _unitOfWork.UserRepository.Delete(id);
-		}
+            try
+            {
+                return _unitOfWork.UserRepository.GetAll().ToList();
+            }
+            catch
+            {
+                return new List<User>();
+            }
+        }
 
-		public List<User> GetAllBus()
-		{
-			return _unitOfWork.UserRepository.GetAll().ToList();
-		}
+        public List<User> Find(string filter)
+        {
+            return _unitOfWork.UserRepository.Find(filter).ToList();
+        }
 
-		public void FirstOrDefaultBus(string filter)
+        public void FirstOrDefault(string filter)
 		{
 			_unitOfWork.UserRepository.FirstOrDefault(filter);
 		}
 
-		public void GetByIdBus(string id)
+		public User? GetById(int id)
 		{
-			// _unitOfWork.UserRepository.GetById(id);
+	        return _unitOfWork.UserRepository.GetById(id);
 		}
 
-		public Result UpdateBus(User entity)
+		public Result Update(User entity)
 		{
 			return _unitOfWork.UserRepository.Update(entity);
 		}

@@ -3,21 +3,20 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.CinemaView
 {
     public class AddCinemaView : IViewRender
     {
-		private readonly CinemaBus _CinemaBUS;
+		private readonly CinemaBUS _cinemaBUS;
         private readonly IViewFactory _viewFactory;
-        private readonly CityBus _cityBus;
+        private readonly CityBUS _cityBus;
 
-        public AddCinemaView(CinemaBus CinemaBUS, IViewFactory viewFactory,CityBus cityBus)
+        public AddCinemaView(CinemaBUS cinemaBUS, IViewFactory viewFactory, CityBUS cityBus)
 		{
 			_viewFactory = viewFactory;
-            _CinemaBUS = CinemaBUS;
+            _cinemaBUS = cinemaBUS;
             _cityBus = cityBus;
 		}
 
@@ -25,18 +24,18 @@ namespace MovieTicket.Views.AdminView.CinemaView
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            Cinema Cinema = new();
+            Cinema cinema = new();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Cinema \n[/]");
 
-            Cinema.Name = AnsiConsole.Ask<string>(" -> Enter Cinema's name: ");
+            cinema.Name = AnsiConsole.Ask<string>(" -> Enter Cinema's name: ");
 
-            Cinema.HallCount = AnsiConsole.Ask<int>(" -> Enter Hall Count: ");
+            cinema.HallCount = AnsiConsole.Ask<int>(" -> Enter Hall Count: ");
 
             string cityName = GetCity();
-			City? city = cityName != "Skip" ? _cityBus.FirstOrDefault($"name = '{cityName}'") : null;
+			cinema.City = cityName != "Skip" ? _cityBus.FirstOrDefault($"name = '{cityName}'") : null;
 
-            Result result = _CinemaBUS.AddBus(Cinema);
+            Result result = _cinemaBUS.Create(cinema);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Cinema successful ![/], press any key to go back.");
@@ -68,7 +67,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
 			// create select city: 
 			var city = AnsiConsole.Prompt(
 				new SelectionPrompt<string>()
-					.Title("\nChoose a city where you live: ")
+					.Title("\nChoose a city: ")
 					.PageSize(10)
 					.AddChoices(cities)
 					.HighlightStyle(new Style(Color.PaleGreen3)));

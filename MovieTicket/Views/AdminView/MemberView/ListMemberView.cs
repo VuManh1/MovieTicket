@@ -6,19 +6,19 @@ using BUS;
 using SharedLibrary.Models;
 using SharedLibrary.Helpers;
 
-namespace MovieTicket.Views.AdminView.CinemaView
+namespace MovieTicket.Views.AdminView.MemberView
 {
-    public class ListCinemaView : IViewRender
+    public class ListMemberView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly CinemaBUS _cinemaBUS;
+        private readonly UserBUS _userBUS;
 
-        private const int CINEMAS_PER_PAGE = 10;
+        private const int USERS_PER_PAGE = 10;
 
-        public ListCinemaView(IViewFactory viewFactory, CinemaBUS CinemaBUS)
+        public ListMemberView(IViewFactory viewFactory, UserBUS userBUS)
         {
             _viewFactory = viewFactory;
-            _cinemaBUS = CinemaBUS;
+            _userBUS = userBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -30,28 +30,28 @@ namespace MovieTicket.Views.AdminView.CinemaView
             int page = searchModel.Page;
             if (page <= 0) page = 1;
 
-            List<Cinema> cinemas;
+            List<User> users;
             if (searchModel.SearchValue != null)
             {
                 AnsiConsole.Markup($"[{ColorConstant.Info}]Search for '{searchModel.SearchValue}'[/]\n");
-                cinemas = _cinemaBUS.Find($"cinemas.name like '%{searchModel.SearchValue}%'");
+                users = _userBUS.Find($"NormalizeName like '%{searchModel.SearchValue}%' AND role = 'Member'");
             }
             else
-                cinemas = _cinemaBUS.GetAll();
+                users = _userBUS.Find("role = 'Member'");
 
 
-            if (cinemas.Count > 0)
+            if (users.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)cinemas.Count / CINEMAS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)users.Count / USERS_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
                 // get movies by page
-                List<Cinema> cinemaToRender = cinemas.
-                    Skip((page - 1) * CINEMAS_PER_PAGE)
-                    .Take(CINEMAS_PER_PAGE).ToList();
+                List<User> usersToRender = users.
+                    Skip((page - 1) * USERS_PER_PAGE)
+                    .Take(USERS_PER_PAGE).ToList();
 
-                RenderCinemas(cinemaToRender);
+                RenderUsers(usersToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -64,10 +64,10 @@ namespace MovieTicket.Views.AdminView.CinemaView
             }
             else
             {
-                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No cinema :([/]\n");
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No user :([/]\n");
             }
 
-            AnsiConsole.MarkupLine(" * Press [dodgerblue2]'C'[/] to choose a cinema, [dodgerblue2]'F'[/] to search cinemas, " +
+            AnsiConsole.MarkupLine(" * Press [dodgerblue2]'C'[/] to choose a user, [dodgerblue2]'F'[/] to search users, " +
                 "[red]'ESCAPE'[/] to go back");
             var key = ConsoleHelper.InputKey(new List<ConsoleKey>()
                 {
@@ -81,34 +81,34 @@ namespace MovieTicket.Views.AdminView.CinemaView
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    _viewFactory.Render(ViewConstant.AdminListCinema, model: new SearchModel()
+                    _viewFactory.Render(ViewConstant.AdminListMember, model: new SearchModel()
                     {
                         Page = page - 1,
                         SearchValue = searchModel.SearchValue,
                     });
                     break;
                 case ConsoleKey.RightArrow:
-                    _viewFactory.Render(ViewConstant.AdminListCinema, model: new SearchModel()
+                    _viewFactory.Render(ViewConstant.AdminListMember, model: new SearchModel()
                     {
                         Page = page + 1,
                         SearchValue = searchModel.SearchValue
                     }); ;
                     break;
                 case ConsoleKey.F:
-                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter cinema's name to search: ");
+                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter user's name to search: ");
 
-                    _viewFactory.Render(ViewConstant.AdminListCinema, model: new SearchModel()
+                    _viewFactory.Render(ViewConstant.AdminListMember, model: new SearchModel()
                     {
                         Page = 1,
                         SearchValue = searchModel.SearchValue
                     });
                     break;
                 case ConsoleKey.C:
-                    int id = AnsiConsole.Ask<int>(" -> Enter cinema's id (0 to cancel): ");
+                    int id = AnsiConsole.Ask<int>(" -> Enter user's id (0 to cancel): ");
 
                     if (id == 0)
                     {
-                        _viewFactory.Render(ViewConstant.AdminListCinema, model: new SearchModel()
+                        _viewFactory.Render(ViewConstant.AdminListMember, model: new SearchModel()
                         {
                             Page = page,
                             SearchValue = searchModel.SearchValue
@@ -116,36 +116,37 @@ namespace MovieTicket.Views.AdminView.CinemaView
                         return;
                     }
 
-                    _viewFactory.Render(ViewConstant.AdminCinemaDetail, model: id);
+                    _viewFactory.Render(ViewConstant.AdminMemberDetail, model: id);
                     break;
                 case ConsoleKey.Escape:
                     if (searchModel.SearchValue != null)
-                        _viewFactory.Render(ViewConstant.AdminListCinema);
+                        _viewFactory.Render(ViewConstant.AdminListMember);
                     else
-                        _viewFactory.Render(ViewConstant.ManageCinema);
+                        _viewFactory.Render(ViewConstant.AdminHome);
 
                     break;
             }
         }
 
-        public void RenderCinemas(List<Cinema> cinemas)
+        public void RenderUsers(List<User> users)
         {
             Table table = new()
             {
                 Title = new TableTitle(
-                    "Cinemas", 
+                    "User", 
                     new Style(Color.PaleGreen3)),
                 Expand = true
             };
-            table.AddColumns("Id", "Name", "HallCount", "City Name");
+            table.AddColumns("Id", "Name", "Email", "Join Date", "City");
 
-            foreach (var cinema in cinemas)
+            foreach (var user in users)
             {
                 table.AddRow(
-                    cinema.Id.ToString(),
-                    cinema.Name,
-                    cinema.HallCount.ToString(),
-                    cinema.City?.Name ?? ""
+                    user.Id.ToString(),
+                    user.Name,
+                    user.Email,
+                    user.CreateDate?.ToString() ?? "",
+                    user.City?.Name ?? ""
                 );
             }
 

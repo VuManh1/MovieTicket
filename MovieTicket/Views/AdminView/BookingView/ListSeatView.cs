@@ -11,11 +11,11 @@ namespace MovieTicket.Views.AdminView.BookingView
     public class ListBookingView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly BookingBus _BookingBUS;
+        private readonly BookingBUS _BookingBUS;
 
         private const int BookingS_PER_PAGE = 10;
 
-        public ListBookingView(IViewFactory viewFactory, BookingBus BookingBUS)
+        public ListBookingView(IViewFactory viewFactory, BookingBUS BookingBUS)
         {
             _viewFactory = viewFactory;
             _BookingBUS = BookingBUS;

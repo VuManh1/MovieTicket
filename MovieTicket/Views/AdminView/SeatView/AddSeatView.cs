@@ -10,10 +10,10 @@ namespace MovieTicket.Views.AdminView.SeatView
 {
     public class AddSeatView : IViewRender
     {
-		private readonly SeatBus _SeatBUS;
+		private readonly SeatBUS _SeatBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddSeatView(SeatBus SeatBUS, IViewFactory viewFactory)
+        public AddSeatView(SeatBUS SeatBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _SeatBUS = SeatBUS;
@@ -36,7 +36,7 @@ namespace MovieTicket.Views.AdminView.SeatView
             Seat.Price = AnsiConsole.Ask<double>(" -> Enter Price: ");
 
 
-            Result result = _SeatBUS.AddBus(Seat);
+            Result result = _SeatBUS.Create(Seat);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Seat successful ![/], press any key to go back.");

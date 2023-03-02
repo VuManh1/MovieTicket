@@ -14,7 +14,7 @@ namespace DAL.Repositories
 			_dbConnection = dbConnection;
 		}
 
-        public Result Add(Movie entity)
+        public Result Create(Movie entity)
         {
             _dbConnection.OpenConnection();
 

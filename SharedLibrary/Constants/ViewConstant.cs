@@ -39,14 +39,12 @@
         public const string AddShow = "Add Show";
         public const string ManageShow = "Manage Show";
         public const string AdminListShow = "Admin List Show";
-        public const string AddUser = "Add User";
-        public const string ManageUser = "Manage User";
-        public const string AdminListUser = "Admin List User";
+        public const string AdminListMember = "Admin List Member";
         public const string AddBooking = "Add Booking";
         public const string ManageBooking = "Manage Booking";
         public const string AdminListBooking = "Admin List Booking";
-
-
+        public const string AdminMemberDetail = "Admin Member Detail";
+        public const string AdminCinemaDetail = "Admin Cinema Detail";
 
         // Shared Views
         public const string Logo = "Logo";

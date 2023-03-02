@@ -11,11 +11,11 @@ namespace MovieTicket.Views.AdminView.GenreView
     public class ListGenreView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly GenreBus _GenreBUS;
+        private readonly GenreBUS _GenreBUS;
 
         private const int GenreS_PER_PAGE = 10;
 
-        public ListGenreView(IViewFactory viewFactory, GenreBus GenreBUS)
+        public ListGenreView(IViewFactory viewFactory, GenreBUS GenreBUS)
         {
             _viewFactory = viewFactory;
             _GenreBUS = GenreBUS;
@@ -29,7 +29,7 @@ namespace MovieTicket.Views.AdminView.GenreView
             
             if (page <= 0) page = 1;
 
-            List<Genre> Genres = _GenreBUS.GetAllBus();
+            List<Genre> Genres = _GenreBUS.GetAll();
 
             if (Genres.Count > 0)
             {

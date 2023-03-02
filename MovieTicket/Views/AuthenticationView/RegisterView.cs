@@ -12,10 +12,10 @@ namespace MovieTicket.Views.Authentication
 	public class RegisterView : IViewRender
 	{
 		private readonly AuthenticationBUS _authenticationBus;
-		private readonly CityBus _cityBus;
+		private readonly CityBUS _cityBus;
 		private readonly IViewFactory _viewFactory;
 
-		public RegisterView(AuthenticationBUS authenticationBus, IViewFactory viewFactory, CityBus cityBus)
+		public RegisterView(AuthenticationBUS authenticationBus, IViewFactory viewFactory, CityBUS cityBus)
 		{
 			_authenticationBus = authenticationBus;
 			_viewFactory = viewFactory;

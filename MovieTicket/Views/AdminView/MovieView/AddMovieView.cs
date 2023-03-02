@@ -10,10 +10,10 @@ namespace MovieTicket.Views.AdminView.MovieView
 {
     public class AddMovieView : IViewRender
     {
-		private readonly MovieBus _movieBUS;
+		private readonly MovieBUS _movieBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddMovieView(MovieBus movieBUS, IViewFactory viewFactory)
+        public AddMovieView(MovieBUS movieBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _movieBUS = movieBUS;
@@ -62,7 +62,7 @@ namespace MovieTicket.Views.AdminView.MovieView
                 GenreIdString = genres
             };
 
-            Result result = _movieBUS.Add(movie);
+            Result result = _movieBUS.Create(movie);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add movie successful ![/], press any key to go back.");

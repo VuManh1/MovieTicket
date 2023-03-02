@@ -1,42 +1,42 @@
-using MySql.Data.MySqlClient;
 using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
-#pragma warning disable
 
 namespace BUS
 {
-    public class DirectorBus
+    public class DirectorBUS
     {
        private readonly IUnitOfWork _unitOfWork;
-	   public DirectorBus(IUnitOfWork unitOfWork)
+
+	   public DirectorBUS(IUnitOfWork unitOfWork)
 		{
 			_unitOfWork = unitOfWork;
 		}
-		public Result AddBus(Director Director)
+
+		public Result Create(Director Director)
 		{
-			return _unitOfWork.DirectorRepository.Add(Director);
+			return _unitOfWork.DirectorRepository.Create(Director);
 		}
 
-		public void DeleteBus(string id)
+		public void Delete(string id)
 		{
 		}
 
-		public List<Director> GetAllBus()
+		public List<Director> GetAll()
 		{
 			return _unitOfWork.DirectorRepository.GetAll().ToList();
 		}
 
-		public void FirstOrDefaultBus(string filter)
+		public void FirstOrDefault(string filter)
 		{
 			_unitOfWork.DirectorRepository.FirstOrDefault(filter);
 		}
 
-		public void GetByIdBus(string id)
+		public void GetById(string id)
 		{
 		}
 
-		public Result UpdateBus(Director entity)
+		public Result Update(Director entity)
 		{
 			return _unitOfWork.DirectorRepository.Update(entity);
 		}

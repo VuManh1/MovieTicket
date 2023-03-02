@@ -11,11 +11,11 @@ namespace MovieTicket.Views.AdminView.CastView
     public class ListCastView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly CastBus _CastBUS;
+        private readonly CastBUS _CastBUS;
 
         private const int CastS_PER_PAGE = 10;
 
-        public ListCastView(IViewFactory viewFactory, CastBus CastBUS)
+        public ListCastView(IViewFactory viewFactory, CastBUS CastBUS)
         {
             _viewFactory = viewFactory;
             _CastBUS = CastBUS;

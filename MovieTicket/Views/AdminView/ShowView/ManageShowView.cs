@@ -1,15 +1,14 @@
 using MovieTicket.Factory;
-using MovieTicket.Views;
 using SharedLibrary.Constants;
 using Spectre.Console;
 
-namespace MovieTicket.Views.AdminView.MovieView
+namespace MovieTicket.Views.AdminView.ShowView
 {
-    public class MovieManageView : IViewRender
+    public class ManageShowView : IViewRender
     {
 		private readonly IViewFactory _viewFactory;
 
-		public MovieManageView(IViewFactory viewFactory)
+		public ManageShowView(IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
 		}
@@ -17,7 +16,7 @@ namespace MovieTicket.Views.AdminView.MovieView
         public void Render(string? statusMessage = null, object? model = null)
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
-            _viewFactory.GetService(ViewConstant.Logo)?.Render("[Manage Movie]");
+            _viewFactory.GetService(ViewConstant.Logo)?.Render("[Manage Show]");
         
 			// create select: 
 			var selection = AnsiConsole.Prompt(
@@ -25,17 +24,17 @@ namespace MovieTicket.Views.AdminView.MovieView
 					.Title("[PaleGreen3]Choose: [/]")
 					.PageSize(10)
 					.AddChoices(new[] {
-						"Add Movie", "Show All Movies", "Back"
+						"Add Show", "Show All Shows", "Back"
 					})
 					.HighlightStyle(new Style(Color.PaleGreen3)));
 
 			switch (selection)
 			{
-				case "Add Movie":
-                    _viewFactory.Render(ViewConstant.AddMovie);
+				case "Add Show":
+                    _viewFactory.Render(ViewConstant.AddShow);
 					break;
-                case "Show All Movies":
-                    _viewFactory.Render(ViewConstant.AdminListMovie);
+                case "Show All Shows":
+                    _viewFactory.Render(ViewConstant.AdminListShow);
                     break;
 				case "Back":
 					_viewFactory.Render(ViewConstant.AdminHome);

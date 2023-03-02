@@ -11,11 +11,11 @@ namespace MovieTicket.Views.AdminView.MovieView
     public class ListMovieView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly MovieBus _movieBUS;
+        private readonly MovieBUS _movieBUS;
 
         private const int MOVIES_PER_PAGE = 10;
 
-        public ListMovieView(IViewFactory viewFactory, MovieBus movieBUS)
+        public ListMovieView(IViewFactory viewFactory, MovieBUS movieBUS)
         {
             _viewFactory = viewFactory;
             _movieBUS = movieBUS;
@@ -104,7 +104,7 @@ namespace MovieTicket.Views.AdminView.MovieView
                     });
                     break;
                 case ConsoleKey.C:
-                    int id = GetMovieId();
+                    int id = AnsiConsole.Ask<int>(" -> Enter movie's id (0 to cancel): ");
 
                     if (id == 0)
                     {
@@ -126,11 +126,6 @@ namespace MovieTicket.Views.AdminView.MovieView
 
                     break;
             }
-        }
-
-        public int GetMovieId()
-        {
-            return AnsiConsole.Ask<int>(" -> Enter movie's id (0 to cancel): ");
         }
 
         public void RenderMovies(List<Movie> movies)

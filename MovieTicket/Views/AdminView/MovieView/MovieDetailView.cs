@@ -1,20 +1,18 @@
 using BUS;
 using MovieTicket.Factory;
-using MovieTicket.SignIn;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
-using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.MovieView
 {
     public class MovieDetailView : IViewRender
     {
-		private readonly MovieBus _movieBUS;
+		private readonly MovieBUS _movieBUS;
         private readonly IViewFactory _viewFactory;
 
-        public MovieDetailView(MovieBus movieBUS, IViewFactory viewFactory)
+        public MovieDetailView(MovieBUS movieBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _movieBUS = movieBUS;
@@ -71,6 +69,12 @@ namespace MovieTicket.Views.AdminView.MovieView
                     _viewFactory.Render(ViewConstant.AdminListMovie);
                     return;
                 case "Delete this movie":
+                    if (!AnsiConsole.Confirm("Delete this movie ? : "))
+                    {
+                        _viewFactory.Render(ViewConstant.AdminMovieDetail, model:movie.Id);
+                        return;
+                    }
+
                     Result deleteResult = _movieBUS.Delete(movie);
 
                     if (deleteResult.Success)

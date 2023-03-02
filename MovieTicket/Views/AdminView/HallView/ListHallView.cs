@@ -11,11 +11,11 @@ namespace MovieTicket.Views.AdminView.HallView
     public class ListHallView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly HallBus _HallBUS;
+        private readonly HallBUS _HallBUS;
 
         private const int HallS_PER_PAGE = 10;
 
-        public ListHallView(IViewFactory viewFactory, HallBus HallBUS)
+        public ListHallView(IViewFactory viewFactory, HallBUS HallBUS)
         {
             _viewFactory = viewFactory;
             _HallBUS = HallBUS;
@@ -29,7 +29,7 @@ namespace MovieTicket.Views.AdminView.HallView
             
             if (page <= 0) page = 1;
 
-            List<Hall> Halls = _HallBUS.GetAllBus();
+            List<Hall> Halls = _HallBUS.GetAll();
 
             if (Halls.Count > 0)
             {

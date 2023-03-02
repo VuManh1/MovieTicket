@@ -6,16 +6,16 @@ using SharedLibrary.Helpers;
 
 namespace BUS
 {
-    public class MovieBus
+    public class MovieBUS
     {
         private readonly IUnitOfWork _unitOfWork;
 
-		public MovieBus(IUnitOfWork unitOfWork)
+		public MovieBUS(IUnitOfWork unitOfWork)
 		{
 			_unitOfWork = unitOfWork;
 		}
 
-		public Result Add(Movie movie)
+		public Result Create(Movie movie)
 		{
             movie.Name = movie.Name.NormalizeString();
             movie.NormalizeName = movie.Name.RemoveMarks();
@@ -89,7 +89,7 @@ namespace BUS
 			_unitOfWork.BeginTransaction();
 			try
 			{
-                Result result = _unitOfWork.MovieRepository.Add(movie);
+                Result result = _unitOfWork.MovieRepository.Create(movie);
 
 				movie.Id = (int)(result.Model ?? 0);
 

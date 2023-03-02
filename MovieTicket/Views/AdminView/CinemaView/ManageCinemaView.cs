@@ -1,15 +1,15 @@
+using BUS;
 using MovieTicket.Factory;
-using MovieTicket.Views;
 using SharedLibrary.Constants;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.CinemaView
 {
-    public class CinemaManageView : IViewRender
+    public class ManageCinemaView : IViewRender
     {
 		private readonly IViewFactory _viewFactory;
 
-		public CinemaManageView(IViewFactory viewFactory)
+        public ManageCinemaView(IViewFactory viewFactory, CinemaBUS cinemaBUS)
 		{
 			_viewFactory = viewFactory;
 		}

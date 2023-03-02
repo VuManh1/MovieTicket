@@ -1,41 +1,87 @@
-using MySql.Data.MySqlClient;
 using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
-#pragma warning disable
+using SharedLibrary.Helpers;
+
 namespace BUS
 {
-    public class CinemaBus
+    public class CinemaBUS
     {
         private readonly IUnitOfWork _unitOfWork;
-		public CinemaBus(IUnitOfWork unitOfWork)
+
+		public CinemaBUS(IUnitOfWork unitOfWork)
 		{
 			_unitOfWork = unitOfWork;
 		}
-		public Result AddBus(Cinema Cinema)
+
+		public Result Create(Cinema cinema)
 		{
-			return _unitOfWork.CinemaRepository.Add(Cinema);
+            cinema.Name = cinema.Name.NormalizeString();
+
+            try
+            {
+                return _unitOfWork.CinemaRepository.Create(cinema);
+            }
+            catch
+            {
+                return Result.NetworkError();
+            }
+        }
+
+		public Result Delete(Cinema cinema)
+		{
+			try
+			{
+				return _unitOfWork.CinemaRepository.Delete(cinema);
+			}
+			catch
+			{
+				return Result.NetworkError();
+			}
 		}
 
-		public void DeleteBus(string id)
+		public List<Cinema> GetAll()
 		{
+            try
+            {
+                return _unitOfWork.CinemaRepository.GetAll().ToList();
+            }
+            catch
+            {
+                return new List<Cinema>();
+            }
+        }
+
+        public List<Cinema> Find(string filter)
+        {
+            try
+            {
+                return _unitOfWork.CinemaRepository.Find(filter).ToList();
+            }
+            catch
+            {
+				return new List<Cinema>();
+            }
+        }
+
+        public Cinema? FirstOrDefault(string filter)
+		{
+			return _unitOfWork.CinemaRepository.FirstOrDefault(filter);
 		}
 
-		public List<Cinema> GetAllBus()
+		public Cinema? GetById(int id)
 		{
-			return _unitOfWork.CinemaRepository.GetAll().ToList();
-		}
+            try
+            {
+                return _unitOfWork.CinemaRepository.GetById(id);
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
-		public void FirstOrDefaultBus(string filter)
-		{
-			_unitOfWork.CinemaRepository.FirstOrDefault(filter);
-		}
-
-		public void GetByIdBus(string id)
-		{
-		}
-
-		public Result UpdateBus(Cinema entity)
+		public Result Update(Cinema entity)
 		{
 			return _unitOfWork.CinemaRepository.Update(entity);
 		}

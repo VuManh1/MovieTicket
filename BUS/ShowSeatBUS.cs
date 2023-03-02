@@ -1,42 +1,42 @@
-using MySql.Data.MySqlClient;
 using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
-#pragma warning disable
 
 namespace BUS
 {
-    public class ShowSeatBus
+    public class ShowSeatBUS
     {
         private readonly IUnitOfWork _unitOfWork;
-		public ShowSeatBus(IUnitOfWork unitOfWork)
+
+		public ShowSeatBUS(IUnitOfWork unitOfWork)
 		{
 			_unitOfWork = unitOfWork;
 		}
-		public Result AddBus(ShowSeat showSeat)
+
+		public Result Create(ShowSeat showSeat)
 		{
-			return _unitOfWork.ShowSeatRepository.Add(showSeat);
+			return _unitOfWork.ShowSeatRepository.Create(showSeat);
 		}
 
-		public void DeleteBus(string id)
+		public void Delete(string id)
 		{
 		}
 
-		public List<ShowSeat> GetAllBus()
+		public List<ShowSeat> GetAll()
 		{
 			return _unitOfWork.ShowSeatRepository.GetAll().ToList();
 		}
 
-		public void FirstOrDefaultBus(string filter)
+		public void FirstOrDefault(string filter)
 		{
 			_unitOfWork.ShowSeatRepository.FirstOrDefault(filter);
 		}
 
-		public void GetByIdBus(string id)
+		public void GetById(string id)
 		{
 		}
 
-		public Result UpdateBus(ShowSeat entity)
+		public Result Update(ShowSeat entity)
 		{
 			return _unitOfWork.ShowSeatRepository.Update(entity);
 		}

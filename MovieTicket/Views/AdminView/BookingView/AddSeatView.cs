@@ -10,10 +10,10 @@ namespace MovieTicket.Views.AdminView.BookingView
 {
     public class AddBookingView : IViewRender
     {
-		private readonly BookingBus _BookingBUS;
+		private readonly BookingBUS _BookingBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddBookingView(BookingBus BookingBUS, IViewFactory viewFactory)
+        public AddBookingView(BookingBUS BookingBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _BookingBUS = BookingBUS;

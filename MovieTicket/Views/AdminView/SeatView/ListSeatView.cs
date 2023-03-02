@@ -11,11 +11,11 @@ namespace MovieTicket.Views.AdminView.SeatView
     public class ListSeatView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly SeatBus _SeatBUS;
+        private readonly SeatBUS _SeatBUS;
 
         private const int SeatS_PER_PAGE = 10;
 
-        public ListSeatView(IViewFactory viewFactory, SeatBus SeatBUS)
+        public ListSeatView(IViewFactory viewFactory, SeatBUS SeatBUS)
         {
             _viewFactory = viewFactory;
             _SeatBUS = SeatBUS;
@@ -29,7 +29,7 @@ namespace MovieTicket.Views.AdminView.SeatView
             
             if (page <= 0) page = 1;
 
-            List<Seat> Seats = _SeatBUS.GetAllBus();
+            List<Seat> Seats = _SeatBUS.GetAll();
 
             if (Seats.Count > 0)
             {

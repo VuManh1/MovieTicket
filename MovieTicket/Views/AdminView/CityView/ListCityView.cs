@@ -11,11 +11,11 @@ namespace MovieTicket.Views.AdminView.CityView
     public class ListCityView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly CityBus _CityBUS;
+        private readonly CityBUS _CityBUS;
 
         private const int CityS_PER_PAGE = 10;
 
-        public ListCityView(IViewFactory viewFactory, CityBus CityBUS)
+        public ListCityView(IViewFactory viewFactory, CityBUS CityBUS)
         {
             _viewFactory = viewFactory;
             _CityBUS = CityBUS;

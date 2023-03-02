@@ -4,8 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MovieTicket.Factory;
 using MovieTicket.Views;
-using MovieTicket.Views.AdminView.MovieView;
-using MovieTicket.Views.Authentication;
+using MovieTicket.Views.AdminView;
 using System.Reflection;
 
 namespace MovieTicket
@@ -43,10 +42,18 @@ namespace MovieTicket
 			Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			Services.AddTransient<AuthenticationBUS>();
-			Services.AddTransient<MovieBus>();
-			Services.AddTransient<CityBus>();
-			Services.AddTransient<CastBus>();
-			Services.AddTransient<DirectorBus>();
+			Services.AddTransient<MovieBUS>();
+			Services.AddTransient<CityBUS>();
+			Services.AddTransient<CastBUS>();
+            Services.AddTransient<DirectorBUS>();
+			Services.AddTransient<BookingBUS>();
+            Services.AddTransient<CinemaBUS>();
+            Services.AddTransient<GenreBUS>();
+            Services.AddTransient<HallBUS>();
+            Services.AddTransient<SeatBUS>();
+            Services.AddTransient<ShowBUS>();
+            Services.AddTransient<ShowSeatBUS>();
+            Services.AddTransient<UserBUS>();
         }
 
         /// <summary>
@@ -65,8 +72,8 @@ namespace MovieTicket
 			var provider = Services.BuildServiceProvider();
 			// get StartView and render it
 			var view = provider.GetServices<IViewRender>()
-				.FirstOrDefault(s => s.GetType() == typeof(MovieManageView));
-			
+				.FirstOrDefault(s => s.GetType() == typeof(HomeView));
+
 			view?.Render();
 		}
 	}

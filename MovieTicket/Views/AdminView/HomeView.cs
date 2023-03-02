@@ -26,7 +26,7 @@ namespace MovieTicket.Views.AdminView
 					.PageSize(10)
 					.AddChoices(new[] {
 						"Manage Movies", "Manage Shows", "Manage Cinemas",
-                        "Logout"
+                        "Manage Members", "Logout"
 					})
 					.HighlightStyle(new Style(Color.PaleGreen3)));
 
@@ -37,9 +37,17 @@ namespace MovieTicket.Views.AdminView
                     _viewFactory.Render(ViewConstant.ManageMovie);
 					break;
 				case "Manage Shows":
-					break;
-				case "Logout":
+                    _viewFactory.Render(ViewConstant.ManageShow);
+                    break;
+                case "Manage Cinemas":
+                    _viewFactory.Render(ViewConstant.ManageCinema);
+                    break;
+                case "Manage Members":
+                    _viewFactory.Render(ViewConstant.AdminListMember);
+                    break;
+                case "Logout":
 					SignInManager.Logout();
+
 					_viewFactory.Render(ViewConstant.Start);
 					break;
 			}

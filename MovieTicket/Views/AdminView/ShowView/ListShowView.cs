@@ -5,22 +5,20 @@ using SharedLibrary.DTO;
 using BUS;
 using SharedLibrary.Models;
 using SharedLibrary.Helpers;
-#pragma warning disable
 
-
-namespace MovieTicket.Views.AdminView.UserView
+namespace MovieTicket.Views.AdminView.ShowView
 {
-    public class ListUserView : IViewRender
+    public class ListShowView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly UserBUS _UserBUS;
+        private readonly ShowBUS _ShowBUS;
 
-        private const int UserS_PER_PAGE = 10;
+        private const int ShowS_PER_PAGE = 10;
 
-        public ListUserView(IViewFactory viewFactory, UserBUS UserBUS)
+        public ListShowView(IViewFactory viewFactory, ShowBUS ShowBUS)
         {
             _viewFactory = viewFactory;
-            _UserBUS = UserBUS;
+            _ShowBUS = ShowBUS;
         }
 
         public void Render(string? statusMessage = null, object? model = null)
@@ -31,20 +29,20 @@ namespace MovieTicket.Views.AdminView.UserView
             
             if (page <= 0) page = 1;
 
-            List<User> Users = _UserBUS.GetAllBus();
+            List<Show> Shows = _ShowBUS.GetAll();
 
-            if (Users.Count > 0)
+            if (Shows.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)Users.Count / UserS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)Shows.Count / ShowS_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
-                // get Users by page
-                List<User> UsersToRender = Users.
-                    Skip((page - 1) * UserS_PER_PAGE)
-                    .Take(UserS_PER_PAGE).ToList();
+                // get Shows by page
+                List<Show> ShowsToRender = Shows.
+                    Skip((page - 1) * ShowS_PER_PAGE)
+                    .Take(ShowS_PER_PAGE).ToList();
 
-                RenderUsers(UsersToRender);
+                RenderShows(ShowsToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -57,7 +55,7 @@ namespace MovieTicket.Views.AdminView.UserView
             }
             else
             {
-                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No User :([/]");
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No Show :([/]");
             }
 
             AnsiConsole.MarkupLine("");
@@ -70,40 +68,34 @@ namespace MovieTicket.Views.AdminView.UserView
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    _viewFactory.Render(ViewConstant.AdminListUser, model: page - 1);
+                    _viewFactory.Render(ViewConstant.AdminListShow, model: page - 1);
                     break;
                 case ConsoleKey.RightArrow:
-                    _viewFactory.Render(ViewConstant.AdminListUser, model: page + 1);
+                    _viewFactory.Render(ViewConstant.AdminListShow, model: page + 1);
                     break;
                 case ConsoleKey.F:
                     break;
             }
         }
 
-        public void RenderUsers(List<User> Users)
+        public void RenderShows(List<Show> Shows)
         {
             Table table = new()
             {
                 Title = new TableTitle(
-                    "User", 
+                    "Show", 
                     new Style(Color.PaleGreen3)),
                 Expand = true
             };
-            table.AddColumns("Id", "Hall ID", "UserType", "UserNumber","Price");
+            table.AddColumns("Id", "Hall ID", "Movie ID", "StartTime");
 
-            foreach (var User in Users)
+            foreach (var Show in Shows)
             {
                 table.AddRow(
-                    User.Id.ToString(),
-                    User.Name,
-                    User.NormalizeName,
-                    User.Email,
-                    User.PhoneNumber.ToString(),
-                    User.City.Id.ToString(),
-                    User.Salt,
-                    User.Role.ToString(),
-                    User.CreateDate.ToString(),
-                    User.IsLock.ToString()
+                    Show.Id.ToString(),
+                    Show.Hall.Id.ToString(),
+                    Show.Movie.Id.ToString(),
+                    Show.StartTime.ToString()
                 );
             }
 

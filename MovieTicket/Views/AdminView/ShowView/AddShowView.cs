@@ -10,10 +10,10 @@ namespace MovieTicket.Views.AdminView.ShowView
 {
     public class AddShowView : IViewRender
     {
-		private readonly ShowBus _ShowBUS;
+		private readonly ShowBUS _ShowBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddShowView(ShowBus ShowBUS, IViewFactory viewFactory)
+        public AddShowView(ShowBUS ShowBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _ShowBUS = ShowBUS;
@@ -31,10 +31,10 @@ namespace MovieTicket.Views.AdminView.ShowView
 
             Show.Movie.Id = AnsiConsole.Ask<int>(" -> Enter Movie Id: ");
 
-            Show.StartTime = AnsiConsole.Ask<DateTime>(" -> Enter StartTime: ");
+            Show.StartTime = AnsiConsole.Ask<DateTime>(" -> Enter Start Time: ");
 
 
-            Result result = _ShowBUS.AddBus(Show);
+            Result result = _ShowBUS.Create(Show);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Show successful ![/], press any key to go back.");

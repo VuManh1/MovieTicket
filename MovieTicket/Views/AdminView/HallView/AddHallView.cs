@@ -10,10 +10,10 @@ namespace MovieTicket.Views.AdminView.HallView
 {
     public class AddHallView : IViewRender
     {
-		private readonly HallBus _HallBUS;
+		private readonly HallBUS _HallBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddHallView(HallBus HallBUS, IViewFactory viewFactory)
+        public AddHallView(HallBUS HallBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _HallBUS = HallBUS;
@@ -33,7 +33,7 @@ namespace MovieTicket.Views.AdminView.HallView
 
             Hall.SeatCount = AnsiConsole.Ask<int>(" -> Enter SeatCount: ");
 
-            Result result = _HallBUS.AddBus(Hall);
+            Result result = _HallBUS.Create(Hall);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Hall successful ![/], press any key to go back.");

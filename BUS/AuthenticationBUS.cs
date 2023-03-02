@@ -43,7 +43,7 @@ namespace BUS
 
 			try
 			{
-				return _unitOfWork.UserRepository.Add(user);
+				return _unitOfWork.UserRepository.Create(user);
 			}
 			catch
 			{

@@ -13,23 +13,14 @@ namespace DAL.Repositories
 			_dbConnection = dbConnection;
 		}
 
-        public Result Add(Cinema entity)
+        public Result Create(Cinema entity)
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("AddCinema", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            string query = "INSERT INTO cinemas(name, HallCount, address, CityId) VALUES" +
+                $"('{entity.Name}', {entity.HallCount}, '{entity.Address}', {entity.City?.Id})";
 
-			cmd.Parameters.AddWithValue("@Name", entity.Name);
-			cmd.Parameters["@Name"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@HallCount", entity.HallCount);
-			cmd.Parameters["@HallCount"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@CityId", entity.City?.Id);
-			cmd.Parameters["@CityId"].Direction = System.Data.ParameterDirection.Input;
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			cmd.ExecuteNonQuery();
 
@@ -40,7 +31,7 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			string query = "delete FROM Cinemas WHERE id = {id};";
+			string query = $"DELETE FROM Cinemas WHERE id = {entity.Id};";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
             cmd.ExecuteNonQuery();
@@ -50,37 +41,111 @@ namespace DAL.Repositories
 
         public IEnumerable<Cinema> Find(string filter)
         {
-            throw new NotImplementedException();
+            List<Cinema> cinemas = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = "SELECT cinemas.id, cinemas.name, cinemas.address, cinemas.HallCount," +
+                " cities.id AS CId, cities.name AS CityName FROM Cinemas" +
+                " JOIN cities" +
+                " ON cinemas.CityId = cities.id" +
+                $" WHERE {filter};";
+
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                cinemas.Add(new Cinema
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    HallCount = reader.GetInt32("HallCount"),
+                    Address = reader["address"].GetType() != typeof(System.DBNull) ? reader.GetString("address") : null,
+                    City = new()
+                    {
+                        Id = reader.GetInt32("CId"),
+                        Name = reader.GetString("CityName")
+                    }
+                });
+            }
+            reader.Close();
+
+            return cinemas;
         }
 
         public Cinema? FirstOrDefault(string filter)
         {
-            throw new NotImplementedException();
+            Cinema? cinema = null;
+
+            _dbConnection.OpenConnection();
+
+            string query = "SELECT cinemas.id, cinemas.name, cinemas.address, cinemas.HallCount," +
+                " cities.id AS CId, cities.name AS CityName FROM Cinemas" +
+                " JOIN cities" +
+                " ON cinemas.CityId = cities.id" +
+                $" WHERE {filter};";
+
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                reader.Read();
+
+                cinema = new Cinema
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    HallCount = reader.GetInt32("HallCount"),
+                    Address = reader["address"].GetType() != typeof(System.DBNull) ? reader.GetString("address") : null,
+                    City = new()
+                    {
+                        Id = reader.GetInt32("CId"),
+                        Name = reader.GetString("CityName")
+                    }
+                };
+            }
+            reader.Close();
+
+            return cinema;
         }
 
         public IEnumerable<Cinema> GetAll()
         {
-            List<Cinema> Cinema = new();
+            List<Cinema> cinemas = new();
 
 			_dbConnection.OpenConnection();
 
-			string query = "SELECT * FROM Cinemas;";
-			MySqlCommand cmd = new(query, _dbConnection.Connection);
+			string query = "SELECT cinemas.id, cinemas.name, cinemas.address, cinemas.HallCount," +
+				" cities.id AS CId, cities.name AS CityName FROM Cinemas" +
+				" JOIN cities" +
+				" ON cinemas.CityId = cities.id;";
+
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			MySqlDataReader reader = cmd.ExecuteReader();
 
 			while (reader.Read())
 			{
-				Cinema.Add(new Cinema
+				cinemas.Add(new Cinema
 				{
-					Id = reader.GetInt32("id"),
-					Name = reader.GetString("Name"),
-					HallCount = reader.GetInt32("HallCount")
-				}); ;
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    HallCount = reader.GetInt32("HallCount"),
+                    Address = reader["address"].GetType() != typeof(System.DBNull) ? reader.GetString("address") : null,
+                    City = new()
+                    {
+                        Id = reader.GetInt32("CId"),
+                        Name = reader.GetString("CityName")
+                    }
+                });
 			}
 			reader.Close();
 
-			return Cinema;
+			return cinemas;
         }
 
         public Cinema? GetById(int id)
@@ -89,19 +154,32 @@ namespace DAL.Repositories
 
             _dbConnection.OpenConnection();
 
-			string query = "SELECT * FROM Cinemas WHERE id = {id};";
+			string query = "SELECT cinemas.id, cinemas.name, cinemas.address, cinemas.HallCount," +
+				" cities.id AS CId, cities.name AS CityName FROM Cinemas" +
+				" JOIN cities" +
+                " ON cinemas.CityId = cities.id" +
+				$" WHERE cinemas.id = {id};";
+
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			MySqlDataReader reader = cmd.ExecuteReader();
 
-			while (reader.Read())
+			if (reader.HasRows)
 			{
+                reader.Read();
+
 				cinema = new Cinema
 				{
 					Id = reader.GetInt32("id"),
-					Name = reader.GetString("Name"),
-					HallCount = reader.GetInt32("HallCount")
-				};
+					Name = reader.GetString("name"),
+					HallCount = reader.GetInt32("HallCount"),
+					Address = reader["address"].GetType() != typeof(System.DBNull) ? reader.GetString("address") : null,
+					City = new()
+					{
+						Id = reader.GetInt32("CId"),
+						Name = reader.GetString("CityName")
+					}
+                };
 			}
 			reader.Close();
 
@@ -112,23 +190,11 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("UpdateCinema", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            string query = "UPDATE cinemas SET" +
+                $" name = '{entity.Name}', HallCount = {entity.HallCount}, address = '{entity.Address}', CityId = {entity.City?.Id}" +
+                $" WHERE id = {entity.Id};";
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@name", entity.Name);
-			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@HallCount", entity.HallCount);
-			cmd.Parameters["@HallCount"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@CityId", entity.City?.Id);
-			cmd.Parameters["@CityId"].Direction = System.Data.ParameterDirection.Input;
-
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			cmd.ExecuteNonQuery();
 

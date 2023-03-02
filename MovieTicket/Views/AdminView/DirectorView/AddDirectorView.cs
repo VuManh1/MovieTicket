@@ -10,10 +10,10 @@ namespace MovieTicket.Views.AdminView.DirectorView
 {
     public class AddDirectorView : IViewRender
     {
-		private readonly DirectorBus _DirectorBUS;
+		private readonly DirectorBUS _DirectorBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddDirectorView(DirectorBus DirectorBUS, IViewFactory viewFactory)
+        public AddDirectorView(DirectorBUS DirectorBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _DirectorBUS = DirectorBUS;
@@ -32,7 +32,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
             director.About = AnsiConsole.Ask<string>(" -> Enter Director's About (0 to skip): ");
             if (director.About == "0") director.About = null;
 
-            Result result = _DirectorBUS.AddBus(director);
+            Result result = _DirectorBUS.Create(director);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Director successful ![/], press any key to go back.");

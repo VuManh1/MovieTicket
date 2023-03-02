@@ -1,23 +1,21 @@
-using MySql.Data.MySqlClient;
 using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
-#pragma warning disable
 
 namespace BUS
 {
-    public class CityBus
+    public class CityBUS
     {
         private readonly IUnitOfWork _unitOfWork;
 
-		public CityBus(IUnitOfWork unitOfWork)
+		public CityBUS(IUnitOfWork unitOfWork)
 		{
 			_unitOfWork = unitOfWork;
 		}
 
-		public Result Add(City City)
+		public Result Create(City City)
 		{
-			return _unitOfWork.CityRepository.Add(City);
+			return _unitOfWork.CityRepository.Create(City);
 		}
 
 		public void Delete(string id)

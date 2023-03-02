@@ -10,11 +10,11 @@ namespace MovieTicket.Views.AdminView.CityView
 {
     public class AddCityView : IViewRender
     {
-		private readonly CityBus _CityBUS;
+		private readonly CityBUS _CityBUS;
         private readonly IViewFactory _viewFactory;
-        private readonly CityBus _cityBus;
+        private readonly CityBUS _cityBus;
 
-        public AddCityView(CityBus CityBUS, IViewFactory viewFactory,CityBus cityBus)
+        public AddCityView(CityBUS CityBUS, IViewFactory viewFactory,CityBUS cityBus)
 		{
 			_viewFactory = viewFactory;
             _CityBUS = CityBUS;
@@ -31,7 +31,7 @@ namespace MovieTicket.Views.AdminView.CityView
 
             City.Name = AnsiConsole.Ask<string>(" -> Enter City's name: ");
 
-            Result result = _CityBUS.Add(City);
+            Result result = _CityBUS.Create(City);
             if (result.Success)
             {
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add City successful ![/], press any key to go back.");

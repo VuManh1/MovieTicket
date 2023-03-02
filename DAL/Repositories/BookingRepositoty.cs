@@ -13,7 +13,7 @@ namespace DAL.Repositories
 			_dbConnection = dbConnection;
 		}
 
-        public Result Add(Booking entity)
+        public Result Create(Booking entity)
         {
             _dbConnection.OpenConnection();
 
