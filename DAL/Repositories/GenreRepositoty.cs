@@ -22,11 +22,11 @@ namespace DAL.Repositories
 				CommandType = System.Data.CommandType.StoredProcedure
 			};
 
-			cmd.Parameters.AddWithValue("@Name", entity.Name);
+			cmd.Parameters.AddWithValue("@name", entity.Name);
 			cmd.Parameters["@Name"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.Parameters.AddWithValue("@Description", entity.Description);
-			cmd.Parameters["@Description"].Direction = System.Data.ParameterDirection.Input;
+			cmd.Parameters.AddWithValue("@description", entity.Description);
+			cmd.Parameters["@description"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.ExecuteNonQuery();
 
@@ -37,7 +37,7 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			string query = "delete FROM Genres WHERE id = {id};";
+			string query = $"DELETE FROM Genres WHERE id = {entity.Id};";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
             cmd.ExecuteNonQuery();
@@ -71,8 +71,8 @@ namespace DAL.Repositories
 				Genre.Add(new Genre
 				{
 					Id = reader.GetInt32("id"),
-					Name = reader.GetString("Name"),
-					Description = reader["Description"].GetType() != typeof(System.DBNull) ? reader.GetString("Description") : null,
+					Name = reader.GetString("name"),
+					Description = reader["description"].GetType() != typeof(System.DBNull) ? reader.GetString("description") : null,
 				}); ;
 			}
 			reader.Close();
@@ -85,19 +85,19 @@ namespace DAL.Repositories
 			Genre? genre = null;
             _dbConnection.OpenConnection();
 
-			string query = "SELECT * FROM Genres WHERE id = {id};";
+			string query = $"SELECT * FROM Genres WHERE id = {id};";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			MySqlDataReader reader = cmd.ExecuteReader();
 
 			while (reader.Read())
 			{
-				genre = new Genre
+				genre = new()
 				{
 					Id = reader.GetInt32("id"),
-					Name = reader.GetString("Name"),
-					Description = reader["Description"].GetType() != typeof(System.DBNull) ? reader.GetString("Description") : null,
-				} ;
+					Name = reader.GetString("name"),
+					Description = reader["description"].GetType() != typeof(System.DBNull) ? reader.GetString("description") : null,
+				};
 			}
 			reader.Close();
 
@@ -119,8 +119,8 @@ namespace DAL.Repositories
 			cmd.Parameters.AddWithValue("@name", entity.Name);
 			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.Parameters.AddWithValue("@Description", entity.Description);
-			cmd.Parameters["@Description"].Direction = System.Data.ParameterDirection.Input;
+			cmd.Parameters.AddWithValue("@description", entity.Description);
+			cmd.Parameters["@description"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.ExecuteNonQuery();
 

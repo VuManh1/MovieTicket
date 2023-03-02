@@ -25,11 +25,20 @@ namespace MovieTicket.Views.AdminView.MovieView
         {
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            int page = model != null ? (int)model : 1; 
-            
+            SearchModel searchModel = model != null ? (SearchModel)model : new SearchModel() { Page = 1 };
+
+            int page = searchModel.Page;
             if (page <= 0) page = 1;
 
-            List<Movie> movies = _movieBUS.GetAll();
+            List<Movie> movies;
+            if (searchModel.SearchValue != null) 
+            {
+                AnsiConsole.Markup($"[{ColorConstant.Info}]Search for '{searchModel.SearchValue}'[/]\n");
+                movies = _movieBUS.Find($"NormalizeName like '%{searchModel.SearchValue}%'");
+            }
+            else
+                movies = _movieBUS.GetAll();
+
 
             if (movies.Count > 0)
             {
@@ -55,27 +64,73 @@ namespace MovieTicket.Views.AdminView.MovieView
             }
             else
             {
-                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No movie :([/]");
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No movie :([/]\n");
             }
 
-            AnsiConsole.MarkupLine("");
+            AnsiConsole.MarkupLine(" * Press [dodgerblue2]'C'[/] to choose a movie, [dodgerblue2]'F'[/] to search movies, " +
+                "[red]'ESCAPE'[/] to go back");
             var key = ConsoleHelper.InputKey(new List<ConsoleKey>()
                 {
                     ConsoleKey.LeftArrow,
-                    ConsoleKey.RightArrow
+                    ConsoleKey.RightArrow,
+                    ConsoleKey.F,
+                    ConsoleKey.C,
+                    ConsoleKey.Escape
                 });
             
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    _viewFactory.Render(ViewConstant.AdminListMovie, model: page - 1);
+                    _viewFactory.Render(ViewConstant.AdminListMovie, model: new SearchModel()
+                    {
+                        Page = page - 1,
+                        SearchValue = searchModel.SearchValue,
+                    });
                     break;
                 case ConsoleKey.RightArrow:
-                    _viewFactory.Render(ViewConstant.AdminListMovie, model: page + 1);
+                    _viewFactory.Render(ViewConstant.AdminListMovie, model: new SearchModel()
+                    {
+                        Page = page + 1,
+                        SearchValue = searchModel.SearchValue
+                    }); ;
                     break;
                 case ConsoleKey.F:
+                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter movie's name to search: ");
+
+                    _viewFactory.Render(ViewConstant.AdminListMovie, model: new SearchModel()
+                    {
+                        Page = 1,
+                        SearchValue = searchModel.SearchValue
+                    });
+                    break;
+                case ConsoleKey.C:
+                    int id = GetMovieId();
+
+                    if (id == 0)
+                    {
+                        _viewFactory.Render(ViewConstant.AdminListMovie, model: new SearchModel()
+                        {
+                            Page = page,
+                            SearchValue = searchModel.SearchValue
+                        });
+                        return;
+                    }
+
+                    _viewFactory.Render(ViewConstant.AdminMovieDetail, model: id);
+                    break;
+                case ConsoleKey.Escape:
+                    if(searchModel.SearchValue != null)
+                        _viewFactory.Render(ViewConstant.AdminListMovie);
+                    else
+                        _viewFactory.Render(ViewConstant.ManageMovie);
+
                     break;
             }
+        }
+
+        public int GetMovieId()
+        {
+            return AnsiConsole.Ask<int>(" -> Enter movie's id (0 to cancel): ");
         }
 
         public void RenderMovies(List<Movie> movies)

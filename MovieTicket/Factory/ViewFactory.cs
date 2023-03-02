@@ -35,6 +35,7 @@ namespace MovieTicket.Factory
 		{
 			Type? type = name switch
 			{
+                ViewConstant.NotFound => typeof(NotFoundView),
                 ViewConstant.Paging => typeof(PagingView),
                 ViewConstant.Logo => typeof(LogoView),
                 ViewConstant.LoginInfo => typeof(LoginInfoView),
@@ -47,6 +48,7 @@ namespace MovieTicket.Factory
                 ViewConstant.ManageMovie => typeof(Views.AdminView.MovieView.MovieManageView),
                 ViewConstant.AddMovie => typeof(Views.AdminView.MovieView.AddMovieView),
                 ViewConstant.AdminListMovie => typeof(Views.AdminView.MovieView.ListMovieView),
+                ViewConstant.AdminMovieDetail => typeof(Views.AdminView.MovieView.MovieDetailView),
                 _ => null
 			};
 

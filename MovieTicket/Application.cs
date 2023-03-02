@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using MovieTicket.Factory;
 using MovieTicket.Views;
 using MovieTicket.Views.AdminView.MovieView;
+using MovieTicket.Views.Authentication;
 using System.Reflection;
 
 namespace MovieTicket
@@ -64,7 +65,7 @@ namespace MovieTicket
 			var provider = Services.BuildServiceProvider();
 			// get StartView and render it
 			var view = provider.GetServices<IViewRender>()
-				.FirstOrDefault(s => s.GetType() == typeof(AddMovieView));
+				.FirstOrDefault(s => s.GetType() == typeof(MovieManageView));
 			
 			view?.Render();
 		}

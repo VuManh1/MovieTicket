@@ -11,10 +11,12 @@
         public const string ManageMovie = "Manage Movie";
         public const string AddMovie = "Add Movie";
         public const string AdminListMovie = "Admin List Movie";
+        public const string AdminMovieDetail = "Admin Movie Detail";
 
         // Shared Views
         public const string Logo = "Logo";
         public const string LoginInfo = "LoginInfo";
         public const string Paging = "Paging";
+        public const string NotFound = "NotFound";
     }
 }

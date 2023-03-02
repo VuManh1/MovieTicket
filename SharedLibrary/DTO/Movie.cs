@@ -8,13 +8,14 @@ namespace SharedLibrary.DTO
         public string NormalizeName { get; set; }
         public string? Description { get; set; }
         public int Length { get; set; }
-        public DateOnly? ReleaseDate { get; set; }
+        public DateOnly ReleaseDate { get; set; }
         public MovieStatus MovieStatus { get; set; }
-
         public string? Country { get; set; }
-        public List<Cast>? Casts { get; set; }
-        public List<Director>? Directors { get; set; }
-	}
+
+        public string? CastIdString { get; set; }
+        public string? DirectorIdString { get; set; }
+        public string? GenreIdString { get; set; }
+    }
 
     public enum MovieStatus
     {

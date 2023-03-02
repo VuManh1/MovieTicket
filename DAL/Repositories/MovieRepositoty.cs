@@ -1,3 +1,4 @@
+using Google.Protobuf.Collections;
 using MySql.Data.MySqlClient;
 using SharedLibrary;
 using SharedLibrary.DTO;
@@ -30,7 +31,7 @@ namespace DAL.Repositories
             cmd.Parameters["@description"].Direction = System.Data.ParameterDirection.Input;
             cmd.Parameters.AddWithValue("@length", entity.Length);
             cmd.Parameters["@length"].Direction = System.Data.ParameterDirection.Input;
-            cmd.Parameters.AddWithValue("@ReleaseDate", entity.ReleaseDate?.ToString("yyyy-MM-dd"));
+            cmd.Parameters.AddWithValue("@ReleaseDate", entity.ReleaseDate.ToString("yyyy-MM-dd"));
             cmd.Parameters["@ReleaseDate"].Direction = System.Data.ParameterDirection.Input;
             cmd.Parameters.AddWithValue("@country", entity.Country);
             cmd.Parameters["@country"].Direction = System.Data.ParameterDirection.Input;
@@ -44,47 +45,83 @@ namespace DAL.Repositories
             // get id of movie
             int id = (int)cmd.Parameters["@movieid"].Value;
 
-            // insert to MovieCast table
-            if (entity.Casts != null)
+            return Result.OK(id);
+        }
+
+        public Result AddToMovieCast(Movie movie, List<Cast> casts)
+        {
+            _dbConnection.OpenConnection();
+
+            string query = $"DELETE FROM MovieCast WHERE MovieId = {movie.Id};";
+
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+            cmd.ExecuteNonQuery();
+
+            query = "INSERT INTO MovieCast VALUES";
+
+            casts.ForEach(c =>
             {
-                string query = "INSERT INTO MovieCast VALUES";
+                query += $" ({movie.Id}, {c.Id}),";
+            });
 
-                entity.Casts.ForEach(c =>
-                {
-                    query += $" ({id}, {c.Id}),";
-                });
+            // remove the ','
+            query = query[0..^1];
+            query += ";";
 
-                // remove the ','
-                query = query[0..^1];
-                query += ";";
+            cmd.CommandText = query;
+            cmd.ExecuteNonQuery();
 
-                cmd.Parameters.Clear();
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = query;
+            return Result.OK();
+        }
 
-                cmd.ExecuteNonQuery();
-            }
+        public Result AddToMovieDirector(Movie movie, List<Director> directors)
+        {
+            _dbConnection.OpenConnection();
 
-            // insert to MovieDirector table
-            if (entity.Directors != null)
+            string query = $"DELETE FROM MovieDirector WHERE MovieId = {movie.Id};";
+
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+            cmd.ExecuteNonQuery();
+
+            query = "INSERT INTO MovieDirector VALUES";
+
+            directors.ForEach(d =>
             {
-                string query = "INSERT INTO MovieDirector VALUES";
+                query += $" ({movie.Id}, {d.Id}),";
+            });
 
-                entity.Directors.ForEach(c =>
-                {
-                    query += $" ({id}, {c.Id}),";
-                });
+            // remove the ','
+            query = query[0..^1];
+            query += ";";
 
-                // remove the ','
-                query = query[0..^1];
-                query += ";";
+            cmd.CommandText = query;
+            cmd.ExecuteNonQuery();
 
-                cmd.Parameters.Clear();
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = query;
+            return Result.OK();
+        }
 
-                cmd.ExecuteNonQuery();
-            }
+        public Result AddToMovieGenre(Movie movie, List<Genre> genres)
+        {
+            _dbConnection.OpenConnection();
+
+            string query = $"DELETE FROM MovieGenre WHERE MovieId = {movie.Id};";
+
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+            cmd.ExecuteNonQuery();
+
+            query = "INSERT INTO MovieGenre VALUES";
+
+            genres.ForEach(d =>
+            {
+                query += $" ({movie.Id}, {d.Id}),";
+            });
+
+            // remove the ','
+            query = query[0..^1];
+            query += ";";
+
+            cmd.CommandText = query;
+            cmd.ExecuteNonQuery();
 
             return Result.OK();
         }
@@ -93,12 +130,42 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			return Result.OK();
+            string query = $"DELETE FROM Movies WHERE id = {entity.Id};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            cmd.ExecuteNonQuery();
+
+            return Result.OK();
         }
 
         public IEnumerable<Movie> Find(string filter)
         {
-            throw new NotImplementedException();
+            List<Movie> movies = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM Movies WHERE {filter};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                movies.Add(new Movie
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    NormalizeName = reader.GetString("NormalizeName"),
+                    Description = reader["description"].GetType() != typeof(System.DBNull) ? reader.GetString("Description") : null,
+                    Length = reader.GetInt32("length"),
+                    ReleaseDate = DateOnly.FromDateTime(reader.GetDateTime("ReleaseDate")),
+                    Country = reader["country"].GetType() != typeof(System.DBNull) ? reader.GetString("country") : null,
+                    MovieStatus = Enum.Parse<MovieStatus>(reader.GetString("status"))
+                });
+            }
+            reader.Close();
+
+            return movies;
         }
 
         public Movie? FirstOrDefault(string filter)
@@ -138,7 +205,35 @@ namespace DAL.Repositories
 
         public Movie? GetById(int id)
         {
-            throw new NotImplementedException();
+            Movie? movie = null;
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM `movies` WHERE id = {id};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                reader.Read();
+
+                movie = new()
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    NormalizeName = reader.GetString("NormalizeName"),
+                    Description = reader["description"].GetType() != typeof(System.DBNull) ? reader.GetString("Description") : null,
+                    Length = reader.GetInt32("length"),
+                    ReleaseDate = DateOnly.FromDateTime(reader.GetDateTime("ReleaseDate")),
+                    Country = reader["country"].GetType() != typeof(System.DBNull) ? reader.GetString("country") : null,
+                    MovieStatus = Enum.Parse<MovieStatus>(reader.GetString("status"))
+                };
+
+            }
+            reader.Close();
+
+            return movie;
         }
 
         public Result Update(Movie entity)
@@ -152,28 +247,99 @@ namespace DAL.Repositories
 
 			cmd.Parameters.AddWithValue("@id", entity.Id);
 			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@name", entity.Name);
 			cmd.Parameters["@name"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@NormalizeName", entity.NormalizeName);
 			cmd.Parameters["@NormalizeName"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@description", entity.Description);
 			cmd.Parameters["@description"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@length", entity.Length);
 			cmd.Parameters["@length"].Direction = System.Data.ParameterDirection.Input;
-            
-			cmd.Parameters.AddWithValue("@ReleaseDate", entity.ReleaseDate?.ToString("yyyy-MM-dd"));
+			cmd.Parameters.AddWithValue("@ReleaseDate", entity.ReleaseDate.ToString("yyyy-MM-dd"));
 			cmd.Parameters["@ReleaseDate"].Direction = System.Data.ParameterDirection.Input;
-
 			cmd.Parameters.AddWithValue("@country", entity.Country);
 			cmd.Parameters["@country"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@status", entity.MovieStatus.ToString());
+            cmd.Parameters["@status"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
 
 			return Result.OK();
         }
-}
+
+        public List<Genre> GetGenres(Movie movie)
+        {
+            List<Genre> genres = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM `MovieGenreView` WHERE MovieId = {movie.Id};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                genres.Add(new Genre
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    Description = reader["description"].GetType() != typeof(System.DBNull) ? reader.GetString("description") : null,
+                });
+            }
+            reader.Close();
+
+            return genres;
+        }
+
+        public List<Cast> GetCasts(Movie movie)
+        {
+            List<Cast> casts = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM `MovieCastView` WHERE MovieId = {movie.Id};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                casts.Add(new Cast
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    About = reader["about"].GetType() != typeof(System.DBNull) ? reader.GetString("about") : null,
+                });
+            }
+            reader.Close();
+
+            return casts;
+        }
+
+        public List<Director> GetDirectors(Movie movie)
+        {
+            List<Director> directors = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM `MovieDirectorView` WHERE MovieId = {movie.Id};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                directors.Add(new Director
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                    About = reader["about"].GetType() != typeof(System.DBNull) ? reader.GetString("about") : null,
+                });
+            }
+            reader.Close();
+
+            return directors;
+        }
+    }
 }

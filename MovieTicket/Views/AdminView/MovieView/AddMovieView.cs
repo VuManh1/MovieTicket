@@ -40,13 +40,16 @@ namespace MovieTicket.Views.AdminView.MovieView
 
             string country = AnsiConsole.Ask<string>(" -> Enter movie's country: ");
 
+            string? genres = AnsiConsole.Ask<string>(" -> Enter genre id (separate by ',') or 0 to skip: ");
+            if (genres == "0") genres = null;
+
             string? casts = AnsiConsole.Ask<string>(" -> Enter cast id (separate by ',') or 0 to skip: ");
             if (casts == "0") casts = null;
 
             string? directors = AnsiConsole.Ask<string>(" -> Enter director id (separate by ',') or 0 to skip: ");
             if (directors == "0") directors = null;
 
-            MovieModel movie = new()
+            Movie movie = new()
             {
                 Name = name,
                 Description = description,
@@ -54,8 +57,9 @@ namespace MovieTicket.Views.AdminView.MovieView
                 ReleaseDate = releaseDate,
                 MovieStatus= status,
                 Country = country,
-                Casts = casts,
-                Directors = directors,
+                CastIdString = casts,
+                DirectorIdString = directors,
+                GenreIdString = genres
             };
 
             Result result = _movieBUS.Add(movie);

@@ -1,11 +1,8 @@
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
-using SharedLibrary.Models;
-using SharedLibrary.Helpers;
 using SharedLibrary;
 using System.Text.RegularExpressions;
-using MySql.Data.MySqlClient;
-using System.Linq;
+using SharedLibrary.Helpers;
 
 namespace BUS
 {
@@ -18,23 +15,38 @@ namespace BUS
 			_unitOfWork = unitOfWork;
 		}
 
-		public Result Add(MovieModel model)
+		public Result Add(Movie movie)
 		{
-			Movie movie = new()
-			{
-				Name = model.Name,
-				NormalizeName = model.Name.NormalizeString(),
-				Description = model.Description,
-				Length = model.Length,
-				MovieStatus = model.MovieStatus,
-				Country = model.Country,
-				ReleaseDate = model.ReleaseDate,
-			};
+            movie.Name = movie.Name.NormalizeString();
+            movie.NormalizeName = movie.Name.RemoveMarks();
 
+            List<Genre>? genres = null;
+            // add casts
+            if (movie.GenreIdString != null)
+            {
+                string[] idList = Regex.Split(movie.GenreIdString, ", |,");
+
+                foreach (string idItem in idList)
+                {
+                    if (!int.TryParse(idItem, out int id) || id == 0) continue;
+
+                    Genre? genre = _unitOfWork.GenreRepository.GetById(id);
+
+                    if (genre != null)
+                    {
+                        genres ??= new List<Genre>();
+
+                        if (!genres.Contains(genre))
+                            genres.Add(genre);
+                    }
+                }
+            }
+
+            List<Cast>? casts = null;
 			// add casts
-			if (model.Casts != null)
+			if (movie.CastIdString != null)
 			{
-				string[] idList = Regex.Split(model.Casts, ", |,");
+				string[] idList = Regex.Split(movie.CastIdString, ", |,");
 
 				foreach (string idItem in idList)
 				{
@@ -44,18 +56,19 @@ namespace BUS
 
 					if (cast != null)
 					{
-						movie.Casts ??= new List<Cast>();
+                        casts ??= new List<Cast>();
 
-                        if (!movie.Casts.Contains(cast))
-                            movie.Casts.Add(cast);
+                        if (!casts.Contains(cast))
+                            casts.Add(cast);
 					}
 				}
 			}
-
+            
+			List<Director>? directors = null;
             // add directors
-            if (model.Directors != null)
+            if (movie.DirectorIdString != null)
             {
-                string[] idList = Regex.Split(model.Directors, ", |,");
+                string[] idList = Regex.Split(movie.DirectorIdString, ", |,");
 
                 foreach (string idItem in idList)
                 {
@@ -65,10 +78,10 @@ namespace BUS
 
                     if (director != null)
                     {
-                        movie.Directors ??= new List<Director>();
+                        directors ??= new List<Director>();
                         
-						if(!movie.Directors.Contains(director)) 
-							movie.Directors.Add(director);
+						if(!directors.Contains(director))
+                            directors.Add(director);
                     }
                 }
             }
@@ -78,19 +91,39 @@ namespace BUS
 			{
                 Result result = _unitOfWork.MovieRepository.Add(movie);
 
-				_unitOfWork.CommitTransaction();
+				movie.Id = (int)(result.Model ?? 0);
+
+				if (genres != null) _unitOfWork.MovieRepository.AddToMovieGenre(movie, genres);
+				if (casts != null) _unitOfWork.MovieRepository.AddToMovieCast(movie, casts);
+                if (directors != null) _unitOfWork.MovieRepository.AddToMovieDirector(movie, directors);
+
+                _unitOfWork.CommitTransaction();
             }
-            catch
+            catch(Exception e)
 			{
 				_unitOfWork.RollBack();
-				return Result.Error();
+				return Result.Error(e.Message);
 			}
 
 			return Result.OK();
         }
 
-		public void Delete(int id)
+        public List<Movie> Find(string filter)
+        {
+            return _unitOfWork.MovieRepository.Find(filter).ToList();
+        }
+
+		public Result Delete(Movie movie)
 		{
+			try
+			{
+				return _unitOfWork.MovieRepository.Delete(movie);
+
+			}
+			catch
+			{
+				return Result.NetworkError();
+			}
 		}
 
 		public List<Movie> GetAll()
@@ -103,14 +136,115 @@ namespace BUS
 			_unitOfWork.MovieRepository.FirstOrDefault(filter);
 		}
 
-		public void GetById(int id)
+		public Movie? GetById(int id)
 		{
-			_unitOfWork.MovieRepository.GetById(id);
+			return _unitOfWork.MovieRepository.GetById(id);
 		}
 
-		public void Update(Movie entity)
+		public Result Update(Movie movie)
 		{
-			_unitOfWork.MovieRepository.Update(entity);
+            movie.Name = movie.Name.NormalizeString();
+            movie.NormalizeName = movie.Name.RemoveMarks();
+
+            List<Genre>? genres = null;
+            // add casts
+            if (movie.GenreIdString != null)
+            {
+                string[] idList = Regex.Split(movie.GenreIdString, ", |,");
+
+                foreach (string idItem in idList)
+                {
+                    if (!int.TryParse(idItem, out int id) || id == 0) continue;
+
+                    Genre? genre = _unitOfWork.GenreRepository.GetById(id);
+
+                    if (genre != null)
+                    {
+                        genres ??= new List<Genre>();
+
+                        if (!genres.Contains(genre))
+                            genres.Add(genre);
+                    }
+                }
+            }
+
+            List<Cast>? casts = null;
+            // add casts
+            if (movie.CastIdString != null)
+            {
+                string[] idList = Regex.Split(movie.CastIdString, ", |,");
+
+                foreach (string idItem in idList)
+                {
+                    if (!int.TryParse(idItem, out int id) || id == 0) continue;
+
+                    Cast? cast = _unitOfWork.CastRepository.GetById(id);
+
+                    if (cast != null)
+                    {
+                        casts ??= new List<Cast>();
+
+                        if (!casts.Contains(cast))
+                            casts.Add(cast);
+                    }
+                }
+            }
+
+            List<Director>? directors = null;
+            // add directors
+            if (movie.DirectorIdString != null)
+            {
+                string[] idList = Regex.Split(movie.DirectorIdString, ", |,");
+
+                foreach (string idItem in idList)
+                {
+                    if (!int.TryParse(idItem, out int id) || id == 0) continue;
+
+                    Director? director = _unitOfWork.DirectorRepository.GetById(id);
+
+                    if (director != null)
+                    {
+                        directors ??= new List<Director>();
+
+                        if (!directors.Contains(director))
+                            directors.Add(director);
+                    }
+                }
+            }
+
+            _unitOfWork.BeginTransaction();
+            try
+            {
+                _unitOfWork.MovieRepository.Update(movie);
+
+                if (genres != null) _unitOfWork.MovieRepository.AddToMovieGenre(movie, genres);
+                if (casts != null) _unitOfWork.MovieRepository.AddToMovieCast(movie, casts);
+                if (directors != null) _unitOfWork.MovieRepository.AddToMovieDirector(movie, directors);
+
+                _unitOfWork.CommitTransaction();
+            }
+            catch (Exception e)
+            {
+                _unitOfWork.RollBack();
+                return Result.Error(e.Message);
+            }
+
+            return Result.OK();
+        }
+
+        public List<Genre> GetGenres(Movie movie)
+        {
+            return _unitOfWork.MovieRepository.GetGenres(movie);
+        }
+
+        public List<Cast> GetCasts(Movie movie)
+		{
+			return _unitOfWork.MovieRepository.GetCasts(movie);
 		}
-}
+
+        public List<Director> GetDirectors(Movie movie)
+        {
+            return _unitOfWork.MovieRepository.GetDirectors(movie);
+        }
+    }
 }
