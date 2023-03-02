@@ -240,11 +240,13 @@ namespace BUS
         public List<Cast> GetCasts(Movie movie)
 		{
 			return _unitOfWork.MovieRepository.GetCasts(movie);
-		}
+		
+        }
 
         public List<Director> GetDirectors(Movie movie)
         {
             return _unitOfWork.MovieRepository.GetDirectors(movie);
         }
+
     }
 }

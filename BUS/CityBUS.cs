@@ -1,5 +1,8 @@
+using MySql.Data.MySqlClient;
+using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
+#pragma warning disable
 
 namespace BUS
 {
@@ -12,9 +15,9 @@ namespace BUS
 			_unitOfWork = unitOfWork;
 		}
 
-		public void Add(City City)
+		public Result Add(City City)
 		{
-			_unitOfWork.CityRepository.Add(City);
+			return _unitOfWork.CityRepository.Add(City);
 		}
 
 		public void Delete(string id)
@@ -35,9 +38,9 @@ namespace BUS
 		{
 		}
 
-		public void Update(City entity)
+		public Result Update(City entity)
 		{
-			_unitOfWork.CityRepository.Update(entity);
+			return _unitOfWork.CityRepository.Update(entity);
 		}
 }
 }

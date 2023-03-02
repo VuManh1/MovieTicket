@@ -12,18 +12,19 @@ namespace BUS
 	{
 
 		private readonly IUnitOfWork _unitOfWork;
-		public void AddBus(User user)
+		public Result AddBus(User user)
 		{
-			_unitOfWork.UserRepository.Add(user);
+			return _unitOfWork.UserRepository.Add(user);
 		}
 
 		public void DeleteBus(string id)
 		{
+			// _unitOfWork.UserRepository.Delete(id);
 		}
 
-		public void GetAllBus()
+		public List<User> GetAllBus()
 		{
-			_unitOfWork.UserRepository.GetAll();
+			return _unitOfWork.UserRepository.GetAll().ToList();
 		}
 
 		public void FirstOrDefaultBus(string filter)
@@ -33,11 +34,12 @@ namespace BUS
 
 		public void GetByIdBus(string id)
 		{
+			// _unitOfWork.UserRepository.GetById(id);
 		}
 
-		public void UpdateBus(User entity)
+		public Result UpdateBus(User entity)
 		{
-			_unitOfWork.UserRepository.Update(entity);
+			return _unitOfWork.UserRepository.Update(entity);
 		}
 	}
 }

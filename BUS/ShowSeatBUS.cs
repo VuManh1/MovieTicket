@@ -9,18 +9,22 @@ namespace BUS
     public class ShowSeatBus
     {
         private readonly IUnitOfWork _unitOfWork;
-		public void AddBus(ShowSeat showSeat)
+		public ShowSeatBus(IUnitOfWork unitOfWork)
 		{
-			_unitOfWork.ShowSeatRepository.Add(showSeat);
+			_unitOfWork = unitOfWork;
+		}
+		public Result AddBus(ShowSeat showSeat)
+		{
+			return _unitOfWork.ShowSeatRepository.Add(showSeat);
 		}
 
 		public void DeleteBus(string id)
 		{
 		}
 
-		public void GetAllBus()
+		public List<ShowSeat> GetAllBus()
 		{
-			_unitOfWork.ShowSeatRepository.GetAll();
+			return _unitOfWork.ShowSeatRepository.GetAll().ToList();
 		}
 
 		public void FirstOrDefaultBus(string filter)
@@ -32,9 +36,9 @@ namespace BUS
 		{
 		}
 
-		public void UpdateBus(ShowSeat entity)
+		public Result UpdateBus(ShowSeat entity)
 		{
-			_unitOfWork.ShowSeatRepository.Update(entity);
+			return _unitOfWork.ShowSeatRepository.Update(entity);
 		}
 }
 }

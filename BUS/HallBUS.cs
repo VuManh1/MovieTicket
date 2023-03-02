@@ -9,18 +9,22 @@ namespace BUS
     public class HallBus
     {
         private readonly IUnitOfWork _unitOfWork;
-		public void AddBus(Hall Hall)
+		public HallBus(IUnitOfWork unitOfWork)
 		{
-			_unitOfWork.HallRepository.Add(Hall);
+			_unitOfWork = unitOfWork;
+		}
+		public Result AddBus(Hall Hall)
+		{
+			return _unitOfWork.HallRepository.Add(Hall);
 		}
 
 		public void DeleteBus(string id)
 		{
 		}
 
-		public void GetAllBus()
+		public List<Hall> GetAllBus()
 		{
-			_unitOfWork.HallRepository.GetAll();
+			return _unitOfWork.HallRepository.GetAll().ToList();
 		}
 
 		public void FirstOrDefaultBus(string filter)
@@ -32,9 +36,9 @@ namespace BUS
 		{
 		}
 
-		public void UpdateBus(Hall entity)
+		public Result UpdateBus(Hall entity)
 		{
-			_unitOfWork.HallRepository.Update(entity);
+			return _unitOfWork.HallRepository.Update(entity);
 		}
 }
 }

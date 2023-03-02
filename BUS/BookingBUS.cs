@@ -1,3 +1,5 @@
+using MySql.Data.MySqlClient;
+using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
 #pragma warning disable
@@ -7,18 +9,18 @@ namespace BUS
     public class BookingBus
     {
         private readonly IUnitOfWork _unitOfWork;
-		public void AddBus(Booking Booking)
+		public Result AddBus(Booking Booking)
 		{
-			_unitOfWork.BookingRepository.Add(Booking);
+			return _unitOfWork.BookingRepository.Add(Booking);
 		}
 
 		public void DeleteBus(string id)
 		{
 		}
 
-		public void GetAllBus()
+		public List<Booking> GetAllBus()
 		{
-			_unitOfWork.BookingRepository.GetAll();
+			return _unitOfWork.BookingRepository.GetAll().ToList();
 		}
 
 		public void FirstOrDefaultBus(string filter)
@@ -30,9 +32,9 @@ namespace BUS
 		{
 		}
 
-		public void UpdateBus(Booking entity)
+		public Result UpdateBus(Booking entity)
 		{
-			_unitOfWork.BookingRepository.Update(entity);
+			return _unitOfWork.BookingRepository.Update(entity);
 		}
 }
 }
