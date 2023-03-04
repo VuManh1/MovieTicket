@@ -6,9 +6,8 @@ using SharedLibrary.Constants;
 
 namespace MovieTicket.Factory
 {
-	public interface IViewFactory
+    public interface IViewFactory
 	{
-		public void Render(string name, object? model = null, string? previousView = null, string? statusMessage = null);
 		public IViewRender? GetService(string name);
 	}
 
@@ -19,16 +18,6 @@ namespace MovieTicket.Factory
 		public ViewFactory(IServiceProvider serviceProvider)
 		{
 			_serviceProvider = serviceProvider;
-		}
-
-		public void Render(string name, object? model = null, string? previousView = null, string? statusMessage = null)
-		{
-			Console.Clear();
-			Console.Title = name;
-
-			// get view by name :
-			IViewRender? view = this.GetService(name);
-			view?.Render(model, previousView, statusMessage);
 		}
 
 		public IViewRender? GetService(string name)
@@ -49,41 +38,37 @@ namespace MovieTicket.Factory
                 ViewConstant.AddMovie => typeof(Views.AdminView.MovieView.AddMovieView),
                 ViewConstant.AdminListMovie => typeof(Views.AdminView.MovieView.ListMovieView),
                 ViewConstant.AdminMovieDetail => typeof(Views.AdminView.MovieView.MovieDetailView),
-                ViewConstant.ManageBooking => typeof(Views.AdminView.BookingView.BookingManageView),
-                ViewConstant.AddBooking => typeof(Views.AdminView.BookingView.AddBookingView),
-                ViewConstant.AdminListBooking => typeof(Views.AdminView.BookingView.ListBookingView),
                 ViewConstant.ManageCast => typeof(Views.AdminView.CastView.ManageCastView),
                 ViewConstant.AddCast => typeof(Views.AdminView.CastView.AddCastView),
                 ViewConstant.AdminListCast => typeof(Views.AdminView.CastView.ListCastView),
                 ViewConstant.ManageCinema => typeof(Views.AdminView.CinemaView.ManageCinemaView),
                 ViewConstant.AddCinema => typeof(Views.AdminView.CinemaView.AddCinemaView),
                 ViewConstant.AdminListCinema => typeof(Views.AdminView.CinemaView.ListCinemaView),
-                ViewConstant.ManageCity => typeof(Views.AdminView.CityView.CityManageView),
-                ViewConstant.AddCity => typeof(Views.AdminView.CityView.AddCityView),
-                ViewConstant.AdminListCity => typeof(Views.AdminView.CityView.ListCityView),
                 ViewConstant.ManageDirector => typeof(Views.AdminView.DirectorView.DirectorManageView),
                 ViewConstant.AddDirector => typeof(Views.AdminView.DirectorView.AddDirectorView),
                 ViewConstant.AdminListDirector => typeof(Views.AdminView.DirectorView.ListDirectorView),
-                ViewConstant.ManageGenre => typeof(Views.AdminView.GenreView.GenreManageView),
-                ViewConstant.AddGenre => typeof(Views.AdminView.GenreView.AddGenreView),
-                ViewConstant.AdminListGenre => typeof(Views.AdminView.GenreView.ListGenreView),
-                ViewConstant.ManageHall => typeof(Views.AdminView.HallView.HallManageView),
+                ViewConstant.ManageHall => typeof(Views.AdminView.HallView.ManageHallView),
                 ViewConstant.AddHall => typeof(Views.AdminView.HallView.AddHallView),
-                ViewConstant.AdminListHall => typeof(Views.AdminView.HallView.ListHallView),
-                ViewConstant.ManageSeat => typeof(Views.AdminView.SeatView.SeatManageView),
-                ViewConstant.AddSeat => typeof(Views.AdminView.SeatView.AddSeatView),
-                ViewConstant.AdminListSeat => typeof(Views.AdminView.SeatView.ListSeatView),
-                ViewConstant.ManageShowSeat => typeof(Views.AdminView.ShowSeatView.ShowSeatManageView),
-                ViewConstant.AddShowSeat => typeof(Views.AdminView.ShowSeatView.AddShowSeatView),
-                ViewConstant.AdminListShowSeat => typeof(Views.AdminView.ShowSeatView.ListShowSeatView),
+                ViewConstant.AdminHallDetail => typeof(Views.AdminView.HallView.HallDetailView),
                 ViewConstant.ManageShow => typeof(Views.AdminView.ShowView.ManageShowView),
                 ViewConstant.AddShow => typeof(Views.AdminView.ShowView.AddShowView),
+                ViewConstant.AdminShowDetail => typeof(Views.AdminView.ShowView.ShowDetailView),
                 ViewConstant.AdminListShow => typeof(Views.AdminView.ShowView.ListShowView),
                 ViewConstant.AdminListMember => typeof(Views.AdminView.MemberView.ListMemberView),
                 ViewConstant.AdminMemberDetail => typeof(Views.AdminView.MemberView.MemberDetailView),
                 ViewConstant.AdminCinemaDetail => typeof(Views.AdminView.CinemaView.CinemaDetailView),
                 ViewConstant.AdminCastDetail => typeof(Views.AdminView.CastView.CastDetailView),
                 ViewConstant.AdminDirectorDetail => typeof(Views.AdminView.DirectorView.DirectorDetailView),
+                ViewConstant.MemberHome => typeof(Views.MemberView.HomeView),
+                ViewConstant.MovieDetail => typeof(Views.MemberView.MovieView.MovieDetailView),
+                ViewConstant.MovieList => typeof(Views.MemberView.MovieView.ListMovieView),
+                ViewConstant.SelectShow => typeof(Views.MemberView.BookingView.SelectShowView),
+                ViewConstant.SelectSeat => typeof(Views.MemberView.BookingView.SelectSeatView),
+                ViewConstant.ConfirmBooking => typeof(Views.MemberView.BookingView.ConfirmBookingView),
+                ViewConstant.BookingStatus => typeof(Views.MemberView.BookingView.BookingStatusView),
+                ViewConstant.BookingDetail => typeof(Views.MemberView.BookingView.BookingDetailView),
+                ViewConstant.ListBooking => typeof(Views.MemberView.BookingView.ListBookingView),
+                ViewConstant.MemberDetail => typeof(Views.MemberView.MemberDetailView),
                 _ => null
 			};
 

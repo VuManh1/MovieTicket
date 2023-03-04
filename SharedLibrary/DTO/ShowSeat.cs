@@ -5,12 +5,12 @@
 #pragma warning disable
 		public Seat Seat { get; set; }
 		public Show Show { get; set; }
-		public Booking Booking { get; set; }
+		public Booking? Booking { get; set; }
 		public SeatStatus SeatStatus { get; set; }
 	}
 
 	public enum SeatStatus
 	{
-		Empty, Booking, Picked
+		Empty, Picked
 	}
 }

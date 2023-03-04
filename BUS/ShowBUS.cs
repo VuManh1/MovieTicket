@@ -13,32 +13,92 @@ namespace BUS
 			_unitOfWork = unitOfWork;
 		}
 
-		public Result Create(Show Show)
+		public Result Create(Show show)
 		{
-			return _unitOfWork.ShowRepository.Create(Show);
+			_unitOfWork.BeginTransaction();
+			try
+			{
+				Result result = _unitOfWork.ShowRepository.Create(show);
+
+				List<Seat> seats = _unitOfWork.HallRepository.GetSeats(show.Hall).ToList();
+
+				if(seats.Count > 0) _unitOfWork.ShowRepository.AddToShowSeat(show, seats);
+
+				_unitOfWork.CommitTransaction();
+			}
+			catch(Exception e)
+			{
+				_unitOfWork.RollBack();
+				return Result.Error(e.Message);
+			}
+
+			return Result.OK();
 		}
 
-		public void Delete(string id)
+		public Result Delete(Show show)
 		{
+			try
+			{
+				return _unitOfWork.ShowRepository.Delete(show);
+			}
+			catch
+			{
+				return Result.NetworkError();
+			}
 		}
 
 		public List<Show> GetAll()
 		{
-			return _unitOfWork.ShowRepository.GetAll().ToList();
+			try
+			{
+				return _unitOfWork.ShowRepository.GetAll().ToList();
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine(e.Message);
+				return new List<Show>();
+			}
 		}
 
-		public void FirstOrDefault(string filter)
-		{
-			_unitOfWork.ShowRepository.FirstOrDefault(filter);
-		}
+        public List<Show> Find(string filter)
+        {
+            try
+            {
+                return _unitOfWork.ShowRepository.Find(filter).ToList();
+            }
+            catch
+            {
+                return new List<Show>();
+            }
+        }
 
-		public void GetById(string id)
+        public List<ShowSeat> GetShowSeats(Show show)
+        {
+            try
+            {
+                return _unitOfWork.ShowRepository.GetShowSeats(show).ToList();
+            }
+            catch
+            {
+                return new List<ShowSeat>();
+            }
+        }
+
+		public Show? GetById(int id)
 		{
+			try
+			{
+				return _unitOfWork.ShowRepository.GetById(id);
+			}
+			catch
+			{
+				return null;
+			}
 		}
 
 		public Result Update(Show entity)
 		{
 			return _unitOfWork.ShowRepository.Update(entity);
 		}
-}
+	}
 }

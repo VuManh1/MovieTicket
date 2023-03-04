@@ -20,6 +20,9 @@ namespace MovieTicket.Views.AdminView.DirectorView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AddDirector;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Director \n[/]");
@@ -37,7 +40,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Director successful ![/], press any key to go back.");
                 Console.ReadKey();
                
-                _viewFactory.Render(ViewConstant.ManageDirector);
+                _viewFactory.GetService(ViewConstant.ManageDirector)?.Render();
             }
             else
             {
@@ -45,11 +48,11 @@ namespace MovieTicket.Views.AdminView.DirectorView
 
                 if (!AnsiConsole.Confirm("Add again ? : "))
                 {
-                    _viewFactory.Render(ViewConstant.ManageDirector);
+                    _viewFactory.GetService(ViewConstant.ManageDirector)?.Render();
                     return;
                 }
 
-                _viewFactory.Render(ViewConstant.AddDirector);
+                _viewFactory.GetService(ViewConstant.AddDirector)?.Render();
             }
         }
     }

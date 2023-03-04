@@ -13,32 +13,72 @@ namespace BUS
             _unitOfWork = unitOfWork;
         }
 
-        public Result Create(Booking Booking)
+        public Result Create(Booking booking, List<Seat> seats)
 		{
-			return _unitOfWork.BookingRepository.Create(Booking);
+			_unitOfWork.BeginTransaction();
+			try 
+			{
+				Result result = _unitOfWork.BookingRepository.Create(booking);
+
+				_unitOfWork.BookingRepository.UpdateShowSeat(booking, seats);
+
+				_unitOfWork.CommitTransaction();
+			}
+			catch
+			{
+				_unitOfWork.RollBack();
+				return Result.Error();
+			}
+
+            return Result.OK();
+        }
+
+		public List<ShowSeat> GetShowSeats(Booking booking)
+		{
+			try
+			{
+				return _unitOfWork.BookingRepository.GetShowSeats(booking).ToList();
+            }
+			catch
+			{
+				return new List<ShowSeat>();
+			}
 		}
 
-		public void Delete(string id)
+        public Result Delete(Booking booking)
 		{
-		}
+			try
+			{
+				return _unitOfWork.BookingRepository.Delete(booking);
+			}
+			catch
+			{
+				return Result.Error();
+			}
+        }
 
-		public List<Booking> GetAll()
-		{
-			return _unitOfWork.BookingRepository.GetAll().ToList();
-		}
+        public List<Booking> Find(string filter)
+        {
+			try
+			{
+				return _unitOfWork.BookingRepository.Find(filter).ToList();
+			}
+			catch
+			{
+				return new List<Booking>();
+			}
+        }
 
-		public void FirstOrDefault(string filter)
+        public Booking? GetById(int id)
 		{
-			_unitOfWork.BookingRepository.FirstOrDefault(filter);
+			try
+			{
+				return _unitOfWork.BookingRepository.GetById(id);
+			}
+			catch
+			{
+				return null;
+			}
 		}
-
-		public void GetById(string id)
-		{
-		}
-
-		public Result Update(Booking entity)
-		{
-			return _unitOfWork.BookingRepository.Update(entity);
-		}
-}
+	}
 }

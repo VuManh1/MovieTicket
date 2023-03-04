@@ -11,17 +11,20 @@ namespace MovieTicket.Views.AdminView.CinemaView
     {
 		private readonly CinemaBUS _cinemaBUS;
         private readonly IViewFactory _viewFactory;
-        private readonly CityBUS _cityBus;
+        private readonly CityBUS _cityBUS;
 
-        public AddCinemaView(CinemaBUS cinemaBUS, IViewFactory viewFactory, CityBUS cityBus)
+        public AddCinemaView(CinemaBUS cinemaBUS, IViewFactory viewFactory, CityBUS cityBUS)
 		{
 			_viewFactory = viewFactory;
             _cinemaBUS = cinemaBUS;
-            _cityBus = cityBus;
+            _cityBUS = cityBUS;
 		}
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AddCinema;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             Cinema cinema = new();
@@ -33,7 +36,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
             cinema.HallCount = AnsiConsole.Ask<int>(" -> Enter Hall Count: ");
 
             string cityName = GetCity();
-			cinema.City = cityName != "Skip" ? _cityBus.FirstOrDefault($"name = '{cityName}'") : null;
+			cinema.City = cityName != "Skip" ? _cityBUS.FirstOrDefault($"name = '{cityName}'") : null;
 
             Result result = _cinemaBUS.Create(cinema);
             if (result.Success)
@@ -41,7 +44,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Cinema successful ![/], press any key to go back.");
                 Console.ReadKey();
                
-                _viewFactory.Render(ViewConstant.ManageCinema);
+                _viewFactory.GetService(ViewConstant.ManageCinema)?.Render();
             }
             else
             {
@@ -49,17 +52,17 @@ namespace MovieTicket.Views.AdminView.CinemaView
 
                 if (!AnsiConsole.Confirm("Add again ? : "))
                 {
-                    _viewFactory.Render(ViewConstant.ManageCinema);
+                    _viewFactory.GetService(ViewConstant.ManageCinema)?.Render();
                     return;
                 }
 
-                _viewFactory.Render(ViewConstant.AddCinema);
+                _viewFactory.GetService(ViewConstant.AddCinema)?.Render();
             }
         }
 
         public string GetCity()
 		{
-			List<string> cities = _cityBus.GetAll().Select(c => c.Name).ToList();
+			List<string> cities = _cityBUS.GetAll().Select(c => c.Name).ToList();
 			cities.Insert(0, "Skip");
 
 			Console.WriteLine();

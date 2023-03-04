@@ -23,6 +23,9 @@ namespace MovieTicket.Views.AdminView.MemberView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AdminListMember;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             SearchModel searchModel = model != null ? (SearchModel)model : new SearchModel() { Page = 1 };
@@ -81,23 +84,23 @@ namespace MovieTicket.Views.AdminView.MemberView
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    _viewFactory.Render(ViewConstant.AdminListMember, model: new SearchModel()
+                    _viewFactory.GetService(ViewConstant.AdminListMember)?.Render(new SearchModel()
                     {
                         Page = page - 1,
                         SearchValue = searchModel.SearchValue,
-                    });
+                    }, previousView);
                     break;
                 case ConsoleKey.RightArrow:
-                    _viewFactory.Render(ViewConstant.AdminListMember, model: new SearchModel()
+                    _viewFactory.GetService(ViewConstant.AdminListMember)?.Render(new SearchModel()
                     {
                         Page = page + 1,
                         SearchValue = searchModel.SearchValue
-                    }); ;
+                    }, previousView);
                     break;
                 case ConsoleKey.F:
                     searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter user's name to search: ");
 
-                    _viewFactory.Render(ViewConstant.AdminListMember, model: new SearchModel()
+                    _viewFactory.GetService(ViewConstant.AdminListMember)?.Render(new SearchModel()
                     {
                         Page = 1,
                         SearchValue = searchModel.SearchValue
@@ -108,22 +111,18 @@ namespace MovieTicket.Views.AdminView.MemberView
 
                     if (id == 0)
                     {
-                        _viewFactory.Render(ViewConstant.AdminListMember, model: new SearchModel()
+                        _viewFactory.GetService(ViewConstant.AdminListMember)?.Render(new SearchModel()
                         {
                             Page = page,
                             SearchValue = searchModel.SearchValue
-                        });
+                        }, previousView);
                         return;
                     }
 
-                    _viewFactory.Render(ViewConstant.AdminMemberDetail, model: id);
+                    _viewFactory.GetService(ViewConstant.AdminMemberDetail)?.Render(id);
                     break;
                 case ConsoleKey.Escape:
-                    if (searchModel.SearchValue != null)
-                        _viewFactory.Render(ViewConstant.AdminListMember);
-                    else
-                        _viewFactory.Render(ViewConstant.AdminHome);
-
+                    _viewFactory.GetService(ViewConstant.AdminHome)?.Render();
                     break;
             }
         }

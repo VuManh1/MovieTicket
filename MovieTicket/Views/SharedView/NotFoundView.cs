@@ -18,10 +18,13 @@ namespace MovieTicket.Views.Shared
         // model: name of view to redirect when press any key.
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.NotFound;
+
             AnsiConsole.Markup($"[{ColorConstant.Error}]Can not find any {model?.ToString()} :(([/], press any key to go back.");
             Console.ReadKey();
 
-            _viewFactory.Render(previousView?.ToString() ?? "");
+            _viewFactory.GetService(previousView ?? "")?.Render();
         }
     }
 }

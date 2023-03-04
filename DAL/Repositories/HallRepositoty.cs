@@ -17,28 +17,25 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("AddHall", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            string query = $"INSERT INTO halls(name, CinemaId, width, height) VALUES" +
+                $"('{entity.Name}', {entity.Cinema.Id}, {entity.Width}, {entity.Height});";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
-			cmd.Parameters.AddWithValue("@CinemaId", entity.Cinema.Id);
-			cmd.Parameters["@CinemaId"].Direction = System.Data.ParameterDirection.Input;
+            cmd.ExecuteNonQuery();
 
-			cmd.Parameters.AddWithValue("@Name", entity.Name);
-			cmd.Parameters["@Name"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@SeatCount", entity.SeatCount);
-			cmd.Parameters["@SeatCount"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.ExecuteNonQuery();
-
-			return Result.OK();
+            return Result.OK();
         }
 
         public Result Delete(Hall entity)
         {
-            throw new NotImplementedException();
+            _dbConnection.OpenConnection();
+
+            string query = $"DELETE FROM Halls WHERE id = {entity.Id};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            cmd.ExecuteNonQuery();
+
+            return Result.OK();
         }
 
         public IEnumerable<Hall> Find(string filter)
@@ -70,7 +67,7 @@ namespace DAL.Repositories
 					Name = reader.GetString("Name"),
 					SeatCount = reader.GetInt32("SeatCount")
 					
-				}); ;
+				});
 			}
 			reader.Close();
 
@@ -106,26 +103,45 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("UpdateHall", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            string query = $"UPDATE Halls SET" +
+                $" name = '{entity.Name}', SeatCount = {entity.SeatCount}, CinemaId = {entity.Cinema.Id}," +
+                $" width = {entity.Width}, height = {entity.Height}" +
+                $" WHERE id = {entity.Id};";
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
-			cmd.Parameters.AddWithValue("@CinemaId", entity.Cinema.Id);
-			cmd.Parameters["@CinemaId"].Direction = System.Data.ParameterDirection.Input;
+            cmd.ExecuteNonQuery();
 
-			cmd.Parameters.AddWithValue("@Name", entity.Name);
-			cmd.Parameters["@Name"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@SeatCount", entity.SeatCount);
-			cmd.Parameters["@SeatCount"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.ExecuteNonQuery();
-
-			return Result.OK();
+            return Result.OK();
         }
-}
+
+        public IEnumerable<Seat> GetSeats(Hall hall)
+        {
+            List<Seat> Seat = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM Seats WHERE HallId = {hall.Id};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Seat.Add(new Seat
+                {
+                    Id = reader.GetInt32("id"),
+                    Position = reader.GetInt32("position"),
+                    SeatRow = reader.GetChar("SeatRow"),
+                    SeatNumber = reader.GetInt32("SeatNumber"),
+                    SeatType = Enum.Parse<SeatType>(reader.GetString("type")),
+                    Price = reader.GetDouble("price"),
+                    Hall = hall
+                });
+            }
+            reader.Close();
+
+            return Seat;
+        }
+    }
 }

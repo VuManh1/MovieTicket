@@ -10,28 +10,84 @@ namespace MovieTicket.Views.AdminView.ShowView
     public class AddShowView : IViewRender
     {
 		private readonly ShowBUS _showBUS;
+		private readonly MovieBUS _movieBUS;
+		private readonly CinemaBUS _cinemaBUS;
         private readonly IViewFactory _viewFactory;
 
-        public AddShowView(ShowBUS showBUS, IViewFactory viewFactory)
+        public AddShowView(
+            ShowBUS showBUS, 
+            MovieBUS movieBUS, 
+            CinemaBUS cinemaBUS, 
+            IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _showBUS = showBUS;
+            _movieBUS = movieBUS;
+            _cinemaBUS = cinemaBUS;
 		}
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AddShow;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            Show show = new();
-
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Show \n[/]");
+
+            // get movie
+            int movieid = AnsiConsole.Ask<int>(" -> Enter movie's id: ");
+            Movie? movie = _movieBUS.GetById(movieid);
+
+            while (movie == null)
+            {
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Can not find movie with id = {movieid}[/]");
+
+                if (!AnsiConsole.Confirm("Continue ? : "))
+                {
+                    _viewFactory.GetService(ViewConstant.AdminHome)?.Render();
+                    return;
+                }
+
+                movieid = AnsiConsole.Ask<int>(" -> Enter movie's id: ");
+                movie = _movieBUS.GetById(movieid);
+            }
             
-            show.Hall.Id = AnsiConsole.Ask<int>(" -> Enter Hall Id: ");
+            // get cinema
+            int cinemaid = AnsiConsole.Ask<int>(" -> Enter cinema's id: ");
+            Cinema? cinema = _cinemaBUS.GetById(cinemaid);
 
-            show.Movie.Id = AnsiConsole.Ask<int>(" -> Enter Movie Id: ");
+            while (cinema == null)
+            {
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Can not find cinema with id = {cinemaid}[/]");
 
-            show.StartTime = AnsiConsole.Ask<DateTime>(" -> Enter Start Time: ");
+                if (!AnsiConsole.Confirm("Continue ? : "))
+                {
+                    _viewFactory.GetService(ViewConstant.AdminHome)?.Render();
+                    return;
+                }
 
+                cinemaid = AnsiConsole.Ask<int>(" -> Enter cinema's id: ");
+                cinema = _cinemaBUS.GetById(cinemaid);
+            }
+
+            List<Hall> halls = _cinemaBUS.GetHalls(cinema);
+            if (halls.Count <= 0)
+            {
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Cinema '{cinema.Name}' doesn't have any hall, create a new[/]" +
+                    $"[{ColorConstant.Error}] one to create a show.[/]");
+
+                Console.ReadKey();
+                _viewFactory.GetService(ViewConstant.AdminHome)?.Render();
+                return;
+            }
+
+            Show show = new()
+            {
+                Movie = movie,
+                Hall = GetHall(halls),
+                StartTime = AnsiConsole.Ask<DateTime>(" -> Enter start time (EX 2-13-2023 14:30:00): ")
+            };
 
             Result result = _showBUS.Create(show);
             if (result.Success)
@@ -39,7 +95,7 @@ namespace MovieTicket.Views.AdminView.ShowView
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Show successful ![/], press any key to go back.");
                 Console.ReadKey();
                
-                _viewFactory.Render(ViewConstant.ManageShow);
+                _viewFactory.GetService(ViewConstant.ManageShow)?.Render();
             }
             else
             {
@@ -47,12 +103,29 @@ namespace MovieTicket.Views.AdminView.ShowView
 
                 if (!AnsiConsole.Confirm("Add again ? : "))
                 {
-                    _viewFactory.Render(ViewConstant.ManageShow);
+                    _viewFactory.GetService(ViewConstant.ManageShow)?.Render();
                     return;
                 }
 
-                _viewFactory.Render(ViewConstant.AddShow);
+                _viewFactory.GetService(ViewConstant.AddShow)?.Render();
             }
+        }
+
+        public Hall GetHall(List<Hall> halls)
+        {
+            List<string> hallsName = halls.Select(h => h.Name).ToList();
+
+            Console.WriteLine();
+
+            // create select hall: 
+            var hall = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("\nChoose a hall: ")
+                    .PageSize(10)
+                    .AddChoices(hallsName)
+                    .HighlightStyle(new Style(Color.PaleGreen3)));
+
+            return halls.First(h => h.Name == hall);
         }
     }
 }

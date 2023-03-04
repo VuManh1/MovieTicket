@@ -61,11 +61,6 @@ namespace BUS
             }
         }
 
-		public Director? FirstOrDefault(string filter)
-		{
-			return _unitOfWork.DirectorRepository.FirstOrDefault(filter);
-		}
-
 		public Director? GetById(int id)
 		{
             return _unitOfWork.DirectorRepository.GetById(id);

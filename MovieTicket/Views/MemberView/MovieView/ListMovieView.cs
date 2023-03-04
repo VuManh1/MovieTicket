@@ -6,25 +6,25 @@ using BUS;
 using SharedLibrary.Models;
 using SharedLibrary.Helpers;
 
-namespace MovieTicket.Views.AdminView.ShowView
+namespace MovieTicket.Views.MemberView.MovieView
 {
-    public class ListShowView : IViewRender
+    public class ListMovieView : IViewRender
     {
         private readonly IViewFactory _viewFactory;
-        private readonly ShowBUS _showBUS;
+        private readonly MovieBUS _movieBUS;
 
-        private const int SHOWS_PER_PAGE = 10;
+        private const int MOVIES_PER_PAGE = 10;
 
-        public ListShowView(IViewFactory viewFactory, ShowBUS showBUS)
+        public ListMovieView(IViewFactory viewFactory, MovieBUS movieBUS)
         {
             _viewFactory = viewFactory;
-            _showBUS = showBUS;
+            _movieBUS = movieBUS;
         }
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
             Console.Clear();
-            Console.Title = ViewConstant.AdminListShow;
+            Console.Title = ViewConstant.MovieList;
 
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
@@ -33,28 +33,28 @@ namespace MovieTicket.Views.AdminView.ShowView
             int page = searchModel.Page;
             if (page <= 0) page = 1;
 
-            List<Show> shows;
+            List<Movie> movies;
             if (searchModel.SearchValue != null) 
             {
                 AnsiConsole.Markup($"[{ColorConstant.Success}]Search for '{searchModel.SearchValue}'[/]\n");
-                shows = _showBUS.Find($"MovieName like '%{searchModel.SearchValue}%' OR CinemaName like '%{searchModel.SearchValue}%'");
+                movies = _movieBUS.Find($"NormalizeName like '%{searchModel.SearchValue}%'");
             }
             else
-                shows = _showBUS.GetAll();
+                movies = _movieBUS.GetAll();
 
 
-            if (shows.Count > 0)
+            if (movies.Count > 0)
             {
-                int numberOfPage = (int)Math.Ceiling((double)shows.Count / SHOWS_PER_PAGE);
+                int numberOfPage = (int)Math.Ceiling((double)movies.Count / MOVIES_PER_PAGE);
 
                 if (page > numberOfPage) page = numberOfPage;
 
-                // get shows by page
-                List<Show> showsToRender = shows.
-                    Skip((page - 1) * SHOWS_PER_PAGE)
-                    .Take(SHOWS_PER_PAGE).ToList();
+                // get movies by page
+                List<Movie> moviesToRender = movies.
+                    Skip((page - 1) * MOVIES_PER_PAGE)
+                    .Take(MOVIES_PER_PAGE).ToList();
 
-                RenderShows(showsToRender);
+                RenderMovies(moviesToRender);
 
                 PagingModel pagingModel = new()
                 {
@@ -67,10 +67,10 @@ namespace MovieTicket.Views.AdminView.ShowView
             }
             else
             {
-                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No show :([/]\n");
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]No movie :([/]\n");
             }
 
-            AnsiConsole.MarkupLine(" * Press [dodgerblue2]'C'[/] to choose a show, [dodgerblue2]'F'[/] to search shows, " +
+            AnsiConsole.MarkupLine(" * Press [dodgerblue2]'C'[/] to choose a movie, [dodgerblue2]'F'[/] to search movies, " +
                 "[red]'ESCAPE'[/] to go back");
             var key = ConsoleHelper.InputKey(new List<ConsoleKey>()
                 {
@@ -84,34 +84,34 @@ namespace MovieTicket.Views.AdminView.ShowView
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    _viewFactory.GetService(ViewConstant.AdminListShow)?.Render(new SearchModel()
+                    _viewFactory.GetService(ViewConstant.MovieList)?.Render(new SearchModel()
                     {
                         Page = page - 1,
                         SearchValue = searchModel.SearchValue,
                     }, previousView);
                     break;
                 case ConsoleKey.RightArrow:
-                    _viewFactory.GetService(ViewConstant.AdminListShow)?.Render(new SearchModel()
+                    _viewFactory.GetService(ViewConstant.MovieList)?.Render(new SearchModel()
                     {
                         Page = page + 1,
                         SearchValue = searchModel.SearchValue
                     }, previousView);
                     break;
                 case ConsoleKey.F:
-                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter movie's name or cinema's name to search: ");
+                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter movie's name to search: ");
 
-                    _viewFactory.GetService(ViewConstant.AdminListShow)?.Render(new SearchModel()
+                    _viewFactory.GetService(ViewConstant.MovieList)?.Render(new SearchModel()
                     {
                         Page = 1,
                         SearchValue = searchModel.SearchValue
-                    }, ViewConstant.AdminListShow);
+                    }, ViewConstant.MovieList);
                     break;
                 case ConsoleKey.C:
-                    int id = AnsiConsole.Ask<int>(" -> Enter show's id (0 to cancel): ");
+                    int id = AnsiConsole.Ask<int>(" -> Enter movie's id (0 to cancel): ");
 
                     if (id == 0)
                     {
-                        _viewFactory.GetService(ViewConstant.AdminListShow)?.Render(new SearchModel()
+                        _viewFactory.GetService(ViewConstant.MovieList)?.Render(new SearchModel()
                         {
                             Page = page,
                             SearchValue = searchModel.SearchValue
@@ -119,33 +119,32 @@ namespace MovieTicket.Views.AdminView.ShowView
                         return;
                     }
 
-                    _viewFactory.GetService(ViewConstant.AdminShowDetail)?.Render(id);
+                    _viewFactory.GetService(ViewConstant.MovieDetail)?.Render(id);
                     break;
                 case ConsoleKey.Escape:
-                    _viewFactory.GetService(previousView ?? ViewConstant.ManageShow)?.Render();
+                    _viewFactory.GetService(previousView ?? ViewConstant.MemberHome)?.Render();
                     break;
             }
         }
 
-        public void RenderShows(List<Show> shows)
+        public void RenderMovies(List<Movie> movies)
         {
             Table table = new()
             {
                 Title = new TableTitle(
-                    "SHOWS", 
+                    "MOVIES", 
                     new Style(Color.PaleGreen3)),
                 Expand = true
             };
-            table.AddColumns("Id", "Movie", "Cinema", "City", "Start Time");
+            table.AddColumns("Id", "Name", "Country", "Status");
 
-            foreach (var show in shows)
+            foreach (var movie in movies)
             {
                 table.AddRow(
-                    show.Id.ToString(),
-                    show.Movie.Name,
-                    show.Hall.Cinema.Name,
-                    show.Hall.Cinema.City?.Name ?? "null",
-                    show.StartTime.ToString("dd-MM-yyyy HH:mm:ss")
+                    movie.Id.ToString(),
+                    movie.Name,
+                    movie.Country ?? "",
+                    movie.MovieStatus.ToString()
                 );
             }
 

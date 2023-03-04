@@ -22,11 +22,14 @@ namespace MovieTicket.Views.AdminView.MovieView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AdminMovieDetail;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             if (model == null)
             {
-                _viewFactory.Render(ViewConstant.NotFound, "movie", ViewConstant.AdminListMovie);
+                _viewFactory.GetService(ViewConstant.NotFound)?.Render("movie", ViewConstant.AdminListMovie);
                 return;
             }
 
@@ -36,7 +39,7 @@ namespace MovieTicket.Views.AdminView.MovieView
 
             if (movie == null)
             {
-                _viewFactory.Render(ViewConstant.NotFound, "movie", ViewConstant.AdminListMovie);
+                _viewFactory.GetService(ViewConstant.NotFound)?.Render("movie", ViewConstant.AdminListMovie);
                 return;
             }
 
@@ -68,21 +71,21 @@ namespace MovieTicket.Views.AdminView.MovieView
             switch (selection)
             {
                 case "Go Back":
-                    _viewFactory.Render(ViewConstant.AdminListMovie);
+                    _viewFactory.GetService(ViewConstant.AdminListMovie)?.Render();
                     return;
                 case "Delete this movie":
                     if (!AnsiConsole.Confirm("Delete this movie ? : "))
                     {
-                        _viewFactory.Render(ViewConstant.AdminMovieDetail, movie.Id);
+                        _viewFactory.GetService(ViewConstant.AdminMovieDetail)?.Render(movie.Id);
                         return;
                     }
 
                     Result deleteResult = _movieBUS.Delete(movie);
 
                     if (deleteResult.Success)
-                        _viewFactory.Render(ViewConstant.AdminListMovie);
+                        _viewFactory.GetService(ViewConstant.AdminListMovie)?.Render();
                     else
-                        _viewFactory.Render(ViewConstant.AdminMovieDetail, movie.Id, statusMessage: "Error !, " + deleteResult.Message);
+                        _viewFactory.GetService(ViewConstant.AdminMovieDetail)?.Render(movie.Id, statusMessage: "Error !, " + deleteResult.Message);
 
                     return;
                 case "Change Name":
@@ -117,9 +120,9 @@ namespace MovieTicket.Views.AdminView.MovieView
             Result result = _movieBUS.Update(movie);
 
             if (result.Success)
-                _viewFactory.Render(ViewConstant.AdminMovieDetail, movie.Id, statusMessage: "Successful change movie detail !");
+                _viewFactory.GetService(ViewConstant.AdminMovieDetail)?.Render(movie.Id, statusMessage: "Successful change movie detail !");
             else
-                _viewFactory.Render(ViewConstant.AdminMovieDetail, movie.Id, statusMessage: "Error !, " + result.Message);
+                _viewFactory.GetService(ViewConstant.AdminMovieDetail)?.Render(movie.Id, statusMessage: "Error !, " + result.Message);
         }
 
         public string? GetGenres()

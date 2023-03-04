@@ -11,17 +11,20 @@ namespace MovieTicket.Views.Authentication
 {
 	public class LoginView : IViewRender
 	{
-		private readonly AuthenticationBUS _authenticationBus;
+		private readonly AuthenticationBUS _authenticationBUS;
 		private readonly IViewFactory _viewFactory;
 
-		public LoginView(AuthenticationBUS authenticationBus, IViewFactory viewFactory)
+		public LoginView(AuthenticationBUS authenticationBUS, IViewFactory viewFactory)
 		{
-			_authenticationBus = authenticationBus;
+			_authenticationBUS = authenticationBUS;
 			_viewFactory = viewFactory;
 		}
 
 		public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
 		{
+			Console.Clear();
+			Console.Title = ViewConstant.Login;
+
             _viewFactory.GetService(ViewConstant.Logo)?.Render();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Login\n[/]");
@@ -32,7 +35,7 @@ namespace MovieTicket.Views.Authentication
 
 			if (email == "<forgot>")
 			{
-				_viewFactory.Render(ViewConstant.ForgotPassword);
+				_viewFactory.GetService(ViewConstant.ForgotPassword)?.Render();
 				return;
 			}
 
@@ -51,7 +54,7 @@ namespace MovieTicket.Views.Authentication
 
 			if (password == "<forgot>")
 			{
-				_viewFactory.Render(ViewConstant.ForgotPassword);
+				_viewFactory.GetService(ViewConstant.ForgotPassword)?.Render();
 				return;
 			}
 
@@ -66,7 +69,7 @@ namespace MovieTicket.Views.Authentication
 						.Secret());
 			}
 
-			Result result = _authenticationBus.Login(email, password);
+			Result result = _authenticationBUS.Login(email, password);
 			if (result.Success)
 			{
 				User? user = (User?)result.Model;
@@ -77,11 +80,12 @@ namespace MovieTicket.Views.Authentication
 
 				if (user.Role == Role.Admin)
 				{
-					_viewFactory.Render(ViewConstant.AdminHome);
+					_viewFactory.GetService(ViewConstant.AdminHome)?.Render();
 					return;
 				}
 				else if (user.Role == Role.Member)
 				{
+					_viewFactory.GetService(ViewConstant.MemberHome)?.Render();
 					return;
 				}
 			}
@@ -91,11 +95,11 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewFactory.Render(ViewConstant.Start);
+					_viewFactory.GetService(ViewConstant.Start)?.Render();
 					return;
 				}
 
-				_viewFactory.Render(ViewConstant.Login);
+				_viewFactory.GetService(ViewConstant.Login)?.Render();
 			}
 		}
 	}

@@ -61,11 +61,6 @@ namespace BUS
             }
         }
 
-		public Cast? FirstOrDefault(string filter)
-		{
-			return _unitOfWork.CastRepository.FirstOrDefault(filter);
-		}
-
 		public Cast? GetById(int id)
 		{
             return _unitOfWork.CastRepository.GetById(id);

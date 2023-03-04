@@ -58,9 +58,8 @@ namespace BUS
 			{
 				user = _unitOfWork.UserRepository.FirstOrDefault($"email = '{email}'");
 			}
-			catch(Exception e)
+			catch
 			{
-				Console.WriteLine(e);
 				return Result.NetworkError();
 			}
 

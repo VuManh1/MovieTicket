@@ -1,4 +1,5 @@
 using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
 using SharedLibrary;
 using SharedLibrary.DTO;
 
@@ -17,52 +18,39 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("AddSeat", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            string query = $"INSERT INTO seats(SeatRow, SeatNumber, position, type, price, HallId) VALUES" +
+                $"('{entity.SeatRow}', {entity.SeatNumber}, {entity.Position}, '{entity.SeatType}'," +
+				$" @price, {entity.Hall.Id});";
 
-			cmd.Parameters.AddWithValue("@SeatNumber", entity.SeatNumber);
-			cmd.Parameters["@SeatNumber"].Direction = System.Data.ParameterDirection.Input;
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+            cmd.Parameters.AddWithValue("@price", entity.Price);
+            cmd.ExecuteNonQuery();
 
-			cmd.Parameters.AddWithValue("@SeatType", entity.SeatType);
-			cmd.Parameters["@SeatType"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.Clear();
+            cmd.CommandText = "SELECT MAX(id) FROM seats;";
+            
+            MySqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
 
-            cmd.Parameters.AddWithValue("@Price", entity.Price);
-			cmd.Parameters["@Price"].Direction = System.Data.ParameterDirection.Input;
+            int seatid = reader.GetInt32("MAX(id)");
+            entity.Id = seatid;
 
-			cmd.Parameters.AddWithValue("@Hall", entity.Hall.Id);
-			cmd.Parameters["@Hall"].Direction = System.Data.ParameterDirection.Input;
+            reader.Close();
 
-			cmd.ExecuteNonQuery();
-
-			return Result.OK();
+            return Result.OK(seatid);
         }
 
         public Result Delete(Seat entity)
         {
             _dbConnection.OpenConnection();
 
-			string query = "delete FROM Seats WHERE id = {id};";
+			string query = $"delete FROM Seats WHERE id = {entity.Id};";
 			MySqlCommand cmd = new(query, _dbConnection.Connection);
 
             cmd.ExecuteNonQuery();
 
 			return Result.OK();
         }
-
-		public string test()
-		{
-			_dbConnection.OpenConnection();
-
-			string query = "SELECT * FROM Seats;";
-			MySqlCommand cmd = new(query, _dbConnection.Connection);
-
-			MySqlDataReader reader = cmd.ExecuteReader();
-
-
-			return "";
-		}
 
         public IEnumerable<Seat> GetAll()
         {
@@ -80,10 +68,12 @@ namespace DAL.Repositories
 				Seat.Add(new Seat
 				{
 					Id = reader.GetInt32("id"),
+					Position = reader.GetInt32("position"),
+                    SeatRow = reader.GetChar("SeatRow"),
 					SeatNumber = reader.GetInt32("SeatNumber"),
 					SeatType = Enum.Parse<SeatType>(reader.GetString("SeatType")),
-                    Price = reader.GetDouble("Price")
-				}); ;
+                    Price = reader.GetDouble("price")
+				});
 			}
 			reader.Close();
 
@@ -119,29 +109,16 @@ namespace DAL.Repositories
         {
             _dbConnection.OpenConnection();
 
-			MySqlCommand cmd = new("UpdateSeat", _dbConnection.Connection)
-			{
-				CommandType = System.Data.CommandType.StoredProcedure
-			};
+            string query = $"UPDATE Seats SET" +
+                $" SeatRow = '{entity.SeatRow}', SeatNumber = {entity.SeatNumber}, position = {entity.Position}," +
+                $" type = '{entity.SeatType}', price = {entity.Price}, HallId = {entity.Hall.Id}" +
+                $" WHERE id = {entity.Id};";
 
-			cmd.Parameters.AddWithValue("@id", entity.Id);
-			cmd.Parameters["@id"].Direction = System.Data.ParameterDirection.Input;
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
 
-			cmd.Parameters.AddWithValue("@SeatNumber", entity.SeatNumber);
-			cmd.Parameters["@SeatNumber"].Direction = System.Data.ParameterDirection.Input;
+            cmd.ExecuteNonQuery();
 
-			cmd.Parameters.AddWithValue("@SeatType", entity.SeatType);
-			cmd.Parameters["@SeatType"].Direction = System.Data.ParameterDirection.Input;
-
-            cmd.Parameters.AddWithValue("@Price", entity.Price);
-			cmd.Parameters["@Price"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.Parameters.AddWithValue("@Hall", entity.Hall.Id);
-			cmd.Parameters["@Hall"].Direction = System.Data.ParameterDirection.Input;
-
-			cmd.ExecuteNonQuery();
-
-			return Result.OK();
+            return Result.OK();
         }
 
         public Seat? FirstOrDefault(string filter)

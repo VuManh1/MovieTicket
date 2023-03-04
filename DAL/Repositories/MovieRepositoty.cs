@@ -44,6 +44,7 @@ namespace DAL.Repositories
 
             // get id of movie
             int id = (int)cmd.Parameters["@movieid"].Value;
+            entity.Id = id;
 
             return Result.OK(id);
         }

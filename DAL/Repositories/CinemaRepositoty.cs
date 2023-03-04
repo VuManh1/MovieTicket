@@ -18,7 +18,7 @@ namespace DAL.Repositories
             _dbConnection.OpenConnection();
 
             string query = "INSERT INTO cinemas(name, HallCount, address, CityId) VALUES" +
-                $"('{entity.Name}', {entity.HallCount}, '{entity.Address}', {entity.City?.Id})";
+                $"('{entity.Name}', {entity.HallCount}, '{entity.Address}', {entity.City?.Id});";
 
             MySqlCommand cmd = new(query, _dbConnection.Connection);
 
@@ -220,7 +220,9 @@ namespace DAL.Repositories
                     Id = reader.GetInt32("id"),
                     Name = reader.GetString("name"),
                     SeatCount = reader.GetInt32("SeatCount"),
-                    Cinema = cinema
+                    Cinema = cinema,
+                    Width = reader.GetInt32("width"),
+                    Height = reader.GetInt32("height")
                 });
             }
             reader.Close();

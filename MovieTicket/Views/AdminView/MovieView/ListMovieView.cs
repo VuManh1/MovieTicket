@@ -23,6 +23,9 @@ namespace MovieTicket.Views.AdminView.MovieView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AdminListMovie;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             SearchModel searchModel = model != null ? (SearchModel)model : new SearchModel() { Page = 1 };
@@ -81,23 +84,23 @@ namespace MovieTicket.Views.AdminView.MovieView
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    _viewFactory.Render(ViewConstant.AdminListMovie, new SearchModel()
+                    _viewFactory.GetService(ViewConstant.AdminListMovie)?.Render(new SearchModel()
                     {
                         Page = page - 1,
                         SearchValue = searchModel.SearchValue,
-                    });
+                    }, previousView);
                     break;
                 case ConsoleKey.RightArrow:
-                    _viewFactory.Render(ViewConstant.AdminListMovie, new SearchModel()
+                    _viewFactory.GetService(ViewConstant.AdminListMovie)?.Render(new SearchModel()
                     {
                         Page = page + 1,
                         SearchValue = searchModel.SearchValue
-                    }); ;
+                    }, previousView);
                     break;
                 case ConsoleKey.F:
                     searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter movie's name to search: ");
 
-                    _viewFactory.Render(ViewConstant.AdminListMovie, new SearchModel()
+                    _viewFactory.GetService(ViewConstant.AdminListMovie)?.Render(new SearchModel()
                     {
                         Page = 1,
                         SearchValue = searchModel.SearchValue
@@ -108,22 +111,18 @@ namespace MovieTicket.Views.AdminView.MovieView
 
                     if (id == 0)
                     {
-                        _viewFactory.Render(ViewConstant.AdminListMovie, new SearchModel()
+                        _viewFactory.GetService(ViewConstant.AdminListMovie)?.Render(new SearchModel()
                         {
                             Page = page,
                             SearchValue = searchModel.SearchValue
-                        });
+                        }, previousView);
                         return;
                     }
 
-                    _viewFactory.Render(ViewConstant.AdminMovieDetail, id);
+                    _viewFactory.GetService(ViewConstant.AdminMovieDetail)?.Render(id);
                     break;
                 case ConsoleKey.Escape:
-                    if(previousView != null)
-                        _viewFactory.Render(previousView);
-                    else
-                        _viewFactory.Render(ViewConstant.ManageMovie);
-
+                    _viewFactory.GetService(previousView ?? ViewConstant.ManageMovie)?.Render();
                     break;
             }
         }

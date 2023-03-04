@@ -11,22 +11,25 @@ namespace MovieTicket.Views.AdminView.CinemaView
     {
 		private readonly CinemaBUS _cinemaBUS;
         private readonly IViewFactory _viewFactory;
-        private readonly CityBUS _cityBus;
+        private readonly CityBUS _cityBUS;
 
-        public CinemaDetailView(CinemaBUS cinemaBUS, CityBUS cityBus, IViewFactory viewFactory)
+        public CinemaDetailView(CinemaBUS cinemaBUS, CityBUS cityBUS, IViewFactory viewFactory)
 		{
 			_viewFactory = viewFactory;
             _cinemaBUS = cinemaBUS;
-            _cityBus = cityBus;
+            _cityBUS = cityBUS;
 		}
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AdminCinemaDetail;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             if (model == null)
             {
-                _viewFactory.Render(ViewConstant.NotFound, "cinema", ViewConstant.AdminListCinema);
+                _viewFactory.GetService(ViewConstant.NotFound)?.Render("cinema", ViewConstant.AdminListCinema);
                 return;
             }
 
@@ -36,7 +39,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
 
             if (cinema == null)
             {
-                _viewFactory.Render(ViewConstant.NotFound, "cinema", ViewConstant.AdminListCinema);
+                _viewFactory.GetService(ViewConstant.NotFound)?.Render("cinema", ViewConstant.AdminListCinema);
                 return;
             }
 
@@ -54,40 +57,37 @@ namespace MovieTicket.Views.AdminView.CinemaView
 
             // create select: 
             var selection = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
-                        .Title("Choose a action: ")
-                        .PageSize(10)
-                        .AddChoices(new[] {
-                        "Go Back", "Delete this cinema", "Add a hall", "Delete a hall",
+                new SelectionPrompt<string>()
+                    .Title("Choose a action: ")
+                    .PageSize(10)
+                    .AddChoices(new[] {
+                        "Go Back", "Delete this cinema", "Manage Halls",
                         "Change Name", "Change Number Of Halls", "Change Address", "Change City"
-                        })
-                        .HighlightStyle(new Style(Color.PaleGreen3)));
+                    })
+                    .HighlightStyle(new Style(Color.PaleGreen3)));
 
 
             switch (selection)
             {
                 case "Go Back":
-                    _viewFactory.Render(ViewConstant.AdminListCinema);
+                    _viewFactory.GetService(ViewConstant.AdminListCinema)?.Render();
                     return;
-                case "Add a hall":
-                    _viewFactory.Render(ViewConstant.AdminListCinema);
-                    return;
-                case "Delete a hall":
-                    _viewFactory.Render(ViewConstant.AdminListCinema);
+                case "Manage Halls":
+                    _viewFactory.GetService(ViewConstant.ManageHall)?.Render(cinema.Id, ViewConstant.AdminCinemaDetail);
                     return;
                 case "Delete this cinema":
                     if (!AnsiConsole.Confirm("Delete this cinema ? : "))
                     {
-                        _viewFactory.Render(ViewConstant.AdminCinemaDetail, model:cinema.Id);
+                        _viewFactory.GetService(ViewConstant.AdminCinemaDetail)?.Render(cinema.Id);
                         return;
                     }
 
                     Result deleteResult = _cinemaBUS.Delete(cinema);
 
                     if (deleteResult.Success)
-                        _viewFactory.Render(ViewConstant.AdminListCinema);
+                        _viewFactory.GetService(ViewConstant.AdminListCinema)?.Render();
                     else
-                        _viewFactory.Render(ViewConstant.AdminCinemaDetail, cinema.Id, statusMessage: "Error !, " + deleteResult.Message);
+                        _viewFactory.GetService(ViewConstant.AdminCinemaDetail)?.Render(cinema.Id, statusMessage: "Error !, " + deleteResult.Message);
 
                     return;
                 case "Change Name":
@@ -107,14 +107,14 @@ namespace MovieTicket.Views.AdminView.CinemaView
             Result result = _cinemaBUS.Update(cinema);
 
             if (result.Success)
-                _viewFactory.Render(ViewConstant.AdminCinemaDetail, cinema.Id, statusMessage: "Successful change cinema detail !");
+                _viewFactory.GetService(ViewConstant.AdminCinemaDetail)?.Render(cinema.Id, statusMessage: "Successful change cinema detail !");
             else
-                _viewFactory.Render(ViewConstant.AdminCinemaDetail, cinema.Id, statusMessage: "Error !, " + result.Message);
+                _viewFactory.GetService(ViewConstant.AdminCinemaDetail)?.Render(cinema.Id, statusMessage: "Error !, " + result.Message);
         }
 
         public City? GetCity()
         {
-            List<string> cities = _cityBus.GetAll().Select(c => c.Name).ToList();
+            List<string> cities = _cityBUS.GetAll().Select(c => c.Name).ToList();
             cities.Insert(0, "Skip");
 
             Console.WriteLine();
@@ -127,7 +127,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
                     .AddChoices(cities)
                     .HighlightStyle(new Style(Color.PaleGreen3)));
 
-            return city != "Skip" ? _cityBus.FirstOrDefault($"name = '{city}'") : null;
+            return city != "Skip" ? _cityBUS.FirstOrDefault($"name = '{city}'") : null;
         }
 
         public void RenderCinemaInfo(Cinema cinema)

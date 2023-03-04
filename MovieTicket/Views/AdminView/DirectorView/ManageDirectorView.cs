@@ -15,6 +15,9 @@ namespace MovieTicket.Views.AdminView.DirectorView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.ManageDirector;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
             _viewFactory.GetService(ViewConstant.Logo)?.Render("[Manage Director]");
         
@@ -31,13 +34,13 @@ namespace MovieTicket.Views.AdminView.DirectorView
 			switch (selection)
 			{
 				case "Add Director":
-                    _viewFactory.Render(ViewConstant.AddDirector);
+                    _viewFactory.GetService(ViewConstant.AddDirector)?.Render();
 					break;
                 case "Show All Directors":
-                    _viewFactory.Render(ViewConstant.AdminListDirector);
+                    _viewFactory.GetService(ViewConstant.AdminListDirector)?.Render();
                     break;
 				case "Back":
-					_viewFactory.Render(ViewConstant.AdminHome);
+					_viewFactory.GetService(ViewConstant.AdminHome)?.Render();
 					break;
 			}
         }

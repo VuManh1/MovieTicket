@@ -64,11 +64,6 @@ namespace BUS
             }
         }
 
-        public Cinema? FirstOrDefault(string filter)
-		{
-			return _unitOfWork.CinemaRepository.FirstOrDefault(filter);
-		}
-
 		public Cinema? GetById(int id)
 		{
             try
@@ -83,7 +78,14 @@ namespace BUS
 
 		public Result Update(Cinema entity)
 		{
-			return _unitOfWork.CinemaRepository.Update(entity);
+            try
+            {
+			    return _unitOfWork.CinemaRepository.Update(entity);
+            }
+            catch
+            {
+                return Result.NetworkError();
+            }
 		}
 
         public List<Hall> GetHalls(Cinema cinema)
@@ -95,6 +97,92 @@ namespace BUS
             catch
             {
                 return new List<Hall>();
+            }
+        }
+
+        public List<Seat> GetSeats(Hall hall)
+        {
+            try
+            {
+                return _unitOfWork.HallRepository.GetSeats(hall).ToList();
+            }
+            catch
+            {
+                return new List<Seat>();
+            }
+        }
+
+        public Result CreateHall(Hall hall)
+        {
+            try
+            {
+			    return _unitOfWork.HallRepository.Create(hall);
+            }
+            catch
+            {
+                return Result.NetworkError();
+            }
+        }
+
+        public Result CreateSeat(Seat seat)
+        {
+            _unitOfWork.BeginTransaction();
+            try
+            {
+                Result result = _unitOfWork.SeatRepository.Create(seat);
+
+                List<Show> shows = _unitOfWork.ShowRepository.Find($"HallId = {seat.Hall.Id}").ToList();
+
+                // Add to showseat table
+                foreach (Show show in shows)
+                {
+                    _unitOfWork.ShowRepository.AddToShowSeat(show, new List<Seat>() { seat });
+                }
+
+                _unitOfWork.CommitTransaction();
+            }
+            catch
+            {
+                _unitOfWork.RollBack();
+                return Result.NetworkError();
+            }
+
+            return Result.OK();
+        }
+
+        public Result DeleteSeat(Seat seat)
+        {
+            try
+            {
+                return _unitOfWork.SeatRepository.Delete(seat);
+            }
+            catch
+            {
+                return Result.NetworkError();
+            }
+        }
+
+        public Result UpdateHall(Hall hall)
+        {
+            try
+            {
+                return _unitOfWork.HallRepository.Update(hall);
+            }
+            catch
+            {
+                return Result.NetworkError();
+            }
+        }
+
+        public Result DeleteHall(Hall hall)
+        {
+            try
+            {
+                return _unitOfWork.HallRepository.Delete(hall);
+            }
+            catch
+            {
+                return Result.NetworkError();
             }
         }
     }

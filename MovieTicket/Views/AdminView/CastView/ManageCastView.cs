@@ -15,6 +15,9 @@ namespace MovieTicket.Views.AdminView.CastView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.ManageCast;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
             _viewFactory.GetService(ViewConstant.Logo)?.Render("[Manage Cast]");
         
@@ -31,13 +34,13 @@ namespace MovieTicket.Views.AdminView.CastView
 			switch (selection)
 			{
 				case "Add Cast":
-                    _viewFactory.Render(ViewConstant.AddCast);
+                    _viewFactory.GetService(ViewConstant.AddCast)?.Render();
 					break;
                 case "Show All Casts":
-                    _viewFactory.Render(ViewConstant.AdminListCast);
+                    _viewFactory.GetService(ViewConstant.AdminListCast)?.Render();
                     break;
 				case "Back":
-					_viewFactory.Render(ViewConstant.AdminHome);
+					_viewFactory.GetService(ViewConstant.AdminHome)?.Render();
 					break;
 			}
         }

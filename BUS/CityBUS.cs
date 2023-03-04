@@ -13,15 +13,6 @@ namespace BUS
 			_unitOfWork = unitOfWork;
 		}
 
-		public Result Create(City City)
-		{
-			return _unitOfWork.CityRepository.Create(City);
-		}
-
-		public void Delete(string id)
-		{
-		}
-
 		public List<City> GetAll()
 		{
 			return _unitOfWork.CityRepository.GetAll().ToList();
@@ -31,14 +22,5 @@ namespace BUS
 		{
 			return _unitOfWork.CityRepository.FirstOrDefault(filter);
 		}
-
-		public void GetById(string id)
-		{
-		}
-
-		public Result Update(City entity)
-		{
-			return _unitOfWork.CityRepository.Update(entity);
-		}
-}
+	}
 }

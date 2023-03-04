@@ -89,8 +89,6 @@ namespace BUS
 			{
                 Result result = _unitOfWork.MovieRepository.Create(movie);
 
-				movie.Id = (int)(result.Model ?? 0);
-
 				if (genres != null) _unitOfWork.MovieRepository.AddToMovieGenre(movie, genres);
 				if (casts != null) _unitOfWork.MovieRepository.AddToMovieCast(movie, casts);
                 if (directors != null) _unitOfWork.MovieRepository.AddToMovieDirector(movie, directors);
@@ -108,7 +106,14 @@ namespace BUS
 
         public List<Movie> Find(string filter)
         {
-            return _unitOfWork.MovieRepository.Find(filter).ToList();
+            try
+            {
+                return _unitOfWork.MovieRepository.Find(filter).ToList();
+            }
+            catch
+            {
+                return new List<Movie>();
+            }
         }
 
 		public Result Delete(Movie movie)
@@ -127,11 +132,6 @@ namespace BUS
 		public List<Movie> GetAll()
 		{
 			return _unitOfWork.MovieRepository.GetAll().ToList();
-		}
-
-		public void FirstOrDefault(string filter)
-		{
-			_unitOfWork.MovieRepository.FirstOrDefault(filter);
 		}
 
 		public Movie? GetById(int id)

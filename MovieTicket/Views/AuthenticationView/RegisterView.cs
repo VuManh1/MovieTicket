@@ -11,19 +11,22 @@ namespace MovieTicket.Views.Authentication
 {
 	public class RegisterView : IViewRender
 	{
-		private readonly AuthenticationBUS _authenticationBus;
-		private readonly CityBUS _cityBus;
+		private readonly AuthenticationBUS _authenticationBUS;
+		private readonly CityBUS _cityBUS;
 		private readonly IViewFactory _viewFactory;
 
-		public RegisterView(AuthenticationBUS authenticationBus, IViewFactory viewFactory, CityBUS cityBus)
+		public RegisterView(AuthenticationBUS authenticationBUS, IViewFactory viewFactory, CityBUS cityBUS)
 		{
-			_authenticationBus = authenticationBus;
+			_authenticationBUS = authenticationBUS;
 			_viewFactory = viewFactory;
-			_cityBus = cityBus;
+			_cityBUS = cityBUS;
 		}
 
 		public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
 		{
+            Console.Clear();
+            Console.Title = ViewConstant.ForgotPassword;
+
             _viewFactory.GetService(ViewConstant.Logo)?.Render();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Register\n[/]");
@@ -60,33 +63,31 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewFactory.Render(ViewConstant.Start);
+					_viewFactory.GetService(ViewConstant.Start)?.Render();
 					return;
 				}
 
-				_viewFactory.Render(ViewConstant.Register);
+				_viewFactory.GetService(ViewConstant.Register)?.Render();
 				return;
 			}
 
 			// Input phonenumber
 			string? phoneNumber = AnsiConsole.Ask<string>(" -> Enter phone number (0 to skip): ");
-			if(phoneNumber == "0")
+            // check phonenumber
+            while (!ValidationHelper.CheckPhoneNumber(phoneNumber) && phoneNumber != "0")
+            {
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Invalid phone number ![/]");
+                phoneNumber = AnsiConsole.Ask<string>(" -> Enter phone number (0 to skip): ");
+            }
+
+            if (phoneNumber == "0")
 			{
 				phoneNumber = null;
-			}
-			else
-			{
-				// check email
-				while (!ValidationHelper.CheckPhoneNumber(phoneNumber))
-				{
-					AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Invalid phone number ![/]");
-					phoneNumber = AnsiConsole.Ask<string>(" -> Enter phone number (0 to skip): ");
-				}
 			}
 
 			// Get city
 			string cityName = GetCity();
-			City? city = cityName != "Skip" ? _cityBus.FirstOrDefault($"name = '{cityName}'") : null;
+			City? city = cityName != "Skip" ? _cityBUS.FirstOrDefault($"name = '{cityName}'") : null;
 
 			User user = new()
 			{
@@ -98,29 +99,29 @@ namespace MovieTicket.Views.Authentication
 			};
 
 			// register
-			Result result = _authenticationBus.Register(user);
+			Result result = _authenticationBUS.Register(user);
 			if (result.Success)
 			{
-				SignInManager.SignIn(user);
-				Console.WriteLine("Đăng ký thành công !");
-			}
-			else
+                SignInManager.SignIn(user);
+                _viewFactory.GetService(ViewConstant.MemberHome)?.Render();
+            }
+            else
 			{
 				AnsiConsole.MarkupLine($"[{ColorConstant.Error}]{result.Message}[/]");
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewFactory.Render(ViewConstant.Start);
+					_viewFactory.GetService(ViewConstant.Start)?.Render();
 					return;
 				}
 
-				_viewFactory.Render(ViewConstant.Register);
+				_viewFactory.GetService(ViewConstant.Register)?.Render();
 			}
 		}
 
 		public string GetCity()
 		{
-			List<string> cities = _cityBus.GetAll().Select(c => c.Name).ToList();
+			List<string> cities = _cityBUS.GetAll().Select(c => c.Name).ToList();
 			cities.Insert(0, "Skip");
 
 			Console.WriteLine();

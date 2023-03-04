@@ -16,6 +16,9 @@ namespace MovieTicket.Views.AdminView.CinemaView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.ManageCinema;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
             _viewFactory.GetService(ViewConstant.Logo)?.Render("[Manage Cinema]");
         
@@ -32,13 +35,13 @@ namespace MovieTicket.Views.AdminView.CinemaView
 			switch (selection)
 			{
 				case "Add Cinema":
-                    _viewFactory.Render(ViewConstant.AddCinema);
+                    _viewFactory.GetService(ViewConstant.AddCinema)?.Render();
 					break;
                 case "Show All Cinemas":
-                    _viewFactory.Render(ViewConstant.AdminListCinema);
+                    _viewFactory.GetService(ViewConstant.AdminListCinema)?.Render();
                     break;
 				case "Back":
-					_viewFactory.Render(ViewConstant.AdminHome);
+					_viewFactory.GetService(ViewConstant.AdminHome)?.Render();
 					break;
 			}
         }

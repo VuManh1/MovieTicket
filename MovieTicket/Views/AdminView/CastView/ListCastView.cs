@@ -23,6 +23,9 @@ namespace MovieTicket.Views.AdminView.CastView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AdminListCast;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             SearchModel searchModel = model != null ? (SearchModel)model : new SearchModel() { Page = 1 };
@@ -60,7 +63,7 @@ namespace MovieTicket.Views.AdminView.CastView
                 };
 
                 // render pagination
-                _viewFactory.GetService(ViewConstant.Paging)?.Render(model: pagingModel);
+                _viewFactory.GetService(ViewConstant.Paging)?.Render(pagingModel);
             }
             else
             {
@@ -81,23 +84,23 @@ namespace MovieTicket.Views.AdminView.CastView
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
-                    _viewFactory.Render(ViewConstant.AdminListCast, model: new SearchModel()
+                    _viewFactory.GetService(ViewConstant.AdminListCast)?.Render(new SearchModel()
                     {
                         Page = page - 1,
                         SearchValue = searchModel.SearchValue,
-                    });
+                    }, previousView);
                     break;
                 case ConsoleKey.RightArrow:
-                    _viewFactory.Render(ViewConstant.AdminListCast, model: new SearchModel()
+                    _viewFactory.GetService(ViewConstant.AdminListCast)?.Render(new SearchModel()
                     {
                         Page = page + 1,
                         SearchValue = searchModel.SearchValue
-                    }); ;
+                    }, previousView);
                     break;
                 case ConsoleKey.F:
                     searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter cast's name to search: ");
 
-                    _viewFactory.Render(ViewConstant.AdminListCast, model: new SearchModel()
+                    _viewFactory.GetService(ViewConstant.AdminListCast)?.Render(new SearchModel()
                     {
                         Page = 1,
                         SearchValue = searchModel.SearchValue
@@ -108,22 +111,18 @@ namespace MovieTicket.Views.AdminView.CastView
 
                     if (id == 0)
                     {
-                        _viewFactory.Render(ViewConstant.AdminListCast, model: new SearchModel()
+                        _viewFactory.GetService(ViewConstant.AdminListCast)?.Render(new SearchModel()
                         {
                             Page = page,
                             SearchValue = searchModel.SearchValue
-                        });
+                        }, previousView);
                         return;
                     }
 
-                    _viewFactory.Render(ViewConstant.AdminCastDetail, model: id);
+                    _viewFactory.GetService(ViewConstant.AdminCastDetail)?.Render(id);
                     break;
                 case ConsoleKey.Escape:
-                    if (searchModel.SearchValue != null)
-                        _viewFactory.Render(ViewConstant.AdminListCast);
-                    else
-                        _viewFactory.Render(ViewConstant.ManageCast);
-
+                    _viewFactory.GetService(previousView ?? ViewConstant.ManageCast)?.Render();
                     break;
             }
         }

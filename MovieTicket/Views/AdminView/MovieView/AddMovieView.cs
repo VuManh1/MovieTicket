@@ -22,6 +22,9 @@ namespace MovieTicket.Views.AdminView.MovieView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AddMovie;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Movie \n[/]");
@@ -69,7 +72,7 @@ namespace MovieTicket.Views.AdminView.MovieView
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add movie successful ![/], press any key to go back.");
                 Console.ReadKey();
                
-                _viewFactory.Render(ViewConstant.ManageMovie);
+                _viewFactory.GetService(ViewConstant.ManageMovie)?.Render();
             }
             else
             {
@@ -77,11 +80,11 @@ namespace MovieTicket.Views.AdminView.MovieView
 
                 if (!AnsiConsole.Confirm("Add again ? : "))
                 {
-                    _viewFactory.Render(ViewConstant.ManageMovie);
+                    _viewFactory.GetService(ViewConstant.ManageMovie)?.Render();
                     return;
                 }
 
-                _viewFactory.Render(ViewConstant.AddMovie);
+                _viewFactory.GetService(ViewConstant.AddMovie)?.Render();
             }
         }
 

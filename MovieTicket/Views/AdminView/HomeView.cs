@@ -16,6 +16,9 @@ namespace MovieTicket.Views.AdminView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AdminHome;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
             _viewFactory.GetService(ViewConstant.Logo)?.Render("[Admin Menu]");
 
@@ -34,27 +37,27 @@ namespace MovieTicket.Views.AdminView
 			switch (selection)
 			{
 				case "Manage Movies":
-                    _viewFactory.Render(ViewConstant.ManageMovie);
+                    _viewFactory.GetService(ViewConstant.ManageMovie)?.Render();
 					break;
 				case "Manage Shows":
-                    _viewFactory.Render(ViewConstant.ManageShow);
+                    _viewFactory.GetService(ViewConstant.ManageShow)?.Render();
                     break;
                 case "Manage Cinemas":
-                    _viewFactory.Render(ViewConstant.ManageCinema);
+                    _viewFactory.GetService(ViewConstant.ManageCinema)?.Render();
                     break;
                 case "Manage Members":
-                    _viewFactory.Render(ViewConstant.AdminListMember);
+                    _viewFactory.GetService(ViewConstant.AdminListMember)?.Render();
                     break;
                 case "Manage Casts":
-                    _viewFactory.Render(ViewConstant.ManageCast);
+                    _viewFactory.GetService(ViewConstant.ManageCast)?.Render();
                     break;
                 case "Manage Directors":
-                    _viewFactory.Render(ViewConstant.ManageDirector);
+                    _viewFactory.GetService(ViewConstant.ManageDirector)?.Render();
                     break;
                 case "Logout":
 					SignInManager.Logout();
 
-					_viewFactory.Render(ViewConstant.Start);
+					_viewFactory.GetService(ViewConstant.Start)?.Render();
 					break;
 			}
         }

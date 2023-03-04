@@ -1,6 +1,7 @@
 ﻿using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
+using SharedLibrary.Helpers;
 
 namespace BUS
 {
@@ -26,36 +27,35 @@ namespace BUS
 			}
 		}
 
-		public List<User> GetAll()
-		{
-            try
-            {
-                return _unitOfWork.UserRepository.GetAll().ToList();
-            }
-            catch
-            {
-                return new List<User>();
-            }
-        }
-
         public List<User> Find(string filter)
         {
             return _unitOfWork.UserRepository.Find(filter).ToList();
         }
 
-        public void FirstOrDefault(string filter)
-		{
-			_unitOfWork.UserRepository.FirstOrDefault(filter);
-		}
-
 		public User? GetById(int id)
 		{
-	        return _unitOfWork.UserRepository.GetById(id);
+			try
+			{
+				return _unitOfWork.UserRepository.GetById(id);
+			}
+			catch
+			{
+				return null;
+			}
 		}
 
 		public Result Update(User entity)
 		{
-			return _unitOfWork.UserRepository.Update(entity);
+			entity.NormalizeName = entity.Name.RemoveMarks();
+
+			try
+			{
+				return _unitOfWork.UserRepository.Update(entity);
+			}
+			catch
+			{
+				return Result.NetworkError();
+			}
 		}
 	}
 }

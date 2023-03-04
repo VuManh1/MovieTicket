@@ -42,8 +42,14 @@ namespace DAL.Repositories
 			cmd.Parameters["@role"].Direction = System.Data.ParameterDirection.Input;
 			cmd.Parameters.AddWithValue("@CityId", entity.City?.Id);
 			cmd.Parameters["@CityId"].Direction = System.Data.ParameterDirection.Input;
+            cmd.Parameters.AddWithValue("@UserId", MySqlDbType.Int32);
+            cmd.Parameters["@UserId"].Direction = System.Data.ParameterDirection.Output;
 
-			cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
+
+            // get id of user
+            int id = (int)cmd.Parameters["@UserId"].Value;
+			entity.Id = id;
 
 			return Result.OK(entity);
 		}

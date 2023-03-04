@@ -20,11 +20,14 @@ namespace MovieTicket.Views.AdminView.DirectorView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AdminDirectorDetail;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             if (model == null)
             {
-                _viewFactory.Render(ViewConstant.NotFound, "director", ViewConstant.AdminListDirector);
+                _viewFactory.GetService(ViewConstant.NotFound)?.Render("director", ViewConstant.AdminListDirector);
                 return;
             }
 
@@ -34,7 +37,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
 
             if (director == null)
             {
-                _viewFactory.Render(ViewConstant.NotFound, "director", ViewConstant.AdminListDirector);
+                _viewFactory.GetService(ViewConstant.NotFound)?.Render("director", ViewConstant.AdminListDirector);
                 return;
             }
 
@@ -65,21 +68,21 @@ namespace MovieTicket.Views.AdminView.DirectorView
             switch (selection)
             {
                 case "Go Back":
-                    _viewFactory.Render(ViewConstant.AdminListDirector);
+                    _viewFactory.GetService(ViewConstant.AdminListDirector)?.Render();
                     return;
                 case "Delete this director":
                     if (!AnsiConsole.Confirm("Delete this director ? : "))
                     {
-                        _viewFactory.Render(ViewConstant.AdminDirectorDetail, model:director.Id);
+                        _viewFactory.GetService(ViewConstant.AdminDirectorDetail)?.Render(director.Id);
                         return;
                     }
 
                     Result deleteResult = _directorBUS.Delete(director);
 
                     if (deleteResult.Success)
-                        _viewFactory.Render(ViewConstant.AdminListDirector);
+                        _viewFactory.GetService(ViewConstant.AdminListDirector)?.Render();
                     else
-                        _viewFactory.Render(ViewConstant.AdminDirectorDetail, director.Id, statusMessage: "Error !, " + deleteResult.Message);
+                        _viewFactory.GetService(ViewConstant.AdminDirectorDetail)?.Render(director.Id, statusMessage: "Error !, " + deleteResult.Message);
 
                     return;
                 case "Change Name":
@@ -93,9 +96,9 @@ namespace MovieTicket.Views.AdminView.DirectorView
             Result result = _directorBUS.Update(director);
 
             if (result.Success)
-                _viewFactory.Render(ViewConstant.AdminDirectorDetail, director.Id, statusMessage: "Successful change director detail !");
+                _viewFactory.GetService(ViewConstant.AdminDirectorDetail)?.Render(director.Id, statusMessage: "Successful change director detail !");
             else
-                _viewFactory.Render(ViewConstant.AdminDirectorDetail, director.Id, statusMessage: "Error !, " + result.Message);
+                _viewFactory.GetService(ViewConstant.AdminDirectorDetail)?.Render(director.Id, statusMessage: "Error !, " + result.Message);
         }
 
         public void RenderDirectorInfo(Director director)

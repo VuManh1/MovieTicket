@@ -16,7 +16,10 @@ namespace MovieTicket.Views.AdminView.MovieView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
-            _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
+            Console.Clear();
+            Console.Title = ViewConstant.ManageMovie;
+         
+			_viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
             _viewFactory.GetService(ViewConstant.Logo)?.Render("[Manage Movie]");
         
 			// create select: 
@@ -32,13 +35,13 @@ namespace MovieTicket.Views.AdminView.MovieView
 			switch (selection)
 			{
 				case "Add Movie":
-                    _viewFactory.Render(ViewConstant.AddMovie);
+                    _viewFactory.GetService(ViewConstant.AddMovie)?.Render();
 					break;
                 case "Show All Movies":
-                    _viewFactory.Render(ViewConstant.AdminListMovie);
+                    _viewFactory.GetService(ViewConstant.AdminListMovie)?.Render();
                     break;
 				case "Back":
-					_viewFactory.Render(ViewConstant.AdminHome);
+					_viewFactory.GetService(ViewConstant.AdminHome)?.Render();
 					break;
 			}
         }

@@ -20,6 +20,9 @@ namespace MovieTicket.Views.AdminView.CastView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AddCast;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Cast \n[/]");
@@ -37,7 +40,7 @@ namespace MovieTicket.Views.AdminView.CastView
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Cast successful ![/], press any key to go back.");
                 Console.ReadKey();
                
-                _viewFactory.Render(ViewConstant.ManageCast);
+                _viewFactory.GetService(ViewConstant.ManageCast)?.Render();
             }
             else
             {
@@ -45,11 +48,11 @@ namespace MovieTicket.Views.AdminView.CastView
 
                 if (!AnsiConsole.Confirm("Add again ? : "))
                 {
-                    _viewFactory.Render(ViewConstant.ManageCast);
+                    _viewFactory.GetService(ViewConstant.ManageCast)?.Render();
                     return;
                 }
 
-                _viewFactory.Render(ViewConstant.AddCast);
+                _viewFactory.GetService(ViewConstant.AddCast)?.Render();
             }
         }
     }

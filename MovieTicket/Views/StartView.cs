@@ -16,7 +16,10 @@ namespace MovieTicket.Views
 
 		public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
 		{
-			_viewFactory.GetService(ViewConstant.Logo)?.Render();
+            Console.Clear();
+            Console.Title = ViewConstant.Start;
+
+            _viewFactory.GetService(ViewConstant.Logo)?.Render();
 
 			// create select: 
 			var selection = AnsiConsole.Prompt(
@@ -32,13 +35,13 @@ namespace MovieTicket.Views
 			switch (selection)
 			{
                 case "Guest":
-
+                    _viewFactory.GetService(ViewConstant.MemberHome)?.Render();
                     break;
                 case "Login":
-					_viewFactory.Render(ViewConstant.Login);
+					_viewFactory.GetService(ViewConstant.Login)?.Render();
 					break;
 				case "Register":
-					_viewFactory.Render(ViewConstant.Register);
+					_viewFactory.GetService(ViewConstant.Register)?.Render();
 					break;
 				case "Exit":
 					AnsiConsole.MarkupLine("[PaleGreen3]Goodbye ![/]");

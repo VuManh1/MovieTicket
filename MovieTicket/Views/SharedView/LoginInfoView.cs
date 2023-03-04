@@ -13,12 +13,13 @@ namespace MovieTicket.Views.Shared
                 var panel = new Panel(
                     new Markup($"[Gold3_1]{SignInManager.User?.Name} ({SignInManager.User?.Role.ToString()})[/]"))
                 {
-                    Border = BoxBorder.Heavy,
+                    Border = BoxBorder.Ascii,
                     BorderStyle = new Style(Color.PaleGreen3),
                     Expand = true
                 };
 
                 AnsiConsole.Write(panel);
+                Console.WriteLine();
             }
         }
     }

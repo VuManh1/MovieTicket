@@ -20,11 +20,14 @@ namespace MovieTicket.Views.AdminView.CastView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+            Console.Clear();
+            Console.Title = ViewConstant.AdminCastDetail;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
             if (model == null)
             {
-                _viewFactory.Render(ViewConstant.NotFound, "cast", ViewConstant.AdminListCast);
+                _viewFactory.GetService(ViewConstant.NotFound)?.Render("cast", ViewConstant.AdminListCast);
                 return;
             }
 
@@ -34,7 +37,7 @@ namespace MovieTicket.Views.AdminView.CastView
 
             if (cast == null)
             {
-                _viewFactory.Render(ViewConstant.NotFound, "cast", ViewConstant.AdminListCast);
+                _viewFactory.GetService(ViewConstant.NotFound)?.Render("cast", ViewConstant.AdminListCast);
                 return;
             }
 
@@ -65,22 +68,22 @@ namespace MovieTicket.Views.AdminView.CastView
             switch (selection)
             {
                 case "Go Back":
-                    _viewFactory.Render(ViewConstant.AdminListCast);
+                    _viewFactory.GetService(ViewConstant.AdminListCast)?.Render();
                     return;
                 case "Delete this cast":
                     if (!AnsiConsole.Confirm("Delete this cast ? : "))
                     {
-                        _viewFactory.Render(ViewConstant.AdminCastDetail, model:cast.Id);
+                        _viewFactory.GetService(ViewConstant.AdminCastDetail)?.Render(cast.Id);
                         return;
                     }
 
                     Result deleteResult = _castBUS.Delete(cast);
 
                     if (deleteResult.Success)
-                        _viewFactory.Render(ViewConstant.AdminListCast);
+                        _viewFactory.GetService(ViewConstant.AdminListCast)?.Render();
                     else
-                        _viewFactory.Render(ViewConstant.AdminCastDetail, cast.Id, statusMessage: "Error !, " + deleteResult.Message);
-
+                        _viewFactory.GetService(ViewConstant.AdminCastDetail)?.Render(cast.Id);
+                   
                     return;
                 case "Change Name":
                     cast.Name = AnsiConsole.Ask<string>(" -> Change cast's name: ");
@@ -93,9 +96,9 @@ namespace MovieTicket.Views.AdminView.CastView
             Result result = _castBUS.Update(cast);
 
             if (result.Success)
-                _viewFactory.Render(ViewConstant.AdminCastDetail, cast.Id, statusMessage: "Successful change cast detail !");
+                _viewFactory.GetService(ViewConstant.AdminCastDetail)?.Render(cast.Id, statusMessage: "Successful change cast detail !");
             else
-                _viewFactory.Render(ViewConstant.AdminCastDetail, cast.Id, statusMessage: "Error !, " + result.Message);
+                _viewFactory.GetService(ViewConstant.AdminCastDetail)?.Render(cast.Id, statusMessage: "Error !, " + result.Message);
         }
 
         public void RenderCastInfo(Cast cast)

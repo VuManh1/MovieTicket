@@ -15,6 +15,9 @@ namespace MovieTicket.Views.AdminView.ShowView
 
         public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
         {
+			Console.Clear();
+			Console.Title = ViewConstant.ManageShow;
+
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
             _viewFactory.GetService(ViewConstant.Logo)?.Render("[Manage Show]");
         
@@ -24,20 +27,20 @@ namespace MovieTicket.Views.AdminView.ShowView
 					.Title("[PaleGreen3]Choose: [/]")
 					.PageSize(10)
 					.AddChoices(new[] {
-						"Add Show", "Show All Shows", "Back"
+						"Add a Show", "Edit Shows", "Back"
 					})
 					.HighlightStyle(new Style(Color.PaleGreen3)));
 
 			switch (selection)
 			{
-				case "Add Show":
-                    _viewFactory.Render(ViewConstant.AddShow);
+				case "Add a Show":
+                    _viewFactory.GetService(ViewConstant.AddShow)?.Render();
 					break;
-                case "Show All Shows":
-                    _viewFactory.Render(ViewConstant.AdminListShow);
+                case "Edit Shows":
+                    _viewFactory.GetService(ViewConstant.AdminListShow)?.Render();
                     break;
 				case "Back":
-					_viewFactory.Render(ViewConstant.AdminHome);
+					_viewFactory.GetService(ViewConstant.AdminHome)?.Render();
 					break;
 			}
         }

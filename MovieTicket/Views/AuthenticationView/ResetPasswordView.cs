@@ -9,17 +9,20 @@ namespace MovieTicket.Views.Authentication
 {
 	public class ResetPasswordView : IViewRender
 	{
-		private readonly AuthenticationBUS _authenticationBus;
+		private readonly AuthenticationBUS _authenticationBUS;
 		private readonly IViewFactory _viewFactory;
 
-		public ResetPasswordView(AuthenticationBUS authenticationBus, IViewFactory viewFactory)
+		public ResetPasswordView(AuthenticationBUS authenticationBUS, IViewFactory viewFactory)
 		{
-			_authenticationBus = authenticationBus;
+			_authenticationBUS = authenticationBUS;
 			_viewFactory = viewFactory;
 		}
 
 		public void Render(object? model = null, string? previousView = null, string? statusMessage = null)
 		{
+            Console.Clear();
+            Console.Title = ViewConstant.ResetPassword;
+
             _viewFactory.GetService(ViewConstant.Logo)?.Render();
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Reset Password\n[/]");
@@ -51,20 +54,20 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewFactory.Render(ViewConstant.Start);
+					_viewFactory.GetService(ViewConstant.Start)?.Render();
 					return;
 				}
 
-				_viewFactory.Render(ViewConstant.ResetPassword, model: model);
+				_viewFactory.GetService(ViewConstant.ResetPassword)?.Render(model);
 				return;
 			}
 
-			Result result = _authenticationBus.ResetPassword(model?.ToString(), newPassword);
+			Result result = _authenticationBUS.ResetPassword(model?.ToString(), newPassword);
 			if (result.Success)
 			{
 				AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Reset password successful ![/], press any key to go back.");
 				Console.ReadKey();
-				_viewFactory.Render(ViewConstant.Start);
+				_viewFactory.GetService(ViewConstant.Start)?.Render();
 			}
 			else
 			{
@@ -72,11 +75,11 @@ namespace MovieTicket.Views.Authentication
 
 				if (!AnsiConsole.Confirm("Continue ? : "))
 				{
-					_viewFactory.Render(ViewConstant.Start);
+					_viewFactory.GetService(ViewConstant.Start)?.Render();
 					return;
 				}
 
-				_viewFactory.Render(ViewConstant.ResetPassword, model: model);
+				_viewFactory.GetService(ViewConstant.ResetPassword)?.Render(model);
 			}
 		}
 	}
