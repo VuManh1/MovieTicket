@@ -23,6 +23,17 @@ namespace DAL.Repositories
 
             cmd.ExecuteNonQuery();
 
+            cmd.Parameters.Clear();
+            cmd.CommandText = "SELECT MAX(id) FROM halls;";
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+
+            int hallid = reader.GetInt32("MAX(id)");
+            entity.Id = hallid;
+
+            reader.Close();
+
             return Result.OK();
         }
 

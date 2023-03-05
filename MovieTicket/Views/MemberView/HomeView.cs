@@ -4,6 +4,7 @@ using MovieTicket.SignIn;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
 using SharedLibrary.Helpers;
+using SharedLibrary.Models;
 using Spectre.Console;
 
 namespace MovieTicket.Views.MemberView
@@ -38,7 +39,7 @@ namespace MovieTicket.Views.MemberView
             }
             else
             {
-                AnsiConsole.MarkupLine(" * Press [dodgerblue2]'C'[/] to choose a movie, [dodgerblue2]'F'[/] to search movies, " +
+                AnsiConsole.MarkupLine(" * Press [dodgerblue2]'C'[/] to choose a movie, [dodgerblue2]'F'[/] to move to search page, " +
                     $"[red]'ESC'[/] to go back");
             }
 
@@ -49,6 +50,8 @@ namespace MovieTicket.Views.MemberView
                         ConsoleKey.F,
                         ConsoleKey.C,
                         ConsoleKey.P,
+                        ConsoleKey.A,
+                        ConsoleKey.S,
                         ConsoleKey.Escape
                     });
 
@@ -62,6 +65,18 @@ namespace MovieTicket.Views.MemberView
                         return;
                     case ConsoleKey.F:
                         _viewFactory.GetService(ViewConstant.MovieList)?.Render();
+                        return;
+                    case ConsoleKey.A:
+                        _viewFactory.GetService(ViewConstant.MovieList)?.Render(new SearchModel
+                        {
+                            SearchValue = "<Playing>"
+                        });
+                        return;
+                    case ConsoleKey.S:
+                        _viewFactory.GetService(ViewConstant.MovieList)?.Render(new SearchModel
+                        {
+                            SearchValue = "<Coming>"
+                        });
                         return;
                     case ConsoleKey.P:
                         if (SignInManager.IsLogin && SignInManager.User != null)
@@ -98,9 +113,11 @@ namespace MovieTicket.Views.MemberView
                 playingGrid.AddRow(
                     playingMovies.Take(5).Select(m =>
                     {
+                        string movieName = m.Name.Length > 25 ? String.Join("", m.Name.Take(25)) + "..." : m.Name;
+
                         return new Panel(
                             Align.Center(new Rows(
-                                new Markup($"[{ColorConstant.Primary}]{m.Name}[/]"),
+                                new Markup($"[{ColorConstant.Primary}]{movieName}[/]"),
                                 new Text($"{m.Length} minutes")
                             ))
                         )
@@ -113,9 +130,11 @@ namespace MovieTicket.Views.MemberView
                 playingGrid.AddRow(
                     playingMovies.Skip(5).Take(5).Select(m =>
                     {
+                        string movieName = m.Name.Length > 25 ? String.Join("", m.Name.Take(25)) + "..." : m.Name;
+
                         return new Panel(
                             Align.Center(new Rows(
-                                new Markup($"[{ColorConstant.Primary}]{m.Name}[/]"),
+                                new Markup($"[{ColorConstant.Primary}]{movieName}[/]"),
                                 new Text($"{m.Length} minutes")
                             )))
                         {
@@ -141,9 +160,11 @@ namespace MovieTicket.Views.MemberView
                 comingGrid.AddRow(
                     comingMovies.Take(5).Select(m =>
                     {
+                        string movieName = m.Name.Length > 25 ? String.Join("", m.Name.Take(25)) + "..." : m.Name;
+
                         return new Panel(
                             Align.Center(new Rows(
-                                new Markup($"[Gold3_1]{m.Name}[/]"),
+                                new Markup($"[Gold3_1]{movieName}[/]"),
                                 new Text($"{m.Length} minutes")
                             )))
                         {
@@ -155,9 +176,11 @@ namespace MovieTicket.Views.MemberView
                 comingGrid.AddRow(
                     comingMovies.Skip(5).Take(5).Select(m =>
                     {
+                        string movieName = m.Name.Length > 25 ? String.Join("", m.Name.Take(25)) + "..." : m.Name;
+
                         return new Panel(
                             Align.Center(new Rows(
-                                new Markup($"[Gold3_1]{m.Name}[/]"),
+                                new Markup($"[Gold3_1]{movieName}[/]"),
                                 new Text($"{m.Length} minutes")
                             )))
                         {
@@ -177,9 +200,9 @@ namespace MovieTicket.Views.MemberView
             {
                 Border = BoxBorder.Heavy,
                 BorderStyle = new Style(Color.PaleGreen3),
-                Expand = true,
-                Header = new PanelHeader("Playing Movies")
+                Expand = true
             };
+            AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Playing Movies[/]   (Press [PaleGreen3]'A'[/] to view all)");
             AnsiConsole.Write(playingMoviePanel);
 
             Console.WriteLine();
@@ -189,9 +212,9 @@ namespace MovieTicket.Views.MemberView
             {
                 Border = BoxBorder.Heavy,
                 BorderStyle = new Style(Color.Gold3_1),
-                Expand = true,
-                Header = new PanelHeader("Upcoming Movies")
+                Expand = true
             };
+            AnsiConsole.MarkupLine($"[Gold3_1]Upcoming Movies[/]   (Press [Gold3_1]'S'[/] to view all)");
             AnsiConsole.Write(comingMoviePanel);
         }
     }

@@ -158,10 +158,10 @@ namespace BUS
 
                 _unitOfWork.CommitTransaction();
             }
-            catch
+            catch(Exception e)
             {
                 _unitOfWork.RollBack();
-                return Result.NetworkError();
+                return Result.Error(e.Message);
             }
 
             return Result.OK();

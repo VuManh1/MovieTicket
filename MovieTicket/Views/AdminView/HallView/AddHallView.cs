@@ -60,9 +60,45 @@ namespace MovieTicket.Views.AdminView.HallView
             hall.Width = AnsiConsole.Ask<int>(" -> Enter hall width (EX: 12 corresponds to 12 seat horizontally): ");
             hall.Height = AnsiConsole.Ask<int>(" -> Enter hall height (EX: 12 corresponds to 12 seat vertically): ");
 
+
             Result result = _cinemaBUS.CreateHall(hall);
             if (result.Success)
             {
+                AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Hall successful ![/]");
+
+                int totalSeat = hall.Width * hall.Height;
+                if (AnsiConsole.Confirm($"Do you want the system to automatically create seats for you? " +
+                    $"(there will be [PaleGreen3]{totalSeat}[/] seats to be created based on width and height you input) : "))
+                {
+                    double price = AnsiConsole.Ask<double>(" -> Enter price for normal seat: ");
+
+                    AnsiConsole.MarkupLine($"Please wait a minute. We are creating seats for you.");
+
+                    int count = 0;
+                    char row = 'A';
+                    for (int i = 0; i < hall.Height; i++)
+                    {
+                        for (int j = 0; j < hall.Width; j++)
+                        {
+                            count++;
+
+                            Seat seat = new()
+                            {
+                                Price = price,
+                                SeatType = SeatType.NORMAL,
+                                Hall = hall,
+                                SeatRow = (char)row,
+                                SeatNumber = j + 1,
+                                Position = count
+                            };
+
+                            _cinemaBUS.CreateSeat(seat);
+                        }
+
+                        row++;
+                    }
+                }
+
                 AnsiConsole.MarkupLine($"[{ColorConstant.Success}]Add Hall successful ![/], press any key to go back.");
                 Console.ReadKey();
                

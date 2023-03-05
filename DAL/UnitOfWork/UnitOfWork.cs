@@ -7,7 +7,6 @@ namespace DAL.UnitOfWork
 	public interface IUnitOfWork
 	{
 		UserRepository UserRepository { get; }
-		ShowSeatRepositoty ShowSeatRepository { get; }
 		ShowRepositoty ShowRepository { get; }
 		SeatRepositoty SeatRepository { get; }
 		MovieRepositoty MovieRepository { get; }
@@ -31,7 +30,6 @@ namespace DAL.UnitOfWork
 		private readonly IDbConnection _dbConnection;
 
 		private UserRepository _userRepository;
-		private ShowSeatRepositoty _showSeatRepository;
 		private ShowRepositoty _showRepository;
 
 		private SeatRepositoty _seatRepository;
@@ -91,16 +89,6 @@ namespace DAL.UnitOfWork
 				_userRepository ??= new UserRepository(_dbConnection);
 
 				return _userRepository;
-			}
-		}
-
-        public ShowSeatRepositoty ShowSeatRepository
-		{
-			get
-			{
-				_showSeatRepository ??= new ShowSeatRepositoty(_dbConnection);
-
-				return _showSeatRepository;
 			}
 		}
 

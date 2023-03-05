@@ -106,6 +106,12 @@ namespace MovieTicket.Views.AdminView.HallView
                     seat.SeatRow = Char.ToUpper(AnsiConsole.Ask<char>(" -> Enter seat's row (only 1 character 'A', 'B', ...): "));
                     seat.SeatNumber = AnsiConsole.Ask<int>(" -> Enter seat's number: ");
 
+                    while (seat.SeatNumber <= 0)
+                    {
+                        AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Seat number must greater than 0 ![/]");
+                        seat.SeatNumber = AnsiConsole.Ask<int>(" -> Enter seat's number: ");
+                    }
+
                     while (seats.Any(s => $"{seat.SeatRow}{seat.SeatNumber}" == $"{s.SeatRow}{s.SeatNumber}"))
                     {
                         AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Seat '{seat.SeatName}' already exist ![/]");
@@ -121,6 +127,11 @@ namespace MovieTicket.Views.AdminView.HallView
                     }
 
                     seat.Position = AnsiConsole.Ask<int>(" -> Enter seat's position (in hall): ");
+                    while (seat.Position <= 0)
+                    {
+                        AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Position must greater than 0 ![/]");
+                        seat.Position = AnsiConsole.Ask<int>(" -> Enter seat's position (in hall): ");
+                    }
 
                     while (seats.Any(s => seat.Position == s.Position))
                     {

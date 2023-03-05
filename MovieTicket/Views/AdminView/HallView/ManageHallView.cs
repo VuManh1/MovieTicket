@@ -116,7 +116,7 @@ namespace MovieTicket.Views.AdminView.HallView
 
                     break;
                 case "Show hall's detail":
-                    string hallName = AnsiConsole.Ask<string>(" -> Enter hall's name to delete: ");
+                    string hallName = AnsiConsole.Ask<string>(" -> Enter hall's name to view detail: ");
 
                     Hall? hallToView = halls.FirstOrDefault(h => h.Name.RemoveMarks() == hallName.RemoveMarks());
                     if (hallToView == null)

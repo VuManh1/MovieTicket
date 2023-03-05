@@ -104,7 +104,7 @@ namespace MovieTicket.Views.AdminView.MovieView
                     movie.Country = AnsiConsole.Ask<string>(" -> Change movie's Country: ");
                     break;
                 case "Change Status":
-                    movie.MovieStatus = AnsiConsole.Ask<MovieStatus>(" -> Change movie's Status: ");
+                    movie.MovieStatus = AnsiConsole.Ask<MovieStatus>(" -> Change movie's status ([green]'Playing'[/], [yellow]'Coming'[/], [red]'Stop'[/]): ");
                     break;
                 case "Change Casts":
                     movie.CastIdString = AnsiConsole.Ask<string>(" -> Change movie's Casts (Enter id separate by ','): ");

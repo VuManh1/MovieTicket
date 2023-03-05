@@ -3,6 +3,7 @@ using MovieTicket.Factory;
 using SharedLibrary;
 using SharedLibrary.Constants;
 using SharedLibrary.DTO;
+using SharedLibrary.Helpers;
 using Spectre.Console;
 
 namespace MovieTicket.Views.AdminView.MovieView
@@ -37,12 +38,12 @@ namespace MovieTicket.Views.AdminView.MovieView
             int length = AnsiConsole.Ask<int>(" -> Enter movie's length: ");
             
             DateOnly releaseDate = DateOnly.FromDateTime(
-                AnsiConsole.Ask<DateTime>(" -> Enter movie's description ([yellow]EX: 12-20-2003[/]): "));
+                AnsiConsole.Ask<DateTime>(" -> Enter movie's release date ([yellow]EX: 12-20-2003[/]): "));
 
             MovieStatus status = AnsiConsole.Ask<MovieStatus>(
                 " -> Enter movie's status ([green]'Playing'[/], [yellow]'Coming'[/], [red]'Stop'[/]): ");
 
-            string country = AnsiConsole.Ask<string>(" -> Enter movie's country: ");
+            string country = AnsiConsole.Ask<string>(" -> Enter movie's country: ").NormalizeString();
 
             string? genres = GetGenres();
             if (genres == "0") genres = null;

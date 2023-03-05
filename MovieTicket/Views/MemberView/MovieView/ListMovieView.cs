@@ -36,8 +36,21 @@ namespace MovieTicket.Views.MemberView.MovieView
             List<Movie> movies;
             if (searchModel.SearchValue != null) 
             {
-                AnsiConsole.Markup($"[{ColorConstant.Success}]Search for '{searchModel.SearchValue}'[/]\n");
-                movies = _movieBUS.Find(searchModel.SearchValue);
+                if (searchModel.SearchValue == "<Playing>")
+                {
+                    AnsiConsole.Markup($"[{ColorConstant.Success}]Playing movies[/]\n");
+                    movies = _movieBUS.GetByStatus(MovieStatus.Playing);
+                }
+                else if (searchModel.SearchValue == "<Coming>")
+                {
+                    AnsiConsole.Markup($"[{ColorConstant.Success}]Upcoming movies[/]\n");
+                    movies = _movieBUS.GetByStatus(MovieStatus.Coming);
+                }
+                else
+                {
+                    AnsiConsole.Markup($"[{ColorConstant.Success}]Search for '{searchModel.SearchValue}'[/]\n");
+                    movies = _movieBUS.Find(searchModel.SearchValue);
+                }
             }
             else
                 movies = _movieBUS.GetAll();
@@ -129,27 +142,63 @@ namespace MovieTicket.Views.MemberView.MovieView
 
         public void RenderMovies(List<Movie> movies)
         {
-            Table table = new()
-            {
-                Title = new TableTitle(
-                    "MOVIES", 
-                    new Style(Color.PaleGreen3)),
-                Expand = true
-            };
-            table.AddColumns("Id", "Name", "Country", "Status");
+            Grid movieGrid = new();
 
-            foreach (var movie in movies)
+            movies.Take(5).ToList().ForEach(m =>
             {
-                table.AddRow(
-                    movie.Id.ToString(),
-                    movie.Name,
-                    movie.Country ?? "",
-                    movie.MovieStatus.ToString()
+                movieGrid.AddColumn();
+            });
+
+            if (movies.Count > 0)
+            {
+                movieGrid.AddRow(
+                    movies.Take(5).Select(m =>
+                    {
+                        return new Panel(
+                            Align.Center(new Rows(
+                                new Markup($"[{ColorConstant.Primary}]{m.Name}[/]"),
+                                new Text($"{m.Length} minutes\n"),
+                                new Text($"[{m.MovieStatus}]")
+                            ))
+                        )
+                        {
+                            Header = new PanelHeader(m.Id.ToString())
+                        };
+                    }).ToArray()
+                );
+
+                movieGrid.AddRow(
+                    movies.Skip(5).Take(5).Select(m =>
+                    {
+                        return new Panel(
+                            Align.Center(new Rows(
+                                new Markup($"[{ColorConstant.Primary}]{m.Name}[/]"),
+                                new Text($"{m.Length} minutes\n"),
+                                new Text($"[{m.MovieStatus}]")
+                            )))
+                        {
+                            Header = new PanelHeader(m.Id.ToString())
+                        };
+                    }).ToArray()
                 );
             }
+            else
+            {
+                movieGrid.AddColumn();
+                movieGrid.AddRow("No movies");
+            }
 
-            table.Border(TableBorder.Heavy);
-            AnsiConsole.Write(table);
+            Panel moviePanel = new(
+                Align.Center(movieGrid))
+            {
+                Border = BoxBorder.Heavy,
+                BorderStyle = new Style(Color.PaleGreen3),
+                Expand = true,
+                Header = new PanelHeader("Movies")
+            };
+            AnsiConsole.Write(moviePanel);
+
+            Console.WriteLine();
         }
     }
 }
