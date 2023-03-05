@@ -48,15 +48,16 @@ namespace DAL.Repositories
             return Result.OK(id);
         }
 
-		public Result UpdateShowSeat(Booking booking, List<Seat> seats)
+		public Result UpdateShowSeat(Booking booking)
 		{
             _dbConnection.OpenConnection();
 
-			string seatId = String.Join(",", seats.Select(s => s.Id));
+			string seatId = String.Join(",", booking.Seats.Select(s => s.Id));
 
             string query = "UPDATE showseat SET" +
                 $" status = 'Picked', BookingId = {booking.Id}" +
 				$" WHERE showseat.SeatId IN({seatId}) AND showseat.ShowId = {booking.Show.Id};";
+
             MySqlCommand cmd = new(query, _dbConnection.Connection);
 
 			cmd.ExecuteNonQuery();

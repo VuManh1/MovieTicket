@@ -60,7 +60,7 @@ namespace DAL.UnitOfWork
 
 		public IDbConnection DbConnection
 		{
-			get { return _dbConnection; }
+			get => _dbConnection; 
 		}
 
 		public void BeginTransaction()

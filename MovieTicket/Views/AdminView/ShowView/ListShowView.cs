@@ -37,7 +37,7 @@ namespace MovieTicket.Views.AdminView.ShowView
             if (searchModel.SearchValue != null) 
             {
                 AnsiConsole.Markup($"[{ColorConstant.Success}]Search for '{searchModel.SearchValue}'[/]\n");
-                shows = _showBUS.Find($"MovieName like '%{searchModel.SearchValue}%' OR CinemaName like '%{searchModel.SearchValue}%'");
+                shows = _showBUS.Find(searchModel.SearchValue);
             }
             else
                 shows = _showBUS.GetAll();

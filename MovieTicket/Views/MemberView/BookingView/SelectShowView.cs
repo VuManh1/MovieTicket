@@ -81,7 +81,7 @@ namespace MovieTicket.Views.MemberView.BookingView
             }
 
             // get cinemas in the city
-            List<Cinema> cinemas = _cinemaBUS.Find($"CityId = {city.Id}");
+            List<Cinema> cinemas = _cinemaBUS.GetByCityId(city.Id);
 
             if (cinemas.Count == 0)
             {
@@ -129,9 +129,7 @@ namespace MovieTicket.Views.MemberView.BookingView
         {
             foreach (Cinema cinema in cinemas)
             {
-                List<Show> shows = _showBUS.Find($"CinemaId = {cinema.Id} AND MovieId = {movie.Id}" +
-                    $" AND StartTime > '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}'" +
-                    $" AND Date(StartTime) = '{date.ToString("yyyy-MM-dd")}'");
+                List<Show> shows = _showBUS.Find(cinema, movie, date);
 
                 Grid showGrid = new();
                 shows.Take(10).ToList().ForEach(s =>
@@ -190,7 +188,7 @@ namespace MovieTicket.Views.MemberView.BookingView
                     .AddChoices(cities)
                     .HighlightStyle(new Style(Color.PaleGreen3)));
 
-            return _cityBUS.FirstOrDefault($"name = '{city}'") ?? new City();
+            return _cityBUS.GetByName(city) ?? new City();
         }
 
         public string GetDate()

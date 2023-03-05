@@ -1,6 +1,8 @@
 using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
+using SharedLibrary.Helpers;
+using SharedLibrary.Models;
 
 namespace BUS
 {
@@ -15,6 +17,8 @@ namespace BUS
 
 		public Result Create(Cast cast)
 		{
+			cast.Name = cast.Name.NormalizeString();
+
 			try
 			{
 				return _unitOfWork.CastRepository.Create(cast);
@@ -41,7 +45,7 @@ namespace BUS
         {
 			try
 			{
-				return _unitOfWork.CastRepository.Find(filter).ToList();
+				return _unitOfWork.CastRepository.Find($"name like '%{filter}%'").ToList();
 			}
 			catch
 			{
@@ -68,6 +72,8 @@ namespace BUS
 
 		public Result Update(Cast entity)
 		{
+            entity.Name = entity.Name.NormalizeString();
+
             try
             {
                 return _unitOfWork.CastRepository.Update(entity);

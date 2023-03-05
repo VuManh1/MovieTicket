@@ -68,10 +68,11 @@ namespace MovieTicket.Views.MemberView.BookingView
                         Show = bookingModel.Show,
                         CreateTime = DateTime.Now,
                         SeatCount = bookingModel.Seats.Count,
-                        Total = total
+                        Total = total,
+                        Seats = bookingModel.Seats
                     };
 
-                    Result result = _bookingBUS.Create(booking, bookingModel.Seats);
+                    Result result = _bookingBUS.Create(booking);
                     bookingModel.Booking = booking;
 
                     if (result.Success)

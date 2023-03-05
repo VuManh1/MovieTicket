@@ -9,5 +9,7 @@
 		public int SeatCount { get; set; }
 		public DateTime CreateTime { get; set; }
 		public double Total { get; set; }
+
+		public List<Seat> Seats { get; set; }
 	}
 }

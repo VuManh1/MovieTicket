@@ -127,7 +127,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
                     .AddChoices(cities)
                     .HighlightStyle(new Style(Color.PaleGreen3)));
 
-            return city != "Skip" ? _cityBUS.FirstOrDefault($"name = '{city}'") : null;
+            return city != "Skip" ? _cityBUS.GetByName(city) : null;
         }
 
         public void RenderCinemaInfo(Cinema cinema)

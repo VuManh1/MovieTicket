@@ -27,16 +27,18 @@ namespace MovieTicket.Views.AdminView.CinemaView
 
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            Cinema cinema = new();
-
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Add Cinema \n[/]");
 
-            cinema.Name = AnsiConsole.Ask<string>(" -> Enter Cinema's name: ");
-
-            cinema.HallCount = AnsiConsole.Ask<int>(" -> Enter Hall Count: ");
+            Cinema cinema = new()
+            {
+                Name = AnsiConsole.Ask<string>(" -> Enter Cinema's name: "),
+                HallCount = AnsiConsole.Ask<int>(" -> Enter Hall Count: ")
+            };
 
             string cityName = GetCity();
-			cinema.City = cityName != "Skip" ? _cityBUS.FirstOrDefault($"name = '{cityName}'") : null;
+			cinema.City = cityName != "Skip" ? _cityBUS.GetByName(cityName) : null;
+            
+            cinema.Address = AnsiConsole.Ask<string>(" -> Enter address: ");
 
             Result result = _cinemaBUS.Create(cinema);
             if (result.Success)

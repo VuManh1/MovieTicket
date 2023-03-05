@@ -1,6 +1,7 @@
 using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
+using SharedLibrary.Helpers;
 
 namespace BUS
 {
@@ -15,6 +16,8 @@ namespace BUS
 
 		public Result Create(Director director)
 		{
+            director.Name = director.Name.NormalizeString();
+
             try
             {
                 return _unitOfWork.DirectorRepository.Create(director);
@@ -41,7 +44,7 @@ namespace BUS
         {
             try
             {
-                return _unitOfWork.DirectorRepository.Find(filter).ToList();
+                return _unitOfWork.DirectorRepository.Find($"name like '%{filter}%'").ToList();
             }
             catch
             {
@@ -68,6 +71,8 @@ namespace BUS
 
         public Result Update(Director entity)
 		{
+            entity.Name = entity.Name.NormalizeString();    
+
             try
             {
                 return _unitOfWork.DirectorRepository.Update(entity);

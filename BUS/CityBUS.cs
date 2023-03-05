@@ -15,12 +15,26 @@ namespace BUS
 
 		public List<City> GetAll()
 		{
-			return _unitOfWork.CityRepository.GetAll().ToList();
+			try
+			{
+				return _unitOfWork.CityRepository.GetAll().ToList();
+			}
+			catch
+			{
+				return new List<City>();
+			}
 		}
 
-		public City? FirstOrDefault(string filter)
+		public City? GetByName(string name)
 		{
-			return _unitOfWork.CityRepository.FirstOrDefault(filter);
+			try
+			{
+				return _unitOfWork.CityRepository.FirstOrDefault($"name = '{name}'");
+			}
+			catch
+			{
+				return null;
+			}
 		}
 	}
 }

@@ -44,7 +44,7 @@ namespace MovieTicket.Views.MemberView.BookingView
             int page = searchModel.Page;
             if (page <= 0) page = 1;
 
-            List<Booking> bookings = _bookingBUS.Find($"UserId = {member.Id}");
+            List<Booking> bookings = _bookingBUS.GetByUserId(member.Id);
 
             if (bookings.Count > 0)
             {

@@ -2,6 +2,7 @@ using SharedLibrary;
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
 using SharedLibrary.Helpers;
+using SharedLibrary.Models;
 
 namespace BUS
 {
@@ -52,15 +53,29 @@ namespace BUS
             }
         }
 
+        public List<Cinema> GetByCityId(int cityid)
+        {
+            try
+            {
+                return _unitOfWork.CinemaRepository.Find($"CityId = {cityid}").ToList();
+            }
+            catch
+            {
+                return new List<Cinema>();
+            }
+        }
+
         public List<Cinema> Find(string filter)
         {
             try
             {
-                return _unitOfWork.CinemaRepository.Find(filter).ToList();
+                return _unitOfWork.CinemaRepository.Find(
+                    $" cinemas.name like '%{filter}%' OR" +
+                    $" cities.name like '%{filter}%'").ToList();
             }
             catch
             {
-				return new List<Cinema>();
+                return new List<Cinema>();
             }
         }
 
@@ -78,6 +93,8 @@ namespace BUS
 
 		public Result Update(Cinema entity)
 		{
+            entity.Name = entity.Name.NormalizeString();
+
             try
             {
 			    return _unitOfWork.CinemaRepository.Update(entity);

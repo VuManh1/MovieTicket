@@ -37,7 +37,7 @@ namespace MovieTicket.Views.AdminView.DirectorView
             if (searchModel.SearchValue != null)
             {
                 AnsiConsole.Markup($"[{ColorConstant.Success}]Search for '{searchModel.SearchValue}'[/]\n");
-                directors = _directorBUS.Find($"name like '%{searchModel.SearchValue}%'");
+                directors = _directorBUS.Find(searchModel.SearchValue);
             }
             else
                 directors = _directorBUS.GetAll();

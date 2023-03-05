@@ -28,7 +28,7 @@ namespace DAL.Repositories
 			cmd.Parameters.AddWithValue("@ShowId", entity.Show.Id);
 			cmd.Parameters["@ShowId"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.Parameters.AddWithValue("@BookingId", entity.Booking.Id);
+			cmd.Parameters.AddWithValue("@BookingId", entity.Booking?.Id);
 			cmd.Parameters["@BookingId"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.Parameters.AddWithValue("@SeatStatus", entity.SeatStatus);
@@ -123,7 +123,7 @@ namespace DAL.Repositories
 			cmd.Parameters.AddWithValue("@ShowId", entity.Show.Id);
 			cmd.Parameters["@ShowId"].Direction = System.Data.ParameterDirection.Input;
 
-			cmd.Parameters.AddWithValue("@BookingId", entity.Booking.Id);
+			cmd.Parameters.AddWithValue("@BookingId", entity.Booking?.Id);
 			cmd.Parameters["@BookingId"].Direction = System.Data.ParameterDirection.Input;
 
 			cmd.Parameters.AddWithValue("@SeatStatus", entity.SeatStatus);

@@ -26,8 +26,8 @@ namespace MovieTicket.Views.MemberView
 
             _viewFactory.GetService(ViewConstant.LoginInfo)?.Render();
 
-            List<Movie> playingMovies = _movieBUS.Find("status = 'Playing'").Take(10).ToList();
-            List<Movie> comingMovies = _movieBUS.Find("status = 'Coming'").Take(10).ToList();
+            List<Movie> playingMovies = _movieBUS.GetByStatus(MovieStatus.Playing).Take(10).ToList();
+            List<Movie> comingMovies = _movieBUS.GetByStatus(MovieStatus.Coming).Take(10).ToList();
             RenderLayout(playingMovies, comingMovies);
 
             if (SignInManager.IsLogin)

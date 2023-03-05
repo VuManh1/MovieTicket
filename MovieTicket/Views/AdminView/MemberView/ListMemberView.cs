@@ -37,10 +37,10 @@ namespace MovieTicket.Views.AdminView.MemberView
             if (searchModel.SearchValue != null)
             {
                 AnsiConsole.Markup($"[{ColorConstant.Info}]Search for '{searchModel.SearchValue}'[/]\n");
-                users = _userBUS.Find($"NormalizeName like '%{searchModel.SearchValue}%' AND role = 'Member'");
+                users = _userBUS.FindMember(searchModel.SearchValue);
             }
             else
-                users = _userBUS.Find("role = 'Member'");
+                users = _userBUS.GetAllMember();
 
 
             if (users.Count > 0)
@@ -122,7 +122,7 @@ namespace MovieTicket.Views.AdminView.MemberView
                     _viewFactory.GetService(ViewConstant.AdminMemberDetail)?.Render(id);
                     break;
                 case ConsoleKey.Escape:
-                    _viewFactory.GetService(ViewConstant.AdminHome)?.Render();
+                    _viewFactory.GetService(previousView ?? ViewConstant.AdminHome)?.Render();
                     break;
             }
         }

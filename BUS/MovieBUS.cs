@@ -108,7 +108,7 @@ namespace BUS
         {
             try
             {
-                return _unitOfWork.MovieRepository.Find(filter).ToList();
+                return _unitOfWork.MovieRepository.Find($"NormalizeName like '%{filter}%'").ToList();
             }
             catch
             {
@@ -116,7 +116,19 @@ namespace BUS
             }
         }
 
-		public Result Delete(Movie movie)
+        public List<Movie> GetByStatus(MovieStatus status)
+        {
+            try
+            {
+                return _unitOfWork.MovieRepository.Find($"status = '{status}'").ToList();
+            }
+            catch
+            {
+                return new List<Movie>();
+            }
+        }
+
+        public Result Delete(Movie movie)
 		{
 			try
 			{

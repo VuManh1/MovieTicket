@@ -37,7 +37,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
             if (searchModel.SearchValue != null)
             {
                 AnsiConsole.Markup($"[{ColorConstant.Info}]Search for '{searchModel.SearchValue}'[/]\n");
-                cinemas = _cinemaBUS.Find($"cinemas.name like '%{searchModel.SearchValue}%'");
+                cinemas = _cinemaBUS.Find(searchModel.SearchValue);
             }
             else
                 cinemas = _cinemaBUS.GetAll();
@@ -98,7 +98,7 @@ namespace MovieTicket.Views.AdminView.CinemaView
                     }, previousView);
                     break;
                 case ConsoleKey.F:
-                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter cinema's name to search: ");
+                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter search's value: ");
 
                     _viewFactory.GetService(ViewConstant.AdminListCinema)?.Render(new SearchModel()
                     {

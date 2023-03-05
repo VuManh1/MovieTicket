@@ -37,7 +37,7 @@ namespace MovieTicket.Views.MemberView.MovieView
             if (searchModel.SearchValue != null) 
             {
                 AnsiConsole.Markup($"[{ColorConstant.Success}]Search for '{searchModel.SearchValue}'[/]\n");
-                movies = _movieBUS.Find($"NormalizeName like '%{searchModel.SearchValue}%'");
+                movies = _movieBUS.Find(searchModel.SearchValue);
             }
             else
                 movies = _movieBUS.GetAll();

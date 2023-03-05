@@ -2,6 +2,7 @@
 using SharedLibrary.DTO;
 using DAL.UnitOfWork;
 using SharedLibrary.Helpers;
+using SharedLibrary.Models;
 
 namespace BUS
 {
@@ -27,9 +28,30 @@ namespace BUS
 			}
 		}
 
-        public List<User> Find(string filter)
+        public List<User> GetAllMember()
         {
-            return _unitOfWork.UserRepository.Find(filter).ToList();
+            try
+            {
+                return _unitOfWork.UserRepository.Find($"role = 'Member'").ToList();
+            }
+            catch
+            {
+                return new List<User>();
+            }
+        }
+
+        public List<User> FindMember(string filter)
+        {
+			try
+			{
+				return _unitOfWork.UserRepository.Find(
+					$"NormalizeName like '%{filter}%' AND" +
+					$" role = 'Member'").ToList();
+			}
+			catch
+			{
+				return new List<User>();
+			}
         }
 
 		public User? GetById(int id)

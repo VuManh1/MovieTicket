@@ -13,14 +13,14 @@ namespace BUS
             _unitOfWork = unitOfWork;
         }
 
-        public Result Create(Booking booking, List<Seat> seats)
+        public Result Create(Booking booking)
 		{
 			_unitOfWork.BeginTransaction();
 			try 
 			{
 				Result result = _unitOfWork.BookingRepository.Create(booking);
 
-				_unitOfWork.BookingRepository.UpdateShowSeat(booking, seats);
+				_unitOfWork.BookingRepository.UpdateShowSeat(booking);
 
 				_unitOfWork.CommitTransaction();
 			}
@@ -57,16 +57,16 @@ namespace BUS
 			}
         }
 
-        public List<Booking> Find(string filter)
+        public List<Booking> GetByUserId(int id)
         {
-			try
-			{
-				return _unitOfWork.BookingRepository.Find(filter).ToList();
-			}
-			catch
-			{
-				return new List<Booking>();
-			}
+            try
+            {
+                return _unitOfWork.BookingRepository.Find($"UserId = {id}").ToList();
+            }
+            catch
+            {
+                return new List<Booking>();
+            }
         }
 
         public Booking? GetById(int id)

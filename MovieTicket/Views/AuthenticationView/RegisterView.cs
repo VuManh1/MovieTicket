@@ -87,7 +87,7 @@ namespace MovieTicket.Views.Authentication
 
 			// Get city
 			string cityName = GetCity();
-			City? city = cityName != "Skip" ? _cityBUS.FirstOrDefault($"name = '{cityName}'") : null;
+			City? city = cityName != "Skip" ? _cityBUS.GetByName(cityName) : null;
 
 			User user = new()
 			{
