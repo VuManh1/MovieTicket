@@ -117,10 +117,8 @@ namespace BUS
                     movies.AddRange(_unitOfWork.GenreRepository.GetMovies(genre));
                 }
             }
-            catch(Exception e)
+            catch
             {
-                Console.WriteLine(e.Message);
-                Console.ReadKey();
                 return movies;
             }
 
