@@ -60,14 +60,22 @@ namespace BUS
 			}
 		}
 
-        public List<Show> Find(Cinema cinema, Movie movie, DateTime date)
+        public List<Show> Find(Cinema cinema, Movie? movie = null, DateTime? date = null)
         {
+			string filter = $"CinemaId = {cinema.Id} AND StartTime > '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}'";
+
+			if (movie != null)
+				filter += $" AND MovieId = {movie.Id}";
+
+			if (date != null)
+			{
+				DateTime dateTime = (DateTime)date;
+				filter += $" AND Date(StartTime) = '{dateTime.ToString("yyyy-MM-dd")}'";
+			}
+
             try
             {
-                return _unitOfWork.ShowRepository.Find(
-					$"CinemaId = {cinema.Id} AND MovieId = {movie.Id}" +
-                    $" AND StartTime > '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}'" +
-                    $" AND Date(StartTime) = '{date.ToString("yyyy-MM-dd")}'").ToList();
+                return _unitOfWork.ShowRepository.Find(filter).ToList();
             }
             catch
             {

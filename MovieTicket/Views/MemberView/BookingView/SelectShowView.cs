@@ -129,7 +129,7 @@ namespace MovieTicket.Views.MemberView.BookingView
         {
             foreach (Cinema cinema in cinemas)
             {
-                List<Show> shows = _showBUS.Find(cinema, movie, date);
+                List<Show> shows = _showBUS.Find(cinema, movie, date).OrderBy(s => s.StartTime).ToList();
 
                 Grid showGrid = new();
                 shows.Take(10).ToList().ForEach(s =>

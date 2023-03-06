@@ -27,7 +27,7 @@ namespace MovieTicket.Views.Authentication
             Console.Clear();
             Console.Title = ViewConstant.ForgotPassword;
 
-            _viewFactory.GetService(ViewConstant.Logo)?.Render();
+            _viewFactory.GetService(ViewConstant.Logo)?.Render("[Register]");
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Register\n[/]");
 
@@ -57,7 +57,7 @@ namespace MovieTicket.Views.Authentication
 					.Secret());
 
 			// check password match
-			if (confirmPassword != password)
+			while (confirmPassword != password)
 			{
 				AnsiConsole.MarkupLine($"[{ColorConstant.Error}]Password not match ![/]");
 
@@ -67,9 +67,11 @@ namespace MovieTicket.Views.Authentication
 					return;
 				}
 
-				_viewFactory.GetService(ViewConstant.Register)?.Render();
-				return;
-			}
+                confirmPassword = AnsiConsole.Prompt(
+                    new TextPrompt<string>(" -> Confirm password: ")
+                        .PromptStyle("red")
+                        .Secret());
+            }
 
 			// Input phonenumber
 			string? phoneNumber = AnsiConsole.Ask<string>(" -> Enter phone number (0 to skip): ");

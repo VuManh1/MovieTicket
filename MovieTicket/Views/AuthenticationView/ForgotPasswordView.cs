@@ -23,7 +23,7 @@ namespace MovieTicket.Views.Authentication
 			Console.Clear();
 			Console.Title = ViewConstant.ForgotPassword;
 
-            _viewFactory.GetService(ViewConstant.Logo)?.Render();
+			_viewFactory.GetService(ViewConstant.Logo)?.Render("[Forgot Password]");
 
             AnsiConsole.MarkupLine($"[{ColorConstant.Primary}]Forgot Password\n[/]");
 

@@ -18,7 +18,15 @@ namespace BUS
 			_unitOfWork.BeginTransaction();
 			try 
 			{
-				Result result = _unitOfWork.BookingRepository.Create(booking);
+				List<ShowSeat> pickedSeats = _unitOfWork.ShowRepository.GetShowSeats(booking.Show)
+					.Where(s => s.SeatStatus == SeatStatus.Picked).ToList();
+
+				if (booking.Seats.Any(s => pickedSeats.Any(ps => ps.Seat.SeatName == s.SeatName)))
+				{
+					return Result.Error();
+				}
+
+				_unitOfWork.BookingRepository.Create(booking);
 
 				_unitOfWork.BookingRepository.UpdateShowSeat(booking);
 

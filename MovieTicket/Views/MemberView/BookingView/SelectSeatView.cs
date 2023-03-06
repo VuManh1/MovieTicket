@@ -79,7 +79,7 @@ namespace MovieTicket.Views.MemberView.BookingView
                                 string[] seatNameList = Regex.Split(seatName, @", |,");
 
                                 bool valid = true;
-                                List<Seat> seatsToAdd = new List<Seat>();
+                                List<Seat> seatsToAdd = new();
 
                                 // check seat picked or not
                                 for (int i = 0; i < seatNameList.Length; i++)

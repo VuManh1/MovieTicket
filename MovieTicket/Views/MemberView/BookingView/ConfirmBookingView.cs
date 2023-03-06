@@ -82,8 +82,6 @@ namespace MovieTicket.Views.MemberView.BookingView
                     }
                     else
                     {
-                        Console.WriteLine(result.Message);
-                        Console.ReadKey();
                         _viewFactory.GetService(ViewConstant.BookingStatus)?.Render(bookingModel, statusMessage: "Error");
                         return;
                     }

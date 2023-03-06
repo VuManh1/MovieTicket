@@ -89,6 +89,26 @@ namespace MovieTicket.Views.AdminView.ShowView
                 StartTime = AnsiConsole.Ask<DateTime>(" -> Enter start time (EX 2-13-2023 14:30:00): ")
             };
 
+            List<Show> shows = _showBUS.Find(show.Hall.Cinema, date:show.StartTime);
+
+            // check if exist a show playing in the same time and same hall
+            while (shows.Any(s =>
+                DateTime.Compare(show.StartTime, s.StartTime.AddMinutes(-show.Movie.Length)) >= 0 &&
+                DateTime.Compare(show.StartTime, s.StartTime.AddMinutes(s.Movie.Length)) <= 0 &&
+                s.Hall.Id == show.Hall.Id))
+            {
+                AnsiConsole.MarkupLine($"[{ColorConstant.Error}]This hall already have a show playing in this time[/]");
+
+                if (!AnsiConsole.Confirm("Continue ? : "))
+                {
+                    _viewFactory.GetService(ViewConstant.ManageShow)?.Render();
+                    return;
+                }
+
+                show.Hall = GetHall(halls);
+                show.StartTime = AnsiConsole.Ask<DateTime>(" -> Enter start time (EX 2-13-2023 14:30:00): ");
+            }
+
             Result result = _showBUS.Create(show);
             if (result.Success)
             {

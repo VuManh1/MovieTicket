@@ -100,6 +100,7 @@ namespace MovieTicket.Views.MemberView.BookingView
 
             Rows rows = new(
                 new Markup($"[{ColorConstant.Primary}]Booking Information: [/]\n").Centered(),
+                new Markup($"[{ColorConstant.Primary}]Movie: [/]{booking.Show.Movie.Name}"),
                 new Markup($"[{ColorConstant.Primary}]Start Time: [/]{booking.Show.StartTime}"),
                 new Markup($"[{ColorConstant.Primary}]Cinema: [/]{booking.Show.Hall.Cinema.Name}"),
                 new Markup($"[{ColorConstant.Primary}]Hall: [/]{booking.Show.Hall.Name}"),

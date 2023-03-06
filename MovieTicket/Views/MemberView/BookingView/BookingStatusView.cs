@@ -69,7 +69,7 @@ namespace MovieTicket.Views.MemberView.BookingView
                     _viewFactory.GetService(ViewConstant.MemberHome)?.Render();
                     break;
                 case ConsoleKey.B:
-                    _viewFactory.GetService(ViewConstant.ConfirmBooking)?.Render(bookingModel);
+                    _viewFactory.GetService(ViewConstant.SelectSeat)?.Render(bookingModel.Show.Id);
                     break;
                 case ConsoleKey.V:
                     _viewFactory.GetService(ViewConstant.BookingDetail)?.Render(bookingModel.Booking.Id, ViewConstant.MemberHome);

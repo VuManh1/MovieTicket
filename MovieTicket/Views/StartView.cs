@@ -19,7 +19,7 @@ namespace MovieTicket.Views
             Console.Clear();
             Console.Title = ViewConstant.Start;
 
-            _viewFactory.GetService(ViewConstant.Logo)?.Render();
+            _viewFactory.GetService(ViewConstant.Logo)?.Render("[Main Menu]");
 
 			// create select: 
 			var selection = AnsiConsole.Prompt(
