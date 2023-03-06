@@ -283,9 +283,9 @@ namespace DAL.Repositories
             {
                 genres.Add(new Genre
                 {
-                    Id = reader.GetInt32("id"),
-                    Name = reader.GetString("name"),
-                    Description = reader["description"].GetType() != typeof(System.DBNull) ? reader.GetString("description") : null,
+                    Id = reader.GetInt32("GenreId"),
+                    Name = reader.GetString("GenreName"),
+                    Description = reader["GenreDesc"].GetType() != typeof(System.DBNull) ? reader.GetString("GenreDesc") : null,
                 });
             }
             reader.Close();

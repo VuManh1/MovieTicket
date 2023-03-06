@@ -111,7 +111,7 @@ namespace MovieTicket.Views.MemberView.MovieView
                     }, previousView);
                     break;
                 case ConsoleKey.F:
-                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter movie's name to search: ");
+                    searchModel.SearchValue = AnsiConsole.Ask<string>(" -> Enter search value: ");
 
                     _viewFactory.GetService(ViewConstant.MovieList)?.Render(new SearchModel()
                     {

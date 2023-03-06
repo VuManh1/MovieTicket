@@ -67,7 +67,14 @@ namespace BUS
 
 		public Cast? GetById(int id)
 		{
-            return _unitOfWork.CastRepository.GetById(id);
+			try
+			{
+				return _unitOfWork.CastRepository.GetById(id);
+			}
+			catch
+			{
+				return null;
+			}
         }
 
 		public Result Update(Cast entity)

@@ -14,7 +14,26 @@ namespace BUS
 
 		public List<Genre> GetAll()
 		{
-			return _unitOfWork.GenreRepository.GetAll().ToList();
+			try
+			{
+				return _unitOfWork.GenreRepository.GetAll().ToList();
+			}
+			catch
+			{
+				return new List<Genre>();
+			}
 		}
+
+		public List<Movie> GetMovies(Genre genre)
+		{
+            try
+            {
+                return _unitOfWork.GenreRepository.GetMovies(genre);
+            }
+            catch
+            {
+                return new List<Movie>();
+            }
+        }
 	}
 }

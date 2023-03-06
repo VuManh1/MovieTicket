@@ -106,14 +106,25 @@ namespace BUS
 
         public List<Movie> Find(string filter)
         {
+            List<Movie> movies = new();
             try
             {
-                return _unitOfWork.MovieRepository.Find($"NormalizeName like '%{filter}%'").ToList();
+                movies.AddRange(_unitOfWork.MovieRepository.Find($"NormalizeName like '%{filter}%'"));
+
+                Genre? genre = _unitOfWork.GenreRepository.FirstOrDefault($"name = '{filter}'");
+                if (genre != null)
+                {
+                    movies.AddRange(_unitOfWork.GenreRepository.GetMovies(genre));
+                }
             }
-            catch
+            catch(Exception e)
             {
-                return new List<Movie>();
+                Console.WriteLine(e.Message);
+                Console.ReadKey();
+                return movies;
             }
+
+            return movies;
         }
 
         public List<Movie> GetByStatus(MovieStatus status)
@@ -143,12 +154,26 @@ namespace BUS
 
 		public List<Movie> GetAll()
 		{
-			return _unitOfWork.MovieRepository.GetAll().ToList();
+            try
+            {
+			    return _unitOfWork.MovieRepository.GetAll().ToList();
+            }
+            catch
+            {
+                return new List<Movie>();
+            }
 		}
 
 		public Movie? GetById(int id)
 		{
-			return _unitOfWork.MovieRepository.GetById(id);
+            try
+            {
+			    return _unitOfWork.MovieRepository.GetById(id);
+            }
+            catch
+            {
+                return null;
+            }
 		}
 
 		public Result Update(Movie movie)
@@ -242,19 +267,38 @@ namespace BUS
 
         public List<Genre> GetGenres(Movie movie)
         {
-            return _unitOfWork.MovieRepository.GetGenres(movie);
+            try
+            {
+                return _unitOfWork.MovieRepository.GetGenres(movie);
+            }
+            catch
+            {
+                return new List<Genre>();
+            }
         }
 
         public List<Cast> GetCasts(Movie movie)
 		{
-			return _unitOfWork.MovieRepository.GetCasts(movie);
-		
+            try
+            {
+			    return _unitOfWork.MovieRepository.GetCasts(movie);
+            }
+            catch
+            {
+                return new List<Cast>();
+            }
         }
 
         public List<Director> GetDirectors(Movie movie)
         {
-            return _unitOfWork.MovieRepository.GetDirectors(movie);
+            try
+            {
+                return _unitOfWork.MovieRepository.GetDirectors(movie);
+            }
+            catch
+            {
+                return new List<Director>();
+            }
         }
-
     }
 }

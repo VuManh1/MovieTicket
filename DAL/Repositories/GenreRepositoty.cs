@@ -149,5 +149,35 @@ namespace DAL.Repositories
 
 			return Result.OK();
         }
-}
+
+        public List<Movie> GetMovies(Genre genre)
+        {
+            List<Movie> movies = new();
+
+            _dbConnection.OpenConnection();
+
+            string query = $"SELECT * FROM `MovieGenreView` WHERE GenreId = {genre.Id};";
+            MySqlCommand cmd = new(query, _dbConnection.Connection);
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                movies.Add(new Movie
+                {
+                    Id = reader.GetInt32("MovieId"),
+                    Name = reader.GetString("MovieName"),
+                    NormalizeName = reader.GetString("MovieNormalizeName"),
+                    Description = reader["MovieDescription"].GetType() != typeof(System.DBNull) ? reader.GetString("MovieDescription") : null,
+                    Length = reader.GetInt32("MovieLength"),
+                    ReleaseDate = DateOnly.FromDateTime(reader.GetDateTime("MovieReleaseDate")),
+                    Country = reader["MovieCountry"].GetType() != typeof(System.DBNull) ? reader.GetString("MovieCountry") : null,
+                    MovieStatus = Enum.Parse<MovieStatus>(reader.GetString("MovieStatus"))
+                });
+            }
+            reader.Close();
+
+            return movies;
+        }
+    }
 }

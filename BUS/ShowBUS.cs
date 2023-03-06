@@ -115,7 +115,14 @@ namespace BUS
 
 		public Result Update(Show entity)
 		{
-			return _unitOfWork.ShowRepository.Update(entity);
+			try
+			{
+				return _unitOfWork.ShowRepository.Update(entity);
+			}
+			catch
+			{
+				return Result.NetworkError();
+			}
 		}
 	}
 }

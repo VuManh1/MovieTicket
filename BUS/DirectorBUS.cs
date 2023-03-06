@@ -66,7 +66,14 @@ namespace BUS
 
 		public Director? GetById(int id)
 		{
-            return _unitOfWork.DirectorRepository.GetById(id);
+            try
+            {
+                return _unitOfWork.DirectorRepository.GetById(id);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public Result Update(Director entity)
